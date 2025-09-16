@@ -4,109 +4,156 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated to zinc/gold theme from design brief */
-  --background: oklch(0.27 0.02 255); /* Dark Zinc */
-  --foreground: oklch(0.98 0 0); /* White */
-  --card: oklch(0.95 0.01 195); /* Soft Cyan */
-  --card-foreground: oklch(0.27 0.02 255); /* Dark Zinc */
-  --popover: oklch(0.98 0 0); /* White */
-  --popover-foreground: oklch(0.27 0.02 255); /* Dark Zinc */
-  --primary: oklch(0.65 0.15 65); /* Gold */
-  --primary-foreground: oklch(0.27 0.02 255); /* Dark Zinc */
-  --secondary: oklch(0.96 0.01 255); /* Light Gray */
-  --secondary-foreground: oklch(0.27 0.02 255); /* Dark Zinc */
-  --muted: oklch(0.27 0.02 255); /* Dark Zinc */
-  --muted-foreground: oklch(0.98 0 0); /* White */
-  --accent: oklch(0.55 0.15 195); /* Cyan */
-  --accent-foreground: oklch(0.98 0 0); /* White */
-  --destructive: oklch(0.55 0.2 25); /* Orange */
-  --destructive-foreground: oklch(0.98 0 0); /* White */
-  --border: oklch(0.65 0.15 65); /* Gold */
-  --input: oklch(0.27 0.02 255); /* Dark Zinc */
-  --ring: oklch(0.65 0.15 65); /* Gold */
-  --chart-1: oklch(0.55 0.15 195); /* Cyan */
-  --chart-2: oklch(0.65 0.15 65); /* Gold */
-  --chart-3: oklch(0.55 0.2 25); /* Orange */
-  --chart-4: oklch(0.27 0.02 255); /* Dark Zinc */
-  --chart-5: oklch(0.95 0.01 195); /* Soft Cyan */
+  /* Neutral foundations (cinematic dark) */
+  --background: oklch(0.27 0.02 255);     /* Zinc 800 */
+  --foreground: oklch(0.98 0 0);          /* White */
+
+  /* Surfaces */
+  --card: oklch(0.22 0.02 255);            /* Zinc 900 card on dark */
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.25 0.02 255);
+  --popover-foreground: oklch(0.98 0 0);
+
+  /* NEW: Brand accent (reserved, not used for primary CTAs) */
+  --brand: oklch(0.72 0.10 85);           /* Muted gold; tasteful, not shouty */
+  --brand-foreground: oklch(0.15 0.02 255);
+
+  /* Primary = cool blue (drives CTAs, links, focus) */
+  --primary: oklch(0.72 0.12 235);        /* Electric-but-elegant blue */
+  --primary-foreground: oklch(0.15 0.02 255);
+
+  /* Secondary / subtle fills */
+  --secondary: oklch(0.32 0.02 255);      /* Zinc 700 */
+  --secondary-foreground: oklch(0.92 0.01 250); /* Off-white */
+
+  /* Muted text / separators */
+  --muted: oklch(0.24 0.02 255);
+  --muted-foreground: oklch(0.72 0.02 255); /* Zinc 400–500 text */
+
+  /* Accent = teal to complement blue, for chips/pills, not CTAs */
+  --accent: oklch(0.67 0.10 210);         /* Teal-cyan */
+  --accent-foreground: oklch(0.12 0.02 255);
+
+  /* Semantic status */
+  --destructive: oklch(0.60 0.20 25);     /* Red-leaning orange */
+  --destructive-foreground: oklch(0.98 0 0);
+
+  /* Primitives */
+  --border: oklch(0.35 0.03 255);         /* Neutral border (no more gold borders) */
+  --input: oklch(0.24 0.02 255);
+  --ring: oklch(0.72 0.12 235);           /* Match primary for focus rings */
+
+  /* Charts (balanced cool-first, restrained warm) */
+  --chart-1: oklch(0.72 0.12 235);        /* Blue */
+  --chart-2: oklch(0.67 0.10 210);        /* Teal */
+  --chart-3: oklch(0.74 0.11 150);        /* Green */
+  --chart-4: oklch(0.72 0.10 85);         /* Gold (brand) */
+  --chart-5: oklch(0.60 0.20 25);         /* Orange/Red */
+
   --radius: 0.5rem;
-  --sidebar: oklch(0.27 0.02 255); /* Dark Zinc */
-  --sidebar-foreground: oklch(0.98 0 0); /* White */
-  --sidebar-primary: oklch(0.65 0.15 65); /* Gold */
-  --sidebar-primary-foreground: oklch(0.27 0.02 255); /* Dark Zinc */
-  --sidebar-accent: oklch(0.55 0.15 195); /* Cyan */
-  --sidebar-accent-foreground: oklch(0.98 0 0); /* White */
-  --sidebar-border: oklch(0.65 0.15 65); /* Gold */
-  --sidebar-ring: oklch(0.65 0.15 65); /* Gold */
+
+  /* Sidebar (keep cohesive; no gold as primary here) */
+  --sidebar: oklch(0.18 0.02 255);        /* Darker panel */
+  --sidebar-foreground: oklch(0.95 0.01 255);
+  --sidebar-primary: var(--primary);      /* Use blue, not gold */
+  --sidebar-primary-foreground: oklch(0.12 0.02 255);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: oklch(0.12 0.02 255);
+  --sidebar-border: oklch(0.28 0.02 255);
+  --sidebar-ring: var(--ring);
 }
 
 .dark {
-  /* Enhanced dark mode with zinc/gold theme */
-  --background: oklch(0.15 0.02 255); /* Darker Zinc */
-  --foreground: oklch(0.98 0 0); /* White */
-  --card: oklch(0.18 0.02 255); /* Dark Card */
-  --card-foreground: oklch(0.98 0 0); /* White */
-  --popover: oklch(0.15 0.02 255); /* Dark Popover */
-  --popover-foreground: oklch(0.98 0 0); /* White */
-  --primary: oklch(0.75 0.18 65); /* Brighter Gold */
-  --primary-foreground: oklch(0.15 0.02 255); /* Dark Zinc */
-  --secondary: oklch(0.25 0.02 255); /* Dark Secondary */
-  --secondary-foreground: oklch(0.98 0 0); /* White */
-  --muted: oklch(0.25 0.02 255); /* Dark Muted */
-  --muted-foreground: oklch(0.75 0.02 255); /* Light Muted */
-  --accent: oklch(0.65 0.18 195); /* Brighter Cyan */
-  --accent-foreground: oklch(0.98 0 0); /* White */
-  --destructive: oklch(0.45 0.2 25); /* Dark Orange */
-  --destructive-foreground: oklch(0.98 0 0); /* White */
-  --border: oklch(0.35 0.05 255); /* Dark Border */
-  --input: oklch(0.25 0.02 255); /* Dark Input */
-  --ring: oklch(0.75 0.18 65); /* Gold Ring */
-  --chart-1: oklch(0.65 0.18 195); /* Cyan */
-  --chart-2: oklch(0.75 0.18 65); /* Gold */
-  --chart-3: oklch(0.65 0.2 25); /* Orange */
-  --chart-4: oklch(0.45 0.05 255); /* Medium Zinc */
-  --chart-5: oklch(0.55 0.1 195); /* Medium Cyan */
-  --sidebar: oklch(0.12 0.02 255); /* Darkest Zinc */
-  --sidebar-foreground: oklch(0.98 0 0); /* White */
-  --sidebar-primary: oklch(0.75 0.18 65); /* Gold */
-  --sidebar-primary-foreground: oklch(0.12 0.02 255); /* Dark Zinc */
-  --sidebar-accent: oklch(0.65 0.18 195); /* Cyan */
-  --sidebar-accent-foreground: oklch(0.98 0 0); /* White */
-  --sidebar-border: oklch(0.35 0.05 255); /* Dark Border */
-  --sidebar-ring: oklch(0.75 0.18 65); /* Gold */
+  /* Deepen but keep the same relationships */
+  --background: oklch(0.14 0.02 255);
+  --foreground: oklch(0.98 0 0);
+
+  --card: oklch(0.17 0.02 255);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.16 0.02 255);
+  --popover-foreground: oklch(0.98 0 0);
+
+  --brand: oklch(0.68 0.10 85);           /* Slightly dimmed gold for dark */
+  --brand-foreground: oklch(0.12 0.02 255);
+
+  --primary: oklch(0.68 0.12 235);
+  --primary-foreground: oklch(0.12 0.02 255);
+
+  --secondary: oklch(0.22 0.02 255);
+  --secondary-foreground: oklch(0.92 0.01 250);
+
+  --muted: oklch(0.21 0.02 255);
+  --muted-foreground: oklch(0.70 0.02 255);
+
+  --accent: oklch(0.63 0.10 210);
+  --accent-foreground: oklch(0.12 0.02 255);
+
+  --destructive: oklch(0.55 0.20 25);
+  --destructive-foreground: oklch(0.98 0 0);
+
+  --border: oklch(0.28 0.02 255);
+  --input: oklch(0.21 0.02 255);
+  --ring: oklch(0.68 0.12 235);
+
+  --chart-1: oklch(0.68 0.12 235);
+  --chart-2: oklch(0.63 0.10 210);
+  --chart-3: oklch(0.67 0.11 150);
+  --chart-4: oklch(0.68 0.10 85);
+  --chart-5: oklch(0.55 0.20 25);
+
+  --sidebar: oklch(0.12 0.02 255);
+  --sidebar-foreground: oklch(0.95 0.01 255);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: oklch(0.10 0.02 255);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: oklch(0.10 0.02 255);
+  --sidebar-border: oklch(0.24 0.02 255);
+  --sidebar-ring: var(--ring);
 }
 
+/* Map the new brand tokens into your Tailwind theme namespace */
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -115,29 +162,44 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Expose brand for special elements (badges, verified, crowns) */
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
 }
 
+/* ---------------------- */
+/* Base Layer - Bulletproof Theme Application */
+/* ---------------------- */
+/* Ensures no route ever shows white background */
+/* Applied before any component styles load */
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+  /* Universal border and outline tokens */
+  * { @apply border-border outline-ring/50; }
+  
+  /* Core body styling with theme tokens */
+  body { @apply bg-background text-foreground; }
+  
+  /* Optional: calmer scrollbar so the chrome doesn't compete with content */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { @apply bg-muted; }
+  ::-webkit-scrollbar-thumb { @apply bg-foreground/20 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-foreground/30; }
 }
 
-/* Added custom scrollbar styling for dark theme */
-@layer base {
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  ::-webkit-scrollbar-track {
-    @apply bg-muted;
-  }
-  ::-webkit-scrollbar-thumb {
-    @apply bg-primary rounded-full;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-primary/80;
-  }
+/* ---------------------- */
+/* Hard Fallback - No Route Goes White */
+/* ---------------------- */
+/* Raw CSS fallback so even if @apply misses, page isn't white */
+/* This ensures theme variables are applied at the lowest level */
+html, body {
+  background-color: var(--background);
+  color: var(--foreground);
+  min-height: 100dvh;
+}
+
+/* Ensure html element gets theme class for proper cascade */
+html {
+  /* Fallback for when theme script hasn't run yet */
+  background-color: var(--background);
 }
