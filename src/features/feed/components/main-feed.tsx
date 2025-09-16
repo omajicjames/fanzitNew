@@ -9,6 +9,8 @@ import { Heart, MessageCircle, Share, MoreHorizontal, Play, Lock, Crown } from "
 import { PostActionsModal } from "./post-actions-modal"
 import { InlineActions } from "@src/features/post-actions/InlineActions"
 import { usePostActionsRegistry, toggleActions } from "@src/features/post-actions/registry"
+import { LockedPostShell } from "@src/features/paywall/components/LockedPostShell"
+import { toast } from "@src/hooks/use-toast"
 
 export function MainFeed() {
   // ----------------------
@@ -97,6 +99,7 @@ export function MainFeed() {
         description: "Learn how to make restaurant-quality truffle pasta at home with simple ingredients.",
         isLocked: true,
         price: "$4.99",
+        requiredTier: "premium" as const,
       },
       engagement: {
         likes: 892,
@@ -127,6 +130,31 @@ export function MainFeed() {
         shares: 12,
       },
       timestamp: "6 hours ago",
+    },
+    {
+      id: 4,
+      creator: {
+        name: "Pro Trader Alex",
+        handle: "@protraderalex",
+        avatar: "/trader-analysis.png",
+        verified: true,
+        tier: "pro",
+      },
+      content: {
+        type: "text",
+        thumbnail: "/market-analysis.png",
+        title: "Advanced Market Analysis Techniques",
+        description: "Exclusive pro-level trading strategies and market analysis methods used by institutional traders.",
+        isLocked: true,
+        price: "$9.99",
+        requiredTier: "pro" as const,
+      },
+      engagement: {
+        likes: 2156,
+        comments: 234,
+        shares: 89,
+      },
+      timestamp: "8 hours ago",
     },
   ]
   
@@ -183,6 +211,25 @@ export function MainFeed() {
     // For now, just log the action
   }
 
+  // ----------------------
+  // Paywall Event Handlers
+  // ----------------------
+  const handlePaywallUnlock = (postId: number) => {
+    console.log('Paywall unlock requested for post:', postId)
+    toast({
+      title: "Unlock Content",
+      description: "Opening subscription options...",
+    })
+  }
+
+  const handlePaywallUpgrade = (postId: number, tier: string) => {
+    console.log('Paywall upgrade requested for post:', postId, 'tier:', tier)
+    toast({
+      title: "Subscription Upgrade",
+      description: `Upgrading to ${tier} tier...`,
+    })
+  }
+
   return (
     <div className="relative z-0 space-y-6 p-6">
       {/* Feed Header */}
@@ -202,7 +249,36 @@ export function MainFeed() {
       </div>
 
       {/* Posts */}
-      {posts.map((post) => (
+      {posts.map((post) => {
+        // ----------------------
+        // Render locked posts with LockedPostShell
+        // ----------------------
+        if (post.content.isLocked && post.content.requiredTier) {
+          return (
+            <LockedPostShell
+              key={post.id}
+              title={post.content.title}
+              excerpt={post.content.description}
+              author={{
+                name: post.creator.name,
+                avatar: post.creator.avatar,
+                username: post.creator.handle
+              }}
+              createdAt={post.timestamp}
+              requiredTier={post.content.requiredTier}
+              previewImage={post.content.thumbnail}
+              mediaType={post.content.type as 'image' | 'video' | 'text'}
+              onUnlock={() => handlePaywallUnlock(post.id)}
+              onUpgrade={() => handlePaywallUpgrade(post.id, post.content.requiredTier!)}
+              className="mb-6"
+            />
+          )
+        }
+
+        // ----------------------
+        // Render regular posts
+        // ----------------------
+        return (
         <Card key={post.id} className="overflow-hidden">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
@@ -265,19 +341,7 @@ export function MainFeed() {
                 </div>
               )}
 
-              {/* Lock Overlay for Premium Content */}
-              {post.content.isLocked && (
-                <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <Lock className="h-12 w-12 mx-auto mb-3" />
-                    <p className="text-lg font-semibold">Premium Content</p>
-                    <p className="text-sm opacity-90">Unlock for {post.content.price}</p>
-                    <Button className="mt-3" variant="secondary">
-                      Unlock Now
-                    </Button>
-                  </div>
-                </div>
-              )}
+              {/* Note: Lock overlay removed - handled by LockedPostShell for locked posts */}
 
               {/* Duration Badge for Videos */}
               {post.content.type === "video" && post.content.duration && (
@@ -307,11 +371,9 @@ export function MainFeed() {
                   </Button>
                 </div>
 
-                {!post.content.isLocked && (
-                  <Button variant="outline" size="sm">
-                    Subscribe
-                  </Button>
-                )}
+                <Button variant="outline" size="sm">
+                  Subscribe
+                </Button>
               </div>
             </div>
             
@@ -336,7 +398,8 @@ export function MainFeed() {
             )}
           </CardContent>
         </Card>
-      ))}
+        )
+      })}
       
       {/* ---------------------- */}
       {/* Post Actions Modal */}
