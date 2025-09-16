@@ -347,7 +347,7 @@ export function PostActionsModal({ isOpen, onClose, post, currentUser, onAction 
           className={cn(
             "bg-background border border-border rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden",
             "transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
-            "backdrop-blur-sm"
+            "backdrop-blur-sm relative z-30"
           )}
           style={{
             transform: `translateY(${currentY}px)`,

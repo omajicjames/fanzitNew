@@ -272,7 +272,7 @@ export function InlineActions({
             animate={{ scale: 1, opacity: 1, height: "auto" }}
             exit={{ scale: 0.95, opacity: 0, height: 0 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="overflow-hidden"
+            className="overflow-hidden relative z-10"
           >
             <div
               role="group"

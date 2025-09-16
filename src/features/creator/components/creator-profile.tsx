@@ -213,19 +213,19 @@ export function CreatorProfile({ creatorId }: CreatorProfileProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {posts.map((post) => (
               <Card key={post.id} className="overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow">
-                <div className="relative">
+                <div className="relative overflow-hidden z-0">
                   <img
                     src={post.thumbnail || "/placeholder.svg"}
                     alt={post.title}
-                    className="w-full h-48 object-cover"
+                    className="w-full h-48 object-cover z-0"
                   />
 
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-black/40 invisible group-hover:visible transition-all z-0" />
 
                   {/* Play Button */}
                   {post.type === "video" && (
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="absolute inset-0 flex items-center justify-center invisible group-hover:visible transition-all z-10">
                       <Button size="lg" className="rounded-full">
                         <Play className="h-6 w-6 ml-1" />
                       </Button>
@@ -244,7 +244,7 @@ export function CreatorProfile({ creatorId }: CreatorProfileProps) {
 
                   {/* Duration */}
                   {post.type === "video" && post.duration && (
-                    <Badge className="absolute bottom-2 right-2 bg-black/70 text-white">{post.duration}</Badge>
+                    <Badge className="absolute bottom-2 right-2 bg-black/70 text-white z-10">{post.duration}</Badge>
                   )}
                 </div>
 

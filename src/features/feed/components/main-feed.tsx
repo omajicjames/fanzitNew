@@ -184,9 +184,9 @@ export function MainFeed() {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="relative z-0 space-y-6 p-6">
       {/* Feed Header */}
-      <div className="sticky top-0 bg-background/80 backdrop-blur-sm border-b border-border pb-4 mb-6">
+      <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-sm border-b border-border pb-4 mb-6">
         <h2 className="text-2xl font-bold text-foreground">Your Feed</h2>
         <div className="flex space-x-2 mt-3">
           <Button variant="default" size="sm">
@@ -246,15 +246,15 @@ export function MainFeed() {
 
           <CardContent className="p-0">
             {/* Content Preview */}
-            <div className="relative">
+            <div className="relative overflow-hidden z-0">
               <img
                 src={post.content.thumbnail || "/placeholder.svg"}
                 alt={post.content.title}
-                className="w-full h-80 object-cover"
+                className="w-full h-80 object-cover z-0"
               />
 
               {/* Content Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-0" />
 
               {/* Play Button for Videos */}
               {post.content.type === "video" && (
@@ -281,7 +281,7 @@ export function MainFeed() {
 
               {/* Duration Badge for Videos */}
               {post.content.type === "video" && post.content.duration && (
-                <Badge className="absolute bottom-3 right-3 bg-black/70 text-white">{post.content.duration}</Badge>
+                <Badge className="absolute bottom-3 right-3 bg-black/70 text-white z-10">{post.content.duration}</Badge>
               )}
             </div>
 

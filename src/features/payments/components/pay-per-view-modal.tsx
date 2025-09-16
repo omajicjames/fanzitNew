@@ -49,13 +49,13 @@ export function PayPerViewModal({ isOpen, onClose, content }: PayPerViewModalPro
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center space-x-3">
-                <div className="relative">
+                <div className="relative overflow-hidden rounded-lg z-0">
                   <img
                     src={content.thumbnail || "/placeholder.svg"}
                     alt={content.title}
-                    className="w-16 h-16 object-cover rounded-lg"
+                    className="w-16 h-16 object-cover rounded-lg z-0"
                   />
-                  <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center z-0">
                     {content.type === "video" ? (
                       <Play className="h-6 w-6 text-white" />
                     ) : (

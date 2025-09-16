@@ -26,7 +26,7 @@ export function SlimCookieBar() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 z-50 max-w-sm">
+    <div className="fixed bottom-4 left-4 z-70 max-w-sm">
       <div className="bg-zinc-900/95 backdrop-blur-sm border border-zinc-700 rounded-lg p-3 shadow-lg">
         <div className="flex items-center justify-between gap-3">
           <div className="flex-1">

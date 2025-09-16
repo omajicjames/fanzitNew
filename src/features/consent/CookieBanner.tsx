@@ -60,7 +60,7 @@ export function CookieBanner() {
       {/* Main Banner Card */}
       {/* Location: Fixed bottom of viewport */}
       {/* ---------------------- */}
-      <div className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:max-w-md">
+      <div className="fixed bottom-4 left-4 right-4 z-70 md:left-auto md:right-4 md:max-w-md">
         <Card className="border-zinc-700 bg-zinc-900/95 backdrop-blur-sm">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg text-zinc-100">Cookie Preferences</CardTitle>

@@ -41,7 +41,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
+      <body className={`relative isolate font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
         {/* ---------------------- */}
         {/* Cookie consent system wrapper */}
         {/* Provides consent context and conditional script loading */}
