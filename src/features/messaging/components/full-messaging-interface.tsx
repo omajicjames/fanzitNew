@@ -36,7 +36,7 @@ export function FullMessagingInterface() {
       type: "individual",
       participant: {
         name: "Sarah Fitness",
-        avatar: "/fitness-woman.png",
+        avatar: "/fitness-woman-avatar.svg",
         online: true,
         isCreator: true,
         tier: "VIP",
@@ -80,7 +80,7 @@ export function FullMessagingInterface() {
       id: "4",
       type: "group",
       name: "VIP Fitness Group",
-      avatar: "/fitness-workout-video.png",
+      avatar: "/fitness-workout-video.svg",
       participants: 12,
       lastMessage: "Mike: Great workout today everyone!",
       timestamp: "5h",

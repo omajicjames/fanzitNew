@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Card, CardContent, CardHeader } from '@src/components/ui/card'
 import { Button } from '@src/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@src/components/ui/avatar'
 import { Badge } from '@src/components/ui/badge'
 import { cn } from '@src/lib/utils'
 import { toast } from '@src/hooks/use-toast'
@@ -23,6 +22,8 @@ import {
 import { paywallClient, type SubscriptionTier, type UserSubscription } from '../mock/paywallClient'
 import { PaywallPill } from './PaywallPill'
 import { PaywallDialog } from './PaywallDialog'
+import { formatHandle, formatRelativeTime } from '@src/lib/format'
+import AuthorHeader, { createAuthorCore } from '@src/components/post/AuthorHeader'
 
 // ----------------------
 // LockedPostShell Component Props
@@ -59,6 +60,9 @@ export interface LockedPostShellProps {
   
   // Children content (the actual locked content)
   children?: React.ReactNode
+  
+  // Header display options
+  showAuthorHeader?: boolean
 }
 
 // ----------------------
@@ -92,6 +96,7 @@ export function LockedPostShell({
   showPreview = true,
   previewLines = 3,
   blurIntensity = 'medium',
+  showAuthorHeader = true,
   children
 }: LockedPostShellProps) {
   // ----------------------
@@ -183,6 +188,64 @@ export function LockedPostShell({
   }
 
   // ----------------------
+  // Author Header Display Values
+  // Safe formatting for handle and timestamp display
+  // ----------------------
+  const displayHandle = author?.username ? `@${formatHandle(author.username)}` : ''
+  const displayTime = createdAt ? formatRelativeTime(createdAt) : ''
+  const shouldShowAuthorHeader = showAuthorHeader && (author?.name || displayHandle || displayTime)
+
+  // ----------------------
+  // Render Functions
+  // Component rendering helpers
+  // ----------------------
+  
+  /**
+   * Render author header using shared AuthorHeader component
+   * Located in: src/features/paywall/components/LockedPostShell.tsx
+   * Used by: LockedPostShell main component
+   * Component: AuthorHeader from /src/components/post/AuthorHeader.tsx
+   */
+  const renderAuthorHeader = () => {
+    if (!shouldShowAuthorHeader) return null
+
+    return (
+      <div className="flex items-center justify-between gap-3">
+        {/* ---------------------- */}
+        {/* Shared AuthorHeader Component */}
+        {/* Component: AuthorHeader from /src/components/post/AuthorHeader.tsx */}
+        {/* Variant: compact for locked posts */}
+        {/* ---------------------- */}
+        <div className="flex-1">
+          <AuthorHeader
+            author={createAuthorCore({
+              name: author?.name,
+              username: author?.username,
+              avatarUrl: author?.avatar,
+              verified: false // Locked posts don't show verification
+            })}
+            createdAt={createdAt}
+            variant="compact"
+            showVerified={false}
+            className="" // No outer margins - spacing handled by parent container
+          />
+        </div>
+        
+        {/* ---------------------- */}
+        {/* PaywallPill - Tier indicator and upgrade button */}
+        {/* Component: PaywallPill from ./PaywallPill */}
+        {/* ---------------------- */}
+        <PaywallPill
+          requiredTier={requiredTier}
+          variant="compact"
+          size="sm"
+          onClick={handleUpgrade}
+        />
+      </div>
+    )
+  }
+
+  // ----------------------
   // Event Handlers
   // Handle user interactions and state changes
   // ----------------------
@@ -266,40 +329,10 @@ export function LockedPostShell({
   // Component rendering utilities
   // ----------------------
 
-  /**
-   * Render post header with author info
-   */
-  const renderHeader = () => (
-    <CardHeader className="pb-3">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3 min-w-0 flex-1">
-          <Avatar className="w-10 h-10 flex-shrink-0">
-            <AvatarImage src={author.avatar} alt={author.name} />
-            <AvatarFallback>
-              {author.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-semibold text-sm truncate">{author.name}</h3>
-              {author.username && (
-                <span className="text-xs text-muted-foreground">@{author.username}</span>
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground">{formatDate(createdAt)}</p>
-          </div>
-        </div>
-        
-        <PaywallPill
-          requiredTier={requiredTier}
-          variant="compact"
-          size="sm"
-          onClick={handleUpgrade}
-        />
-      </div>
-    </CardHeader>
-  )
+  // ----------------------
+  // Old renderHeader() function removed - using renderAuthorHeader() instead
+  // This eliminates duplicate author headers and uses the new FormatUtils
+  // ----------------------
 
   /**
    * Render media preview section
@@ -311,7 +344,7 @@ export function LockedPostShell({
     const MediaIcon = mediaConfig.icon
     
     return (
-      <div className="relative mb-4">
+      <div className="relative">
         {previewImage ? (
           <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
             <img
@@ -330,7 +363,7 @@ export function LockedPostShell({
                 getBlurClasses()
               )}>
                 <div className="text-center text-white">
-                  <Lock className="w-8 h-8 mx-auto mb-2" />
+                  <Lock className="w-8 h-8 mx-auto" />
                   <p className="text-sm font-medium">Premium Content</p>
                 </div>
               </div>
@@ -343,7 +376,7 @@ export function LockedPostShell({
             'border-current/20'
           )}>
             <div className="text-center">
-              <MediaIcon className={cn('w-12 h-12 mx-auto mb-2', mediaConfig.color)} />
+              <MediaIcon className={cn('w-12 h-12 mx-auto', mediaConfig.color)} />
               <p className={cn('text-sm font-medium', mediaConfig.color)}>
                 {mediaConfig.label}
                 {mediaCount > 1 && ` (${mediaCount})`}
@@ -397,7 +430,7 @@ export function LockedPostShell({
           <Button
             variant="ghost"
             size="sm"
-            className="mt-2 text-xs"
+            className="text-xs"
             onClick={handlePreviewToggle}
           >
             {showFullPreview ? (
@@ -432,7 +465,7 @@ export function LockedPostShell({
     const TierIcon = tierConfig.icon
     
     return (
-      <div className="mt-4 p-4 rounded-lg bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20">
+      <div className="p-4 rounded-lg bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <div className="p-2 rounded-full bg-primary/10">
@@ -487,10 +520,12 @@ export function LockedPostShell({
           </div>
         )}
         
-        {/* Header */}
-        {renderHeader()}
+        {/* Header removed - using renderAuthorHeader() instead */}
         
         <CardContent className="pt-0">
+          {/* Author Header - Compact author/time display */}
+          {renderAuthorHeader()}
+          
           {/* Title */}
           <h2 className={cn(
             'text-lg font-bold mb-3 leading-tight',

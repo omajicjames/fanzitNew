@@ -91,7 +91,7 @@ export function Sidebar() {
         {/* ---------------------- */}
         <div className="space-y-2">
           {[
-            { id: 2, name: "Sarah Fitness", avatar: "/fitness-woman.png", online: true },
+            { id: 2, name: "Sarah Fitness", avatar: "/fitness-woman-avatar.svg", online: true },
             { id: 3, name: "Chef Marco", avatar: "/chef-cooking.png", online: false },
             { id: 4, name: "Art by Luna", avatar: "/artist-painting.png", online: true },
           ].map((creator) => (

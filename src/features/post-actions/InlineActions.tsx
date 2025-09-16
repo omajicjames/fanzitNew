@@ -277,7 +277,7 @@ export function InlineActions({
             <div
               role="group"
               aria-label="Post actions"
-              className="bg-card border border-border rounded-xl p-4 mt-3 shadow-lg space-y-2"
+              className="bg-card border border-border rounded-xl p-4 shadow-lg space-y-2"
             >
               {buildActionMenu()}
             </div>

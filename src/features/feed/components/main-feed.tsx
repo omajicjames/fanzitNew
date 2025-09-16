@@ -1,15 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader } from "@src/components/ui/card"
 import { Button } from "@src/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@src/components/ui/avatar"
-import { Badge } from "@src/components/ui/badge"
-import { Heart, MessageCircle, Share, MoreHorizontal, Play, Lock, Crown } from "lucide-react"
+import PostCard from "@src/features/post/PostCard"
+import { PostDataAdapter } from "@src/features/post/adapters/PostDataAdapter"
 import { PostActionsModal } from "./post-actions-modal"
-import { InlineActions } from "@src/features/post-actions/InlineActions"
 import { usePostActionsRegistry, toggleActions } from "@src/features/post-actions/registry"
-import { LockedPostShell } from "@src/features/paywall/components/LockedPostShell"
 import { toast } from "@src/hooks/use-toast"
 
 export function MainFeed() {
@@ -59,17 +55,17 @@ export function MainFeed() {
   // ----------------------
   const posts = [
     {
-      id: 1,
+      id: "1",
       creator: {
         name: "Sarah Fitness",
         handle: "@sarahfit",
-        avatar: "/fitness-woman.png",
+        avatar: "/fitness-woman-avatar.svg",
         verified: true,
         tier: "premium",
       },
       content: {
         type: "video",
-        thumbnail: "/fitness-workout-video.png",
+        thumbnail: "/fitness-workout-video.svg",
         title: "Morning Yoga Flow - 20 Minutes",
         description:
           "Start your day with this energizing yoga sequence perfect for beginners and advanced practitioners.",
@@ -82,9 +78,11 @@ export function MainFeed() {
         shares: 23,
       },
       timestamp: "2 hours ago",
+      has_premium: false,
+      unlocked: true,
     },
     {
-      id: 2,
+      id: "2",
       creator: {
         name: "Chef Marco",
         handle: "@chefmarco",
@@ -107,9 +105,13 @@ export function MainFeed() {
         shares: 45,
       },
       timestamp: "4 hours ago",
+      has_premium: true,
+      unlocked: false,
+      price_cents: 499,
+      preview_url: "/gourmet-pasta.png",
     },
     {
-      id: 3,
+      id: "3",
       creator: {
         name: "Art by Luna",
         handle: "@artbyluna",
@@ -130,9 +132,11 @@ export function MainFeed() {
         shares: 12,
       },
       timestamp: "6 hours ago",
+      has_premium: false,
+      unlocked: true,
     },
     {
-      id: 4,
+      id: "4",
       creator: {
         name: "Pro Trader Alex",
         handle: "@protraderalex",
@@ -155,6 +159,10 @@ export function MainFeed() {
         shares: 89,
       },
       timestamp: "8 hours ago",
+      has_premium: true,
+      unlocked: false,
+      price_cents: 999,
+      preview_url: "/market-analysis.png",
     },
   ]
   
@@ -166,7 +174,7 @@ export function MainFeed() {
     const postWithSettings = {
       ...post,
       creator: {
-        id: post.id === 1 ? "user123" : "creator456", // Make first post owned by current user for testing
+        id: post.id === "1" ? "user123" : "creator456", // Make first post owned by current user for testing
         name: post.creator.name,
         handle: post.creator.handle
       },
@@ -185,7 +193,7 @@ export function MainFeed() {
   // ----------------------
   const handleToggleInlineActions = (post: any) => {
     const postId = post.id.toString()
-    const creatorId = post.id === 1 ? "user123" : "creator456" // Use the same logic as in handleOpenModal
+    const creatorId = post.id === "1" ? "user123" : "creator456" // Use the same logic as in handleOpenModal
     const wasOpen = isOpen(postId)
     
     // Toggle the actions using the new functional approach
@@ -214,7 +222,7 @@ export function MainFeed() {
   // ----------------------
   // Paywall Event Handlers
   // ----------------------
-  const handlePaywallUnlock = (postId: number) => {
+  const handlePaywallUnlock = (postId: string) => {
     console.log('Paywall unlock requested for post:', postId)
     toast({
       title: "Unlock Content",
@@ -222,7 +230,7 @@ export function MainFeed() {
     })
   }
 
-  const handlePaywallUpgrade = (postId: number, tier: string) => {
+  const handlePaywallUpgrade = (postId: string, tier: string) => {
     console.log('Paywall upgrade requested for post:', postId, 'tier:', tier)
     toast({
       title: "Subscription Upgrade",
@@ -231,7 +239,7 @@ export function MainFeed() {
   }
 
   return (
-    <div className="relative z-0 space-y-6 p-6">
+    <div className="relative z-0 p-6">
       {/* Feed Header */}
       <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-sm border-b border-border pb-4 mb-6">
         <h2 className="text-2xl font-bold text-foreground">Your Feed</h2>
@@ -249,157 +257,37 @@ export function MainFeed() {
       </div>
 
       {/* Posts */}
-      {posts.map((post) => {
-        // ----------------------
-        // Render locked posts with LockedPostShell
-        // ----------------------
-        if (post.content.isLocked && post.content.requiredTier) {
+      {/* ---------------------- */}
+      {/* V2 Feed List Container - Single source of spacing truth */}
+      {/* Component: PostCard from /src/features/post/PostCard.tsx */}
+      {/* Adapter: PostDataAdapter from /src/features/post/adapters/PostDataAdapter.ts */}
+      {/* List owns ALL vertical spacing via gap-6, cards have no outer margins */}
+      {/* ---------------------- */}
+      <ul className="flex flex-col gap-6">
+        {posts.map((post) => {
+          // ----------------------
+          // Convert legacy post data to PostView format
+          // Uses PostDataAdapter to normalize data structure
+          // ----------------------
+          const postView = PostDataAdapter.fromLegacyPost(post)
+          
           return (
-            <LockedPostShell
-              key={post.id}
-              title={post.content.title}
-              excerpt={post.content.description}
-              author={{
-                name: post.creator.name,
-                avatar: post.creator.avatar,
-                username: post.creator.handle
-              }}
-              createdAt={post.timestamp}
-              requiredTier={post.content.requiredTier}
-              previewImage={post.content.thumbnail}
-              mediaType={post.content.type as 'image' | 'video' | 'text'}
-              onUnlock={() => handlePaywallUnlock(post.id)}
-              onUpgrade={() => handlePaywallUpgrade(post.id, post.content.requiredTier!)}
-              className="mb-6"
-            />
-          )
-        }
-
-        // ----------------------
-        // Render regular posts
-        // ----------------------
-        return (
-        <Card key={post.id} className="overflow-hidden">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={post.creator.avatar || "/placeholder.svg"} alt={post.creator.name} />
-                  <AvatarFallback>
-                    {post.creator.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <div className="flex items-center space-x-2">
-                    <h3 className="font-semibold text-card-foreground">{post.creator.name}</h3>
-                    {post.creator.verified && (
-                      <Badge variant="secondary" className="text-xs">
-                        <Crown className="h-3 w-3 mr-1" />
-                        Verified
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {post.creator.handle} • {post.timestamp}
-                  </p>
-                </div>
-              </div>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => handleToggleInlineActions(post)}
-                aria-label="More actions"
-                aria-expanded={isOpen(post.id.toString())}
-                aria-haspopup="menu"
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardHeader>
-
-          <CardContent className="p-0">
-            {/* Content Preview */}
-            <div className="relative overflow-hidden z-0">
-              <img
-                src={post.content.thumbnail || "/placeholder.svg"}
-                alt={post.content.title}
-                className="w-full h-80 object-cover z-0"
+            <li key={post.id}>
+              <PostCard
+                view={postView}
+                openPricingPlansModal={() => {
+                  console.log('Opening pricing plans modal for post:', post.id)
+                  toast({
+                    title: "Subscription Required",
+                    description: "Opening subscription options...",
+                  })
+                }}
+                size="default"
               />
-
-              {/* Content Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-0" />
-
-              {/* Play Button for Videos */}
-              {post.content.type === "video" && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Button size="lg" className="rounded-full bg-primary/90 hover:bg-primary">
-                    <Play className="h-6 w-6 ml-1" />
-                  </Button>
-                </div>
-              )}
-
-              {/* Note: Lock overlay removed - handled by LockedPostShell for locked posts */}
-
-              {/* Duration Badge for Videos */}
-              {post.content.type === "video" && post.content.duration && (
-                <Badge className="absolute bottom-3 right-3 bg-black/70 text-white z-10">{post.content.duration}</Badge>
-              )}
-            </div>
-
-            {/* Content Info */}
-            <div className="p-4">
-              <h4 className="font-semibold text-card-foreground mb-2">{post.content.title}</h4>
-              <p className="text-sm text-muted-foreground mb-4">{post.content.description}</p>
-
-              {/* Engagement Actions */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-6">
-                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-red-500">
-                    <Heart className="h-4 w-4 mr-2" />
-                    {post.engagement.likes}
-                  </Button>
-                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-blue-500">
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    {post.engagement.comments}
-                  </Button>
-                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-green-500">
-                    <Share className="h-4 w-4 mr-2" />
-                    {post.engagement.shares}
-                  </Button>
-                </div>
-
-                <Button variant="outline" size="sm">
-                  Subscribe
-                </Button>
-              </div>
-            </div>
-            
-            {/* ---------------------- */}
-            {/* Inline Post Actions */}
-            {/* Embedded expandable actions below post content */}
-            {/* Location: /src/features/post-actions/InlineActions.tsx */}
-            {/* ---------------------- */}
-            {isOpen(post.id.toString()) && (
-              <div className="px-4 pb-4">
-                <InlineActions
-                  postId={post.id.toString()}
-                  isOwner={post.id === 1} // First post is owned by current user for testing
-                  onAction={(event) => {
-                    console.log('Inline action:', event)
-                    handleAction(event.type, event)
-                    // Auto-collapse after action selection for better mobile UX
-                    toggleActions(post.id.toString())
-                  }}
-                />
-              </div>
-            )}
-          </CardContent>
-        </Card>
-        )
-      })}
+            </li>
+          )
+        })}
+      </ul>
       
       {/* ---------------------- */}
       {/* Post Actions Modal */}

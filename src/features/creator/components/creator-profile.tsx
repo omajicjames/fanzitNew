@@ -20,8 +20,8 @@ export function CreatorProfile({ creatorId }: CreatorProfileProps) {
     id: creatorId,
     name: "Sarah Fitness",
     handle: "@sarahfit",
-    avatar: "/fitness-woman.png",
-    coverImage: "/fitness-workout-video.png",
+    avatar: "/fitness-woman-avatar.svg",
+    coverImage: "/fitness-workout-banner.svg",
     bio: "Certified personal trainer helping you achieve your fitness goals. Join me for daily workouts, nutrition tips, and wellness content.",
     location: "Los Angeles, CA",
     website: "https://sarahfitness.com",
@@ -72,7 +72,7 @@ export function CreatorProfile({ creatorId }: CreatorProfileProps) {
     {
       id: 1,
       type: "video",
-      thumbnail: "/fitness-workout-video.png",
+      thumbnail: "/fitness-workout-video.svg",
       title: "Full Body HIIT Workout",
       duration: "25:30",
       likes: 1247,
@@ -210,9 +210,9 @@ export function CreatorProfile({ creatorId }: CreatorProfileProps) {
         </TabsList>
 
         <TabsContent value="posts" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
-              <Card key={post.id} className="overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow">
+              <article key={post.id} className="rounded-2xl border border-border/50 bg-card overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow">
                 <div className="relative overflow-hidden z-0">
                   <img
                     src={post.thumbnail || "/placeholder.svg"}
@@ -248,23 +248,23 @@ export function CreatorProfile({ creatorId }: CreatorProfileProps) {
                   )}
                 </div>
 
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-card-foreground mb-2 line-clamp-2">{post.title}</h3>
+                <div className="p-4">
+                  <h3 className="font-semibold text-card-foreground line-clamp-2">{post.title}</h3>
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
                     <span>{post.timestamp}</span>
                     <div className="flex items-center space-x-3">
                       <span className="flex items-center space-x-1">
-                        <Heart className="h-3 w-3" />
+                        <Heart className="h-4 w-4" />
                         <span>{post.likes}</span>
                       </span>
                       <span className="flex items-center space-x-1">
-                        <MessageCircle className="h-3 w-3" />
+                        <MessageCircle className="h-4 w-4" />
                         <span>{post.comments}</span>
                       </span>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </article>
             ))}
           </div>
         </TabsContent>
