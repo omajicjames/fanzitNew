@@ -25,6 +25,7 @@ type Props = {
   }
   createdAt: string
   requiredTier?: SubscriptionTier
+  className?: string
 }
 
 /**
@@ -41,7 +42,8 @@ export default function LockedBranch({
   openPricingPlansModal,
   author,
   createdAt,
-  requiredTier = 'premium'
+  requiredTier = 'premium',
+  className
 }: Props) {
   return (
     <LockedPostShell
@@ -51,6 +53,7 @@ export default function LockedBranch({
       requiredTier={requiredTier}
       previewImage={previewUrl}
       onUpgrade={openPricingPlansModal}
+      className={className}
     />
   )
 }

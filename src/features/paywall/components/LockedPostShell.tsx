@@ -48,6 +48,12 @@ export interface LockedPostShellProps {
   mediaType?: 'image' | 'video' | 'text' | 'mixed'
   mediaCount?: number
   
+  // Modern overlay props
+  postId?: string
+  priceCents?: number
+  useV2?: boolean
+  openPricingPlansModal?: () => void
+  
   // Interaction props
   onUnlock?: () => void
   onUpgrade?: () => void
@@ -90,6 +96,10 @@ export function LockedPostShell({
   previewImage,
   mediaType = 'text',
   mediaCount = 1,
+  postId,
+  priceCents,
+  useV2 = false,
+  openPricingPlansModal,
   onUnlock,
   onUpgrade,
   className,
@@ -106,7 +116,17 @@ export function LockedPostShell({
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [showFullPreview, setShowFullPreview] = useState(false)
+  const [peekUntil, setPeekUntil] = useState<number | null>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+
+  // ----------------------
+  // Track Function for Analytics
+  // Handles event tracking for user interactions
+  // ----------------------
+  const track = (event: string, properties?: Record<string, any>) => {
+    // Analytics tracking implementation
+    console.log('Track event:', event, properties)
+  }
 
   // ----------------------
   // Media Type Configuration
@@ -148,9 +168,37 @@ export function LockedPostShell({
    * Check if user has access to content
    */
   const hasAccess = (): boolean => {
+    // Check if peek is active
+    if (peekUntil && Date.now() < peekUntil) {
+      return true
+    }
     const access = paywallClient.checkContentAccess(requiredTier)
     return access.canView
   }
+
+  // ----------------------
+  // Peek Timer Effect
+  // Handles automatic peek expiration
+  // ----------------------
+  useEffect(() => {
+    if (!peekUntil) return
+
+    const timeRemaining = peekUntil - Date.now()
+    if (timeRemaining <= 0) {
+      setPeekUntil(null)
+      return
+    }
+
+    const timer = setTimeout(() => {
+      setPeekUntil(null)
+      toast({
+        title: "Peek Expired",
+        description: "Preview time has ended. Upgrade to continue viewing.",
+      })
+    }, timeRemaining)
+
+    return () => clearTimeout(timer)
+  }, [peekUntil])
 
   /**
    * Get blur intensity classes
@@ -335,7 +383,7 @@ export function LockedPostShell({
   // ----------------------
 
   /**
-   * Render media preview section
+   * Render modern glass overlay media preview
    */
   const renderMediaPreview = () => {
     if (!previewImage && !mediaCount) return null
@@ -343,29 +391,91 @@ export function LockedPostShell({
     const mediaConfig = getMediaConfig()
     const MediaIcon = mediaConfig.icon
     
+    const tierConfig = {
+        free: { label: 'Free', color: 'bg-gray-500', price: 'Free' },
+        premium: { label: 'Premium', color: 'bg-purple-500', price: '$4.99' },
+        pro: { label: 'Pro', color: 'bg-amber-500', price: '$9.99' }
+      }
+
+    const currentTier = tierConfig[requiredTier] || tierConfig.premium
+    const displayPrice = priceCents ? `$${(priceCents / 100).toFixed(2)}` : currentTier.price
+    
     return (
       <div className="relative">
         {previewImage ? (
-          <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
+          <div className="group relative aspect-video w-full overflow-hidden rounded-b-2xl border-0">
+            {/* Base Image */}
             <img
               src={previewImage}
               alt="Content preview"
-              className={cn(
-                'w-full h-full object-cover transition-all duration-300',
-                !hasAccess() && 'filter blur-sm scale-105'
-              )}
+              className="h-full w-full object-cover transition-all duration-300"
             />
             
-            {/* Media overlay */}
-            {!hasAccess() && (
+            {/* Subtle Scrim */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+            
+            {/* Radial Frosted Mask */}
+            <div className="absolute inset-0 bg-gradient-radial from-transparent via-white/10 to-white/30 backdrop-blur-[2px]" />
+            
+            {/* Tier/Price Chip - Top Right */}
+            <div className="absolute top-4 right-4 flex items-center gap-2">
               <div className={cn(
-                'absolute inset-0 bg-black/20 flex items-center justify-center',
-                getBlurClasses()
+                "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md",
+                currentTier.color
               )}>
-                <div className="text-center text-white">
-                  <Lock className="w-8 h-8 mx-auto" />
-                  <p className="text-sm font-medium">Premium Content</p>
+                <Crown className="h-3 w-3" />
+                <span>{currentTier.label}</span>
+              </div>
+              <div className="rounded-full bg-white/20 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
+                {displayPrice}
+              </div>
+            </div>
+            
+            {/* Center Glass CTA */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Button
+                onClick={() => {
+                  track('unlock_cta_clicked', { postId, tier: requiredTier, price: displayPrice })
+                  if (openPricingPlansModal) {
+                    openPricingPlansModal()
+                  } else if (onUpgrade) {
+                    onUpgrade()
+                  }
+                }}
+                className="group/btn relative overflow-hidden rounded-2xl bg-white/10 px-8 py-4 text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:scale-105 border border-white/20"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="rounded-full bg-white/20 p-2">
+                    <Unlock className="h-5 w-5" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-sm font-semibold">Unlock Content</div>
+                    <div className="text-xs opacity-80">Get instant access</div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
                 </div>
+              </Button>
+            </div>
+            
+            {/* Quick Peek Helper - Bottom Left */}
+            {useV2 && (
+              <div className="absolute bottom-4 left-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    track('quick_peek_clicked', { postId })
+                    setPeekUntil(Date.now() + 10000) // 10 second peek
+                    toast({
+                      title: "Quick Peek Active",
+                      description: "You have 10 seconds to preview this content",
+                    })
+                  }}
+                  className="rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20 border border-white/20"
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  Quick Peek
+                </Button>
               </div>
             )}
           </div>
@@ -495,55 +605,72 @@ export function LockedPostShell({
 
   // ----------------------
   // Component Render
-  // Main component JSX structure
+  // Main component JSX structure with proper absolute positioning
+  // Following docs/media_aspect_box.md specifications
   // ----------------------
   return (
     <>
-      <Card 
-        className={cn(
-          'relative transition-all duration-300 hover:shadow-md',
-          !hasAccess() && 'cursor-pointer',
-          isHovered && !hasAccess() && 'shadow-lg transform scale-[1.02]',
-          className
+      <div className={cn("relative h-full w-full overflow-hidden", className)}>
+        {/* Background media always fills */}
+        {previewImage && (
+          <img
+            src={previewImage}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
+          />
         )}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={!hasAccess() ? handleUnlock : undefined}
-      >
-        {/* Locked indicator overlay */}
-        {!hasAccess() && (
-          <div className="absolute top-2 right-2 z-10">
-            <Badge variant="secondary" className="bg-black/20 text-white backdrop-blur-sm">
-              <Lock className="w-3 h-3 mr-1" />
-              Locked
-            </Badge>
+
+        {/* Frosted/radial layers + chips + CTA go here, but keep them inside the absolute box */}
+        <div className="absolute inset-0">
+          {/* Subtle Scrim */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          
+          {/* Radial Frosted Mask */}
+          <div className="absolute inset-0 bg-gradient-radial from-transparent via-white/10 to-white/30 backdrop-blur-[2px]" />
+          
+          {/* Tier/Price Chip - Top Right */}
+          <div className="absolute top-4 right-4 flex items-center gap-2">
+            <div className={cn(
+               "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md",
+               requiredTier === 'free' ? 'bg-gray-500' : 
+               requiredTier === 'premium' ? 'bg-purple-500' : 
+               requiredTier === 'pro' ? 'bg-amber-500' : 'bg-purple-500'
+             )}>
+              <Crown className="h-3 w-3" />
+              <span>{requiredTier === 'free' ? 'Free' : requiredTier === 'premium' ? 'Premium' : 'Pro'}</span>
+            </div>
+            <div className="rounded-full bg-white/20 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
+              {priceCents ? `$${(priceCents / 100).toFixed(2)}` : requiredTier === 'free' ? 'Free' : requiredTier === 'premium' ? '$4.99' : '$9.99'}
+            </div>
           </div>
-        )}
-        
-        {/* Header removed - using renderAuthorHeader() instead */}
-        
-        <CardContent className="pt-0">
-          {/* Author Header - Compact author/time display */}
-          {renderAuthorHeader()}
           
-          {/* Title */}
-          <h2 className={cn(
-            'text-lg font-bold mb-3 leading-tight',
-            !hasAccess() && 'filter blur-[0.5px]'
-          )}>
-            {title}
-          </h2>
-          
-          {/* Media preview */}
-          {renderMediaPreview()}
-          
-          {/* Content preview */}
-          {renderContentPreview()}
-          
-          {/* Unlock action */}
-          {renderUnlockAction()}
-        </CardContent>
-      </Card>
+          {/* Center Glass CTA */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Button
+              onClick={() => {
+                track('unlock_cta_clicked', { postId, tier: requiredTier })
+                if (openPricingPlansModal) {
+                  openPricingPlansModal()
+                } else if (onUpgrade) {
+                  onUpgrade()
+                }
+              }}
+              className="group/btn relative overflow-hidden rounded-2xl bg-white/10 px-8 py-4 text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:scale-105 border border-white/20"
+            >
+              <div className="flex items-center gap-3">
+                <div className="rounded-full bg-white/20 p-2">
+                  <Unlock className="h-5 w-5" />
+                </div>
+                <div className="text-left">
+                  <div className="text-sm font-semibold">Unlock Content</div>
+                  <div className="text-xs opacity-90">Get instant access</div>
+                </div>
+              </div>
+            </Button>
+          </div>
+        </div>
+      </div>
       
       {/* Paywall dialog */}
       <PaywallDialog

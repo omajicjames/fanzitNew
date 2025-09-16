@@ -14,6 +14,10 @@
 
 import { BasePostCard } from "./BasePostCard";
 import { formatHandle, formatRelativeTime } from "@src/lib/format";
+import LockedBranch from "@src/features/paywall/LockedBranch";
+import SmartVideo from "@src/features/media/SmartVideo";
+import AuthorHeader, { createAuthorCore } from "@src/components/post/AuthorHeader";
+import { AspectRatio } from "@src/components/ui/aspect-ratio";
 
 import { PostView } from "./types";
 
@@ -115,87 +119,64 @@ export default function PostCard({ view, openPricingPlansModal, size = "default"
       {/* Location: BasePostCard.Header compound component */}
       {/* ---------------------- */}
       <BasePostCard.Header className={`${paddingX} ${headerPad}`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {p.author.avatar && (
-              <img
-                src={p.author.avatar}
-                alt={p.author.name}
-                className="w-10 h-10 rounded-full object-cover"
-              />
-            )}
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-foreground">{p.author.name}</span>
-                {p.author.verified && (
-                  <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                )}
-              </div>
-              {p.author.handle && (
-                <span className="text-sm text-muted-foreground">{p.author.handle}</span>
-              )}
-              {p.createdAt && (
-                <span className="text-sm text-muted-foreground"> • {formatRelativeTime(p.createdAt)}</span>
-              )}
-            </div>
-          </div>
-        </div>
+        {/* ---------------------- */}
+        {/* AuthorHeader Component */}
+        {/* Component: AuthorHeader from /src/components/post/AuthorHeader.tsx */}
+        {/* Purpose: Clean author display without extra role/title text */}
+        {/* ---------------------- */}
+        <AuthorHeader
+          author={createAuthorCore({
+            name: p.author.name,
+            username: p.author.handle,
+            avatarUrl: p.author.avatar,
+            verified: p.author.verified
+          })}
+          createdAt={p.createdAt}
+          variant="regular"
+          showVerified={true}
+        />
       </BasePostCard.Header>
 
       {/* ---------------------- */}
       {/* Media Section */}
-      {/* Purpose: Display media content or locked state */}
+      {/* Purpose: Display media content or locked state with proper aspect ratio */}
+      {/* Component: AspectRatio from /src/components/ui/aspect-ratio.tsx */}
       {/* ---------------------- */}
       <BasePostCard.Media>
-        {p.gate.locked ? (
-          <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-gradient-to-br from-gray-900 to-gray-800">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-              <div className="w-12 h-12 mb-4 rounded-full bg-white/20 flex items-center justify-center">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Premium Content</h3>
-              <p className="text-sm text-gray-300 mb-4 text-center px-4">
-                {p.gate.priceLabel ? `Unlock for ${p.gate.priceLabel}` : 'Subscription required'}
-              </p>
-            </div>
-            {p.media.previewUrl && (
-              <img
-                src={p.media.previewUrl}
-                alt={p.title}
-                className="h-full w-full object-cover opacity-30"
-                loading="lazy"
-              />
-            )}
-          </div>
-        ) : (
-          <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-black">
-            {p.media.kind === "video" ? (
-              <video
-                src={p.media.src}
-                poster={p.media.poster}
-                controls
-                className="h-full w-full"
-                preload="metadata"
-              />
-            ) : p.media.src ? (
-              <img
-                src={p.media.src}
-                alt={p.title}
-                className="h-full w-full object-cover"
-                loading="lazy"
+        <div className="relative overflow-hidden rounded-b-2xl">  {/* card owns rounding */}
+          <AspectRatio ratio={16 / 9}>                             {/* controls height */}
+            {p.gate.locked ? (
+              <LockedBranch
+                postId={String(p.id)}
+                title={p.title}
+                priceCents={p.gate.priceCents || 499}
+                previewUrl={p.media.previewUrl}
+                openPricingPlansModal={openPricingPlansModal}
+                author={{ name: p.author.name, avatar: p.author.avatar, username: p.author.handle }}
+                createdAt={String(p.createdAt || new Date().toISOString())}
+                requiredTier={p.gate.tier as any}
+                className="absolute inset-0"
               />
             ) : (
-              <div className="h-full w-full bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-500">No media</span>
+              <div className="absolute inset-0">
+                {p.media.kind === "video" ? (
+                  <SmartVideo src={p.media.src} poster={p.media.poster} controls className="h-full w-full" />
+                ) : p.media.src ? (
+                  <img
+                    src={p.media.src}
+                    alt={p.title}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="h-full w-full bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-500">No media</span>
+                  </div>
+                )}
               </div>
             )}
-          </div>
-        )}
+          </AspectRatio>
+        </div>
       </BasePostCard.Media>
 
       {/* ---------------------- */}
