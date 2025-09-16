@@ -110,7 +110,7 @@ grep -r "@vite" src/
 ## Summary
 
 ### Current Status
-- **Development Server**: ✅ Running successfully on http://localhost:3000
+- **Development Server**: ✅ Running successfully on http://localhost:${PORT:-3000}
 - **Compilation**: ✅ Successful (467-952 modules)
 - **Fast Refresh**: ⚠️ Falling back to full reloads
 - **Vite Client**: ⚠️ 404 errors appearing

@@ -1,12 +1,60 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader } from "@src/components/ui/card"
 import { Button } from "@src/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@src/components/ui/avatar"
 import { Badge } from "@src/components/ui/badge"
 import { Heart, MessageCircle, Share, MoreHorizontal, Play, Lock, Crown } from "lucide-react"
+import { PostActionsModal } from "./post-actions-modal"
+import { InlineActions } from "@src/features/post-actions/InlineActions"
+import { usePostActionsRegistry, toggleActions } from "@src/features/post-actions/registry"
 
 export function MainFeed() {
+  // ----------------------
+  // State Management
+  // ----------------------
+  const [selectedPost, setSelectedPost] = useState<any>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  // ----------------------
+  // Post Actions Registry for inline actions
+  // Manages which post has expanded actions (only one at a time)
+  // ----------------------
+  const { openPostId, openActions, closeAll, isOpen } = usePostActionsRegistry()
+  
+  // ----------------------
+  // Handle ESC and outside-click events from InlineActions
+  // ----------------------
+  useEffect(() => {
+    const handleEscape = (event: CustomEvent) => {
+      closeAll()
+    }
+    
+    const handleOutsideClick = (event: CustomEvent) => {
+      closeAll()
+    }
+    
+    window.addEventListener('inline-actions-escape' as any, handleEscape)
+    window.addEventListener('inline-actions-outside-click' as any, handleOutsideClick)
+    
+    return () => {
+      window.removeEventListener('inline-actions-escape' as any, handleEscape)
+      window.removeEventListener('inline-actions-outside-click' as any, handleOutsideClick)
+    }
+  }, [closeAll])
+  
+  // ----------------------
+  // Mock current user data
+  // ----------------------
+  const currentUser = {
+    id: "user123",
+    role: "subscriber" as const // Change to "creator" to test creator actions
+  }
+  
+  // ----------------------
+  // Mock posts data
+  // ----------------------
   const posts = [
     {
       id: 1,
@@ -81,6 +129,59 @@ export function MainFeed() {
       timestamp: "6 hours ago",
     },
   ]
+  
+  // ----------------------
+  // Action Handlers
+  // ----------------------
+  const handleOpenModal = (post: any) => {
+    // Add settings to post data for modal
+    const postWithSettings = {
+      ...post,
+      creator: {
+        id: post.id === 1 ? "user123" : "creator456", // Make first post owned by current user for testing
+        name: post.creator.name,
+        handle: post.creator.handle
+      },
+      settings: {
+        commentsEnabled: true,
+        isPinned: false
+      }
+    }
+    setSelectedPost(postWithSettings)
+    setIsModalOpen(true)
+  }
+  
+  // ----------------------
+  // Handle toggling inline actions for a post
+  // Uses the new functional registry with toggleActions
+  // ----------------------
+  const handleToggleInlineActions = (post: any) => {
+    const postId = post.id.toString()
+    const creatorId = post.id === 1 ? "user123" : "creator456" // Use the same logic as in handleOpenModal
+    const wasOpen = isOpen(postId)
+    
+    // Toggle the actions using the new functional approach
+    toggleActions(postId)
+    
+    // Analytics: track the action
+    if (typeof window !== 'undefined' && window.analytics) {
+      window.analytics.track(wasOpen ? 'post_actions_closed' : 'post_actions_opened', {
+        postId,
+        role: currentUser?.id === creatorId ? 'creator' : 'subscriber'
+      })
+    }
+  }
+  
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedPost(null)
+  }
+  
+  const handleAction = (action: string, data?: any) => {
+    console.log(`Action: ${action}`, data)
+    // Here you would implement the actual action logic
+    // For now, just log the action
+  }
 
   return (
     <div className="space-y-6 p-6">
@@ -130,7 +231,14 @@ export function MainFeed() {
                   </p>
                 </div>
               </div>
-              <Button variant="ghost" size="sm">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => handleToggleInlineActions(post)}
+                aria-label="More actions"
+                aria-expanded={isOpen(post.id.toString())}
+                aria-haspopup="menu"
+              >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </div>
@@ -206,9 +314,42 @@ export function MainFeed() {
                 )}
               </div>
             </div>
+            
+            {/* ---------------------- */}
+            {/* Inline Post Actions */}
+            {/* Embedded expandable actions below post content */}
+            {/* Location: /src/features/post-actions/InlineActions.tsx */}
+            {/* ---------------------- */}
+            {isOpen(post.id.toString()) && (
+              <div className="px-4 pb-4">
+                <InlineActions
+                  postId={post.id.toString()}
+                  isOwner={post.id === 1} // First post is owned by current user for testing
+                  onAction={(event) => {
+                    console.log('Inline action:', event)
+                    handleAction(event.type, event)
+                    // Auto-collapse after action selection for better mobile UX
+                    toggleActions(post.id.toString())
+                  }}
+                />
+              </div>
+            )}
           </CardContent>
         </Card>
       ))}
+      
+      {/* ---------------------- */}
+      {/* Post Actions Modal */}
+      {/* ---------------------- */}
+      {selectedPost && (
+        <PostActionsModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          post={selectedPost}
+          currentUser={currentUser}
+          onAction={handleAction}
+        />
+      )}
     </div>
   )
 }

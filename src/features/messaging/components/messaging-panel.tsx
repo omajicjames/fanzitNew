@@ -1,14 +1,26 @@
 "use client"
 
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@src/components/ui/card"
 import { Button } from "@src/components/ui/button"
 import { Input } from "@src/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@src/components/ui/avatar"
 import { Badge } from "@src/components/ui/badge"
 import { ScrollArea } from "@src/components/ui/scroll-area"
-import { Search, MessageCircle, Phone, Video, MoreVertical, Send, Paperclip, Smile } from "lucide-react"
+import { Search, MessageCircle, Phone, Video, MoreVertical, Send, Paperclip, Smile, Minimize2, Maximize2 } from "lucide-react"
 
+// ----------------------
+// MessagingPanel Component
+// Location: /src/features/messaging/components/messaging-panel.tsx
+// Parent: ThreeColumnShell component as rightColumn prop
+// Children: Conversation list, active chat interface, message input
+// Features: Minimize/maximize functionality, conversation management
+// ----------------------
 export function MessagingPanel() {
+  // ----------------------
+  // State Management
+  // ----------------------
+  const [isMinimized, setIsMinimized] = useState(true) // Start minimized by default
   const conversations = [
     {
       id: 1,
@@ -70,26 +82,52 @@ export function MessagingPanel() {
     },
   ]
 
+  // ----------------------
+  // Toggle minimize/maximize state
+  // ----------------------
+  const handleToggleMinimize = () => {
+    setIsMinimized(!isMinimized)
+  }
+
   return (
     <div className="flex flex-col h-full">
-      {/* Messages Header */}
+      {/* ---------------------- */}
+      {/* Messages Header with minimize/maximize controls */}
+      {/* ---------------------- */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-card-foreground">Messages</h3>
-          <Button variant="ghost" size="sm">
-            <MessageCircle className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center space-x-1">
+            <Button variant="ghost" size="sm">
+              <MessageCircle className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleToggleMinimize}
+              title={isMinimized ? "Restore Messages" : "Minimize Messages"}
+            >
+              {isMinimized ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search conversations..." className="pl-10 bg-background" />
-        </div>
+        {/* ---------------------- */}
+        {/* Search - only show when not minimized */}
+        {/* ---------------------- */}
+        {!isMinimized && (
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Search conversations..." className="pl-10 bg-background" />
+          </div>
+        )}
       </div>
 
-      {/* Conversations List */}
-      <div className="flex-1 overflow-hidden">
+      {/* ---------------------- */}
+      {/* Conversations List - only show when not minimized */}
+      {/* ---------------------- */}
+      {!isMinimized && (
+        <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="p-2">
             {conversations.map((conversation) => (
@@ -135,10 +173,14 @@ export function MessagingPanel() {
             ))}
           </div>
         </ScrollArea>
-      </div>
+        </div>
+      )}
 
-      {/* Active Conversation */}
-      <Card className="m-4 flex-shrink-0">
+      {/* ---------------------- */}
+      {/* Active Conversation - only show when not minimized */}
+      {/* ---------------------- */}
+      {!isMinimized && (
+        <Card className="m-4 flex-shrink-0">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -206,7 +248,8 @@ export function MessagingPanel() {
             </div>
           </div>
         </CardContent>
-      </Card>
+        </Card>
+      )}
     </div>
   )
 }
