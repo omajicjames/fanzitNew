@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@src/components/ui/button"
 import PostCard from "@src/features/post/PostCard"
 import { PostDataAdapter } from "@src/features/post/adapters/PostDataAdapter"
-import { PostActionsModal } from "./post-actions-modal"
+
 import { usePostActionsRegistry, toggleActions } from "@src/features/post-actions/registry"
 import { toast } from "@src/hooks/use-toast"
 
@@ -12,8 +12,7 @@ export function MainFeed() {
   // ----------------------
   // State Management
   // ----------------------
-  const [selectedPost, setSelectedPost] = useState<any>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+
   
   // ----------------------
   // Post Actions Registry for inline actions
@@ -169,23 +168,7 @@ export function MainFeed() {
   // ----------------------
   // Action Handlers
   // ----------------------
-  const handleOpenModal = (post: any) => {
-    // Add settings to post data for modal
-    const postWithSettings = {
-      ...post,
-      creator: {
-        id: post.id === "1" ? "user123" : "creator456", // Make first post owned by current user for testing
-        name: post.creator.name,
-        handle: post.creator.handle
-      },
-      settings: {
-        commentsEnabled: true,
-        isPinned: false
-      }
-    }
-    setSelectedPost(postWithSettings)
-    setIsModalOpen(true)
-  }
+
   
   // ----------------------
   // Handle toggling inline actions for a post
@@ -208,16 +191,7 @@ export function MainFeed() {
     }
   }
   
-  const handleCloseModal = () => {
-    setIsModalOpen(false)
-    setSelectedPost(null)
-  }
-  
-  const handleAction = (action: string, data?: any) => {
-    console.log(`Action: ${action}`, data)
-    // Here you would implement the actual action logic
-    // For now, just log the action
-  }
+
 
   // ----------------------
   // Paywall Event Handlers
@@ -289,18 +263,7 @@ export function MainFeed() {
         })}
       </ul>
       
-      {/* ---------------------- */}
-      {/* Post Actions Modal */}
-      {/* ---------------------- */}
-      {selectedPost && (
-        <PostActionsModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          post={selectedPost}
-          currentUser={currentUser}
-          onAction={handleAction}
-        />
-      )}
+
     </div>
   )
 }

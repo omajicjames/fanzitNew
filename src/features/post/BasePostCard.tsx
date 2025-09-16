@@ -5,7 +5,7 @@
 // Children: Header, Media, Body, Actions, InlinePanel slots
 // ----------------------
 
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, forwardRef } from 'react';
 import { cn } from '@src/lib/utils';
 import { PostView } from './types';
 
@@ -54,13 +54,13 @@ interface BasePostCardProps {
  * Base post card container with context provider
  * Provides consistent styling and data access for all variants
  */
-function BasePostCardRoot({
+const BasePostCardRoot = forwardRef<HTMLElement, BasePostCardProps>(function BasePostCardRoot({
   post,
   children,
   className,
   onClick,
   showInlineActions = false,
-}: BasePostCardProps) {
+}, ref) {
   const contextValue: PostCardContextValue = {
     post,
     showInlineActions,
@@ -70,6 +70,7 @@ function BasePostCardRoot({
   return (
     <PostCardContext.Provider value={contextValue}>
       <article
+        ref={ref}
         className={cn(
           // V2 Base card root: no outer margins, consistent inner styling
           'rounded-2xl border border-border/50 bg-card overflow-hidden',
@@ -83,7 +84,7 @@ function BasePostCardRoot({
       </article>
     </PostCardContext.Provider>
   );
-}
+});
 
 // ----------------------
 // Header Slot Component

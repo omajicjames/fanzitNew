@@ -5,7 +5,7 @@
 // Parent: BasePostCard.Header (trigger) and BasePostCard.InlinePanel (panel)
 // ----------------------
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   MoreHorizontal,
   Bookmark,
@@ -25,6 +25,7 @@ import {
 } from '@src/components/ui/dropdown-menu';
 import { cn } from '@src/lib/utils';
 import { PostView, PostActionType } from '../types';
+import { toggleActions } from '@src/features/post-actions/registry';
 
 // ----------------------
 // Post Action Interface
@@ -82,7 +83,6 @@ export function PostActions({
   className,
   useInlinePanel = false,
 }: PostActionsProps) {
-  const [isInlinePanelOpen, setIsInlinePanelOpen] = useState(false);
 
   // ----------------------
   // Action Configuration
@@ -95,7 +95,6 @@ export function PostActions({
       icon: Bookmark,
       onClick: () => {
         onSave?.();
-        setIsInlinePanelOpen(false);
       },
     },
     {
@@ -104,7 +103,6 @@ export function PostActions({
       icon: Share,
       onClick: () => {
         onShare?.();
-        setIsInlinePanelOpen(false);
       },
     },
   ];
@@ -117,7 +115,6 @@ export function PostActions({
       icon: Copy,
       onClick: () => {
         onCopyLink();
-        setIsInlinePanelOpen(false);
       },
     });
   }
@@ -130,7 +127,6 @@ export function PostActions({
       icon: Download,
       onClick: () => {
         onDownload();
-        setIsInlinePanelOpen(false);
       },
     });
   }
@@ -143,7 +139,6 @@ export function PostActions({
       icon: Flag,
       onClick: () => {
         onReport();
-        setIsInlinePanelOpen(false);
       },
       destructive: true,
       requiresConfirmation: true,
@@ -154,7 +149,7 @@ export function PostActions({
   // 3-Dots Trigger Component
   // ----------------------
   
-  const ActionTrigger = () => (
+  const ActionTrigger = ({ onClick: customOnClick }: { onClick?: () => void }) => (
     <Button
       variant="ghost"
       size="sm"
@@ -168,11 +163,11 @@ export function PostActions({
         'sm:h-6 sm:w-6',
         className
       )}
-      onClick={() => {
+      onClick={customOnClick || (() => {
         if (useInlinePanel) {
-          setIsInlinePanelOpen(!isInlinePanelOpen);
+          toggleActions(post.id);
         }
-      }}
+      })}
       aria-label="Post actions menu"
     >
       <MoreHorizontal className="h-4 w-4" />
@@ -186,7 +181,7 @@ export function PostActions({
   const ActionDropdown = () => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <ActionTrigger />
+        <ActionTrigger onClick={undefined} />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
@@ -223,88 +218,16 @@ export function PostActions({
   );
 
   // ----------------------
-  // Inline Panel Component
+  // Note: Inline Panel Component removed
+  // The new inline system uses InlineActions component from post-actions registry
   // ----------------------
-  
-  const ActionInlinePanel = () => {
-    if (!isInlinePanelOpen) return null;
-
-    return (
-      <div
-        className={cn(
-          // Mobile-first layout
-          'flex flex-col gap-2',
-          'sm:flex-row sm:items-center sm:justify-between',
-          'animate-in slide-in-from-top-2 duration-200',
-        )}
-      >
-        {/* Primary actions */}
-        <div className="flex items-center gap-2">
-          {actions.filter(action => !action.destructive).map((action, index) => {
-            const Icon = action.icon;
-            
-            return (
-              <Button
-                key={`${action.type}-${index}`}
-                variant="outline"
-                size="sm"
-                onClick={action.onClick}
-                className={cn(
-                  'flex items-center gap-1.5',
-                  'text-xs sm:text-sm',
-                  'px-3 py-1.5',
-                  'hover:bg-gray-50',
-                )}
-              >
-                <Icon className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>{action.label}</span>
-              </Button>
-            );
-          })}
-        </div>
-
-        {/* Destructive actions */}
-        {actions.some(action => action.destructive) && (
-          <div className="flex items-center gap-2">
-            {actions.filter(action => action.destructive).map((action, index) => {
-              const Icon = action.icon;
-              
-              return (
-                <Button
-                  key={`${action.type}-${index}`}
-                  variant="outline"
-                  size="sm"
-                  onClick={action.onClick}
-                  className={cn(
-                    'flex items-center gap-1.5',
-                    'text-xs sm:text-sm',
-                    'px-3 py-1.5',
-                    'text-red-600 border-red-200',
-                    'hover:bg-red-50 hover:border-red-300',
-                  )}
-                >
-                  <Icon className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span>{action.label}</span>
-                </Button>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    );
-  };
 
   // ----------------------
   // Main Render
   // ----------------------
   
   if (useInlinePanel) {
-    return (
-      <>
-        <ActionTrigger />
-        <ActionInlinePanel />
-      </>
-    );
+    return <ActionTrigger />;
   }
 
   return <ActionDropdown />;

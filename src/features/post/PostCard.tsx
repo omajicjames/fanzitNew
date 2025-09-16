@@ -18,6 +18,10 @@ import LockedBranch from "@src/features/paywall/LockedBranch";
 import SmartVideo from "@src/features/media/SmartVideo";
 import AuthorHeader, { createAuthorCore } from "@src/components/post/AuthorHeader";
 import { AspectRatio } from "@src/components/ui/aspect-ratio";
+import { toggleActions, usePostActionsOpen, closeAll } from "@src/features/post-actions/registry";
+import { InlineActions } from "@src/features/post-actions/InlineActions";
+import { MoreHorizontal } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 import { PostView } from "./types";
 
@@ -105,6 +109,11 @@ export default function PostCard({ view, openPricingPlansModal, size = "default"
   const p = derivePresentation(view);
   const compact = size === "compact";
   const featured = size === "featured";
+  const isOwner = Boolean(view.author?.username); // Determine if current user owns this post - TODO: Add proper ownership logic
+  const isOpen = usePostActionsOpen(view.id);
+  const postCardRef = useRef<HTMLElement>(null);
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const isLongPressRef = useRef(false);
 
   // unified spacing tokens (keep rhythm identical across states)
   const paddingX = compact ? "px-3" : "px-4";
@@ -112,13 +121,96 @@ export default function PostCard({ view, openPricingPlansModal, size = "default"
   const bodyPadT = compact ? "pt-1.5" : "pt-2";
   const footerPadB = compact ? "pb-3" : "pb-4";
 
+  // ----------------------
+  // Outside click detection
+  // Closes inline actions when clicking outside the post card
+  // ----------------------
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (isOpen && postCardRef.current && !postCardRef.current.contains(event.target as Node)) {
+        closeAll();
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
+
+  // ----------------------
+  // ESC key detection
+  // Closes inline actions when ESC key is pressed
+  // ----------------------
+  useEffect(() => {
+    function handleEscKey(event: KeyboardEvent) {
+      if (event.key === 'Escape' && isOpen) {
+        closeAll();
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscKey);
+      return () => document.removeEventListener('keydown', handleEscKey);
+    }
+  }, [isOpen]);
+
+  // ----------------------
+  // Mobile long press handlers
+  // Handles long press on mobile devices for 3-dots button
+  // ----------------------
+  const handleTouchStart = () => {
+    isLongPressRef.current = false;
+    longPressTimerRef.current = setTimeout(() => {
+      isLongPressRef.current = true;
+      toggleActions(view.id);
+    }, 500); // 500ms for long press
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Only handle click if it wasn't a long press
+    if (!isLongPressRef.current) {
+      toggleActions(view.id);
+    }
+    isLongPressRef.current = false;
+  };
+
   return (
-    <BasePostCard.Root post={view} className={featured ? "border-2 border-blue-200" : undefined}>
+    <BasePostCard.Root ref={postCardRef} post={view} className={featured ? "border-2 border-blue-200" : undefined}>
       {/* ---------------------- */}
       {/* Header Section */}
       {/* Location: BasePostCard.Header compound component */}
       {/* ---------------------- */}
-      <BasePostCard.Header className={`${paddingX} ${headerPad}`}>
+      <BasePostCard.Header 
+        className={`${paddingX} ${headerPad}`}
+        actions={
+          /* ---------------------- */
+          /* 3-Dots Button */
+          /* Purpose: Toggle inline actions menu */
+          /* Component: Button with MoreHorizontal icon */
+          /* ---------------------- */
+          <button
+            type="button"
+            onClick={handleClick}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            aria-expanded={isOpen}
+            aria-controls={`post-actions-${view.id}`}
+            className="inline-flex items-center justify-center rounded-full p-2 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500/60"
+          >
+            <MoreHorizontal className="h-5 w-5" aria-hidden />
+            <span className="sr-only">More actions</span>
+          </button>
+        }
+      >
         {/* ---------------------- */}
         {/* AuthorHeader Component */}
         {/* Component: AuthorHeader from /src/components/post/AuthorHeader.tsx */}
@@ -220,7 +312,35 @@ export default function PostCard({ view, openPricingPlansModal, size = "default"
         </div>
       </BasePostCard.Actions>
 
-
+      {/* ---------------------- */}
+      {/* Inline Actions Panel */}
+      {/* Component: InlineActions from /src/features/post-actions/InlineActions.tsx */}
+      {/* Purpose: Expandable inline actions menu - only shown when isOpen is true */}
+      {/* ---------------------- */}
+      {isOpen && (
+        <div id={`post-actions-${view.id}`} className={`${paddingX} pb-3`}>
+          <InlineActions
+            postId={view.id}
+            isOwner={isOwner}
+            onAction={(event) => {
+              switch (event.type) {
+                case "pin":
+                  console.log('Pin post:', view.id);
+                  break;
+                case "save":
+                  console.log('Save post:', view.id);
+                  break;
+                case "share":
+                  console.log('Share post:', view.id);
+                  break;
+                case "report":
+                  console.log('Report post:', view.id);
+                  break;
+              }
+            }}
+          />
+        </div>
+      )}
 
     </BasePostCard.Root>
   );

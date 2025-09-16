@@ -7,15 +7,80 @@ This directory contains solutions to common development issues encountered in th
 ```
 docs/troubleshooting/
 ├── README.md                    # This file - main troubleshooting index
-├── fast-refresh/               # Fast Refresh and Hot Module Replacement issues
-│   └── mixed-exports-solution.md
-├── hydration-mismatch/         # Server-client rendering mismatches
+├── components/                 # Component implementation and fixes
+├── ui/                        # UI styling and visual fixes
+├── system/                    # System-level features (auth, paywall, etc.)
+├── fixes/                     # General bug fixes and patches
+├── development/               # Development environment issues
+├── auth/                      # Authentication related issues
+├── fast-refresh/              # Fast Refresh and Hot Module Replacement issues
+├── hydration-mismatch/        # Server-client rendering mismatches
 ├── build-errors/              # Production build failures
+├── typescript/                # TypeScript compilation issues
 ├── typescript-errors/         # TypeScript compilation issues
-└── performance-issues/        # Performance optimization solutions
+├── performance-issues/        # Performance optimization solutions
+├── navigation/                # Navigation and routing issues
+├── ui-components/             # UI component specific issues
+└── project-structure/         # Project organization and structure
 ```
 
 ## Issue Categories
+
+### 🧩 Component Issues
+**Location:** `components/`
+
+- **Post Actions** - 3-dots menu, click handlers, dropdown functionality
+- **Card Components** - Base cards, unified systems, stacking issues
+- **Author Headers** - Shared components, time handles
+- **Media Components** - Aspect boxes, image handling
+
+**Current Solutions:**
+- ✅ [Post Actions 3-dots Menu](./components/post-actions-3dots-menu-implementation.md)
+- ✅ [Author Time Handle](./components/author-time-handle-implementation.md)
+- ✅ [Card Stacking Cleanup](./components/card-stacking-cleanup.md)
+- ✅ [Media Aspect Box](./components/media-aspect-box-implementation.md)
+- ✅ [One Base Card Implementation](./components/one-base-card-implementation.md)
+- ✅ [Unified Base Card System](./components/unified-base-card-system-implementation.md)
+
+### 🎨 UI & Styling Issues
+**Location:** `ui/`
+
+- **Overlay Systems** - Modern overlays, legacy modernization
+- **Border Styling** - Faint double borders, card styling
+- **Z-index Management** - Layering, stacking contexts
+- **Background Issues** - White background prevention
+
+**Current Solutions:**
+- ✅ [Modern Overlay Implementation](./ui/modern-overlay-implementation.md)
+- ✅ [Overlay Standardization](./ui/overlay-standardization-fix.md)
+- ✅ [Z-index Layering Fixes](./ui/z-index-layering-fixes.md)
+- ✅ [White Background Prevention](./ui/white-background-prevention-fixes.md)
+
+### ⚙️ System Features
+**Location:** `system/`
+
+- **Consent System** - Cookie consent, preferences
+- **Paywall System** - Payment integration, type fixes
+- **Theme System** - Theme implementation and setup
+- **TypeScript Integration** - System-level type fixes
+
+**Current Solutions:**
+- ✅ [Consent System Fixes](./system/consent-system-fixes.md)
+- ✅ [Paywall System Implementation](./system/paywall-system-implementation.md)
+- ✅ [Theme Implementation Setup](./system/theme-implementation-setup.md)
+
+### 🔧 General Fixes
+**Location:** `fixes/`
+
+- **Image Replacements** - Asset updates and fixes
+- **Git Operations** - Commit and push issues
+- **Component Removal** - Redundant element cleanup
+- **Prop Fixes** - Component property issues
+
+**Current Solutions:**
+- ✅ [Fitness Image Replacement](./fixes/fitness-image-replacement-fix.md)
+- ✅ [Git Commit Push Success](./fixes/git-commit-push-success.md)
+- ✅ [Redundant Upgrade Button Removal](./fixes/redundant-upgrade-button-removal.md)
 
 ### 🔄 Fast Refresh Issues
 **Location:** `fast-refresh/`
@@ -34,18 +99,12 @@ docs/troubleshooting/
 - **localStorage Access** - Accessing browser APIs during SSR
 - **Dynamic Content** - Time-sensitive or random content causing mismatches
 
-**Current Solutions:**
-- 🔄 *Solutions will be documented as they occur*
-
 ### 🏗️ Build Errors
 **Location:** `build-errors/`
 
 - **Module Resolution** - Import/export issues
 - **Missing Dependencies** - Package installation problems
 - **Environment Variables** - Configuration issues
-
-**Current Solutions:**
-- 🔄 *Solutions will be documented as they occur*
 
 ### 📝 TypeScript Errors
 **Location:** `typescript-errors/`
