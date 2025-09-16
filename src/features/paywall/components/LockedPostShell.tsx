@@ -411,8 +411,8 @@ export function LockedPostShell({
               className="h-full w-full object-cover transition-all duration-300"
             />
             
-            {/* Subtle Scrim */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+            {/* Subtle Scrim - Lighter overlay for better transparency */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent" />
             
             {/* Radial Frosted Mask */}
             <div className="absolute inset-0 bg-gradient-radial from-transparent via-white/10 to-white/30 backdrop-blur-[2px]" />
@@ -623,8 +623,8 @@ export function LockedPostShell({
 
         {/* Frosted/radial layers + chips + CTA go here, but keep them inside the absolute box */}
         <div className="absolute inset-0">
-          {/* Subtle Scrim */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          {/* Subtle Scrim - Lighter overlay for better transparency */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent" />
           
           {/* Radial Frosted Mask */}
           <div className="absolute inset-0 bg-gradient-radial from-transparent via-white/10 to-white/30 backdrop-blur-[2px]" />

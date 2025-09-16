@@ -59,13 +59,13 @@ function derivePresentation(view: PostView) {
   const createdAt = view.createdAt;
 
   // Media
-  const kind = view.media?.type ?? "none";
-  const src = view.media?.url ?? "";
+  const kind = view.media?.type ?? "image";
+  const src = view.media?.url ?? "/fitness-workout-banner.svg"; // Mock fitness image for testing overlay transparency
   const poster = view.media?.thumbnailUrl ?? "";
   const previewUrl =
     view.media?.thumbnailUrl ??
     view.media?.url ??
-    "/placeholder.svg"; // safe fallback
+    "/fitness-workout-banner.svg"; // Mock fitness image fallback
 
   // Gating
   const priceRaw = (view.premium?.priceCents ?? 0) as any;
@@ -143,7 +143,7 @@ export default function PostCard({ view, openPricingPlansModal, size = "default"
       {/* Component: AspectRatio from /src/components/ui/aspect-ratio.tsx */}
       {/* ---------------------- */}
       <BasePostCard.Media>
-        <div className="relative overflow-hidden rounded-b-2xl">  {/* card owns rounding */}
+        <div className="relative overflow-hidden">  {/* card owns rounding - removed rounded-b-2xl for square bottom */}
           <AspectRatio ratio={16 / 9}>                             {/* controls height */}
             {p.gate.locked ? (
               <LockedBranch

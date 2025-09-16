@@ -140,13 +140,13 @@ export function MainFeed() {
       creator: {
         name: "Pro Trader Alex",
         handle: "@protraderalex",
-        avatar: "/trader-analysis.png",
+        avatar: "/fitness-woman-avatar.svg",
         verified: true,
         tier: "pro",
       },
       content: {
         type: "text",
-        thumbnail: "/market-analysis.png",
+        thumbnail: "/fitness-workout-banner.svg",
         title: "Advanced Market Analysis Techniques",
         description: "Exclusive pro-level trading strategies and market analysis methods used by institutional traders.",
         isLocked: true,
@@ -162,7 +162,7 @@ export function MainFeed() {
       has_premium: true,
       unlocked: false,
       price_cents: 999,
-      preview_url: "/market-analysis.png",
+      preview_url: "/fitness-workout-banner.svg",
     },
   ]
   

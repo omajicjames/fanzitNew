@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@src/components/ui/avatar"
 import { Badge } from "@src/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs"
 import { Crown, Heart, MessageCircle, Share, Play, Lock, Calendar, MapPin, LinkIcon, Star, Gift } from "lucide-react"
+import LockedBranch from "@src/features/paywall/LockedBranch"
 
 interface CreatorProfileProps {
   creatorId: string
@@ -213,38 +214,44 @@ export function CreatorProfile({ creatorId }: CreatorProfileProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
               <article key={post.id} className="rounded-2xl border border-border/50 bg-card overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow">
-                <div className="relative overflow-hidden z-0">
-                  <img
-                    src={post.thumbnail || "/placeholder.svg"}
-                    alt={post.title}
-                    className="w-full h-48 object-cover z-0"
-                  />
+                <div className="relative overflow-hidden z-0 h-48">
+                  {post.isLocked ? (
+                    <LockedBranch
+                      postId={String(post.id)}
+                      title={post.title}
+                      priceCents={parseFloat(post.price?.replace('$', '') || '2.99') * 100}
+                      previewUrl={post.thumbnail || "/placeholder.svg"}
+                      openPricingPlansModal={() => console.log('Open pricing modal')}
+                      author={{ name: creator.name, avatar: creator.avatar, username: creator.handle }}
+                      createdAt={post.timestamp}
+                      requiredTier="premium"
+                      className="absolute inset-0"
+                    />
+                  ) : (
+                    <>
+                      <img
+                        src={post.thumbnail || "/placeholder.svg"}
+                        alt={post.title}
+                        className="w-full h-full object-cover z-0"
+                      />
 
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-black/40 invisible group-hover:visible transition-all z-0" />
+                      {/* Hover Overlay - Only for unlocked content */}
+                      <div className="absolute inset-0 bg-black/20 invisible group-hover:visible transition-all z-0" />
 
-                  {/* Play Button */}
-                  {post.type === "video" && (
-                    <div className="absolute inset-0 flex items-center justify-center invisible group-hover:visible transition-all z-10">
-                      <Button size="lg" className="rounded-full">
-                        <Play className="h-6 w-6 ml-1" />
-                      </Button>
-                    </div>
-                  )}
+                      {/* Play Button */}
+                      {post.type === "video" && (
+                        <div className="absolute inset-0 flex items-center justify-center invisible group-hover:visible transition-all z-10">
+                          <Button size="lg" className="rounded-full">
+                            <Play className="h-6 w-6 ml-1" />
+                          </Button>
+                        </div>
+                      )}
 
-                  {/* Lock Overlay */}
-                  {post.isLocked && (
-                    <div className="absolute top-2 right-2">
-                      <Badge variant="secondary" className="bg-black/70 text-white">
-                        <Lock className="h-3 w-3 mr-1" />
-                        {post.price}
-                      </Badge>
-                    </div>
-                  )}
-
-                  {/* Duration */}
-                  {post.type === "video" && post.duration && (
-                    <Badge className="absolute bottom-2 right-2 bg-black/70 text-white z-10">{post.duration}</Badge>
+                      {/* Duration - Only for unlocked videos */}
+                      {post.type === "video" && post.duration && (
+                        <Badge className="absolute bottom-2 right-2 bg-black/30 text-white z-10">{post.duration}</Badge>
+                      )}
+                    </>
                   )}
                 </div>
 

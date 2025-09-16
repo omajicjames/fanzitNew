@@ -52,6 +52,7 @@ export default function LockedBranch({
       createdAt={createdAt}
       requiredTier={requiredTier}
       previewImage={previewUrl}
+      priceCents={priceCents}
       onUpgrade={openPricingPlansModal}
       className={className}
     />
