@@ -28,6 +28,7 @@ export function LoginForm() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('🔐 Login form submitted'); // Debug log
     setIsLoading(true)
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -43,14 +44,17 @@ export function LoginForm() {
           isCreator: true,
         }),
       )
+      console.log('💾 Login user stored in localStorage'); // Debug log
     }
 
     setIsLoading(false)
+    console.log('🚀 Login redirecting to home...'); // Debug log
     router.push("/")
   }
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('📝 Signup form submitted'); // Debug log
     setIsLoading(true)
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -66,22 +70,29 @@ export function LoginForm() {
           isCreator: true,
         }),
       )
+      console.log('💾 Signup user stored in localStorage'); // Debug log
     }
 
     setIsLoading(false)
+    console.log('🚀 Signup redirecting to home...'); // Debug log
     router.push("/")
   }
 
   const handleDemoLogin = (userType: "creator" | "subscriber") => {
+    console.log('🔥 Demo login clicked:', userType); // Debug log
     const demoUser =
       userType === "creator"
         ? { id: "1", name: "Demo Creator", email: "creator@demo.com", isCreator: true }
         : { id: "2", name: "Demo Subscriber", email: "subscriber@demo.com", isCreator: false }
 
+    console.log('👤 Demo user data:', demoUser); // Debug log
+    
     // Store demo user data in localStorage for demo purposes (client-side only)
     if (typeof window !== 'undefined') {
       localStorage.setItem("user", JSON.stringify(demoUser))
+      console.log('💾 User stored in localStorage'); // Debug log
     }
+    console.log('🚀 Redirecting to home...'); // Debug log
     router.push("/")
   }
 

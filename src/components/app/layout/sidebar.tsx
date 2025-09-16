@@ -4,8 +4,25 @@ import { Button } from "@src/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@src/components/ui/avatar"
 import { Badge } from "@src/components/ui/badge"
 import { Home, Search, Heart, MessageCircle, User, Settings, TrendingUp, Star, Crown } from "lucide-react"
+import { useRouter } from "next/navigation"
 
+// ----------------------
+// Sidebar Navigation Component
+// Location: /src/components/app/layout/sidebar.tsx
+// Parent: ThreeColumnShell component in app/(public)/page.tsx
+// Children: Navigation buttons, subscription list, user profile section
+// ----------------------
 export function Sidebar() {
+  const router = useRouter()
+
+  // ----------------------
+  // Navigation handler function
+  // Handles routing to different pages when navigation buttons are clicked
+  // ----------------------
+  const handleNavigation = (path: string) => {
+    router.push(path)
+  }
+
   return (
     <div className="flex flex-col h-full p-4 space-y-6">
       {/* Logo/Brand */}
@@ -15,10 +32,15 @@ export function Sidebar() {
       </div>
 
       {/* Navigation Menu */}
+      {/* ---------------------- */}
+      {/* Main navigation buttons with routing functionality */}
+      {/* Routes to: Home (/), Explore (coming soon), Trending (coming soon), Liked (coming soon), Messages (/messages) */}
+      {/* ---------------------- */}
       <nav className="space-y-2">
         <Button
           variant="ghost"
           className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          onClick={() => handleNavigation('/')}
         >
           <Home className="mr-3 h-5 w-5" />
           Home
@@ -26,6 +48,7 @@ export function Sidebar() {
         <Button
           variant="ghost"
           className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          onClick={() => handleNavigation('/explore')}
         >
           <Search className="mr-3 h-5 w-5" />
           Explore
@@ -33,6 +56,7 @@ export function Sidebar() {
         <Button
           variant="ghost"
           className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          onClick={() => handleNavigation('/trending')}
         >
           <TrendingUp className="mr-3 h-5 w-5" />
           Trending
@@ -40,6 +64,7 @@ export function Sidebar() {
         <Button
           variant="ghost"
           className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          onClick={() => handleNavigation('/liked')}
         >
           <Heart className="mr-3 h-5 w-5" />
           Liked
@@ -47,6 +72,7 @@ export function Sidebar() {
         <Button
           variant="ghost"
           className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          onClick={() => handleNavigation('/messages')}
         >
           <MessageCircle className="mr-3 h-5 w-5" />
           Messages
@@ -59,16 +85,21 @@ export function Sidebar() {
       {/* Subscriptions Section */}
       <div className="space-y-3">
         <h3 className="text-sm font-semibold text-sidebar-muted-foreground px-2">Subscriptions</h3>
+        {/* ---------------------- */}
+        {/* Subscription creator buttons with profile navigation */}
+        {/* Routes to: /creator/profile/[id] for each subscribed creator */}
+        {/* ---------------------- */}
         <div className="space-y-2">
           {[
-            { name: "Sarah Fitness", avatar: "/fitness-woman.png", online: true },
-            { name: "Chef Marco", avatar: "/chef-cooking.png", online: false },
-            { name: "Art by Luna", avatar: "/artist-painting.png", online: true },
+            { id: 2, name: "Sarah Fitness", avatar: "/fitness-woman.png", online: true },
+            { id: 3, name: "Chef Marco", avatar: "/chef-cooking.png", online: false },
+            { id: 4, name: "Art by Luna", avatar: "/artist-painting.png", online: true },
           ].map((creator) => (
             <Button
               key={creator.name}
               variant="ghost"
               className="w-full justify-start p-2 h-auto text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              onClick={() => handleNavigation(`/creator/profile/${creator.id}`)}
             >
               <div className="relative mr-3">
                 <Avatar className="h-8 w-8">
@@ -92,10 +123,15 @@ export function Sidebar() {
       </div>
 
       {/* User Profile Section */}
+      {/* ---------------------- */}
+      {/* User profile and settings navigation */}
+      {/* Routes to: Profile (/creator/profile/1), Settings (coming soon) */}
+      {/* ---------------------- */}
       <div className="mt-auto space-y-3">
         <Button
           variant="ghost"
           className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          onClick={() => handleNavigation('/creator/profile/1')}
         >
           <User className="mr-3 h-5 w-5" />
           Profile
@@ -103,6 +139,7 @@ export function Sidebar() {
         <Button
           variant="ghost"
           className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          onClick={() => handleNavigation('/settings')}
         >
           <Settings className="mr-3 h-5 w-5" />
           Settings
