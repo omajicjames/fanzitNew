@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript"
+  ],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [{ "name": "next/headers", "message": "Server-only; not in client components." }],
+        "patterns": ["@src/db/*", "@src/server/*"]
+      }
+    ]
+  }
+}
