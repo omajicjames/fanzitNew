@@ -202,8 +202,9 @@ export default function AnnouncementStack({
   // ----------------------
   // Controller Instance
   // Purpose: Initialize announcement controller for business logic
+  // Location: /src/features/right-rail/AnnouncementStack.tsx
   // ----------------------
-  const controllerRef = React.useRef<AnnouncementController>();
+  const controllerRef = React.useRef<AnnouncementController | null>(null);
   
   React.useEffect(() => {
     if (!controllerRef.current) {

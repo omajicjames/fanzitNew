@@ -8,6 +8,7 @@ interface User {
   name: string
   avatar?: string
   isCreator: boolean
+  isAdmin?: boolean
   subscriptions: string[]
   createdAt: string
 }

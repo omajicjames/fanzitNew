@@ -8,9 +8,10 @@ import { useEffect, useState } from "react"
 interface ProtectedRouteProps {
   children: ReactNode
   requireCreator?: boolean
+  requireAdmin?: boolean
 }
 
-export function ProtectedRoute({ children, requireCreator = false }: ProtectedRouteProps) {
+export function ProtectedRoute({ children, requireCreator = false, requireAdmin = false }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth()
   const [isMounted, setIsMounted] = useState(false)
 
@@ -48,6 +49,22 @@ export function ProtectedRoute({ children, requireCreator = false }: ProtectedRo
           </p>
           <button className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90">
             Apply to be a Creator
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (requireAdmin && !user.isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <div className="text-center max-w-md">
+          <h2 className="text-2xl font-bold text-foreground mb-4">Admin Access Required</h2>
+          <p className="text-muted-foreground mb-6">
+            You need administrator privileges to access this page. Please contact support if you believe you should have admin access.
+          </p>
+          <button className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90">
+            Contact Support
           </button>
         </div>
       </div>
