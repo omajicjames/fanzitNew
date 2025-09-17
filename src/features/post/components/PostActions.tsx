@@ -156,8 +156,8 @@ export function PostActions({
       className={cn(
         // Mobile-first styling
         'h-8 w-8 p-0',
-        'text-gray-500 hover:text-gray-700',
-        'hover:bg-gray-100',
+        'text-muted-foreground hover:text-foreground',
+        'hover:bg-accent',
         'transition-colors duration-200',
         // Touch-friendly on mobile
         'sm:h-6 sm:w-6',

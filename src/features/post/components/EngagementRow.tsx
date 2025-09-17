@@ -131,7 +131,7 @@ export function EngagementRow({
         className={cn(
           // Mobile-first base styles
           'flex items-center gap-1.5 px-2 py-1.5',
-          'text-gray-600 hover:text-gray-900',
+          'text-muted-foreground hover:text-foreground',
           'transition-colors duration-200',
           // Responsive sizing
           compact ? 'text-xs' : 'text-sm',

@@ -81,7 +81,7 @@ export default function RightRailNavigator() {
         {/* Header section with title and description */}
         {/* ---------------------- */}
         <div className="px-4 py-3 border-b border-border/50">
-          <div className="text-base font-semibold leading-none">Page Navigator</div>
+          <div className="text-base font-semibold leading-none">Page Navigatos</div>
           <div className="mt-1 text-xs text-muted-foreground">
             Quick access to key areas
           </div>

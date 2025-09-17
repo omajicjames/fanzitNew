@@ -71,8 +71,14 @@ export class PaywallClient {
 
   /**
    * Initialize subscription from localStorage or set default
+   * SSR-safe implementation that skips localStorage during server rendering
    */
   private initializeSubscription(): void {
+    // Skip localStorage access during SSR
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return
+    }
+    
     try {
       const stored = localStorage.getItem(this.STORAGE_KEY)
       if (!stored) {
@@ -86,9 +92,15 @@ export class PaywallClient {
 
   /**
    * Get current user subscription status
+   * SSR-safe implementation that returns default during server rendering
    * @returns UserSubscription object
    */
   public getSubscription(): UserSubscription {
+    // Return default subscription during SSR
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return this.DEFAULT_SUBSCRIPTION
+    }
+    
     try {
       const stored = localStorage.getItem(this.STORAGE_KEY)
       if (stored) {
@@ -107,9 +119,15 @@ export class PaywallClient {
 
   /**
    * Update user subscription status
+   * SSR-safe implementation that skips localStorage during server rendering
    * @param subscription - New subscription data
    */
   public setSubscription(subscription: UserSubscription): void {
+    // Skip localStorage access during SSR
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return
+    }
+    
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(subscription))
     } catch (error) {

@@ -24,7 +24,7 @@ export function ThreeColumnShell({ leftColumn, centerColumn, rightColumn, classN
         </aside>
 
         {/* Center Content - Main Feed */}
-        <main className="flex-1 overflow-y-auto bg-black">
+        <main className="flex-1 overflow-y-auto bg-black scrollbar-hide">
           <div className="max-w-2xl mx-auto">{centerColumn}</div>
         </main>
 

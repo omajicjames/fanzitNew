@@ -170,3 +170,18 @@ html {
   border-top: 1px solid oklch(0.35 0.03 255 / 0.2);
   border-bottom: 1px solid oklch(0.35 0.03 255);
 }
+
+/* ---------------------- */
+/* Scrollbar Hide Utility */
+/* ---------------------- */
+/* Hide scrollbar while maintaining scroll functionality */
+.scrollbar-hide {
+  /* Firefox */
+  scrollbar-width: none;
+  /* Safari and Chrome */
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

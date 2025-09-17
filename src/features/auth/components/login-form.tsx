@@ -78,22 +78,35 @@ export function LoginForm() {
     router.push("/")
   }
 
+  // ----------------------
+  // Demo Login Handler
+  // Purpose: Handle demo user login for testing creator vs subscriber roles
+  // Sets user data in localStorage and redirects to home page
+  // ----------------------
   const handleDemoLogin = (userType: "creator" | "subscriber") => {
     console.log('🔥 Demo login clicked:', userType); // Debug log
     const demoUser =
       userType === "creator"
-        ? { id: "1", name: "Demo Creator", email: "creator@demo.com", isCreator: true }
-        : { id: "2", name: "Demo Subscriber", email: "subscriber@demo.com", isCreator: false }
+        ? { id: "1", name: "Demo Creator", email: "creator@demo.com", isCreator: true, subscriptions: [], createdAt: new Date().toISOString() }
+        : { id: "2", name: "Demo Subscriber", email: "subscriber@demo.com", isCreator: false, subscriptions: ["sarah-fitness", "chef-marco"], createdAt: new Date().toISOString() }
 
     console.log('👤 Demo user data:', demoUser); // Debug log
     
     // Store demo user data in localStorage for demo purposes (client-side only)
     if (typeof window !== 'undefined') {
-      localStorage.setItem("user", JSON.stringify(demoUser))
-      console.log('💾 User stored in localStorage'); // Debug log
+      try {
+        localStorage.setItem("user", JSON.stringify(demoUser))
+        console.log('💾 User stored in localStorage successfully'); // Debug log
+        console.log('📋 Stored data:', localStorage.getItem("user")); // Verify storage
+      } catch (error) {
+        console.error('❌ Failed to store user in localStorage:', error);
+        return;
+      }
     }
+    
     console.log('🚀 Redirecting to home...'); // Debug log
-    router.push("/")
+    // Force a page reload to ensure auth provider picks up the new user data
+    window.location.href = "/";
   }
 
   return (

@@ -179,14 +179,14 @@ interface BodyProps {
 
 /**
  * Body slot for title and description
- * Uses exact padding: px-4 py-3
+ * Uses improved padding: px-6 py-3 for better spacing
  */
 function Body({ children, className }: BodyProps) {
   return (
     <div
       className={cn(
-        // Exact container padding as specified
-        'px-4 py-3',
+        // Improved container padding for better title spacing
+        'px-6 py-3',
         'space-y-2',
         className
       )}
@@ -290,8 +290,8 @@ function Title({ children, className }: TitleProps) {
     <h2
       id={`post-title-${post.id}`}
       className={cn(
-        // Mobile-first typography
-        'text-base font-semibold text-gray-900',
+        // Mobile-first typography with theme-compatible colors
+        'text-base font-semibold text-foreground',
         'sm:text-lg',
         'line-clamp-2',
         'leading-tight',
@@ -323,8 +323,8 @@ function Description({ children, className }: DescriptionProps) {
   return (
     <p
       className={cn(
-        // Mobile-first typography
-        'text-sm text-gray-600',
+        // Mobile-first typography with improved contrast for better readability
+        'text-sm text-foreground/80',
         'sm:text-base',
         'line-clamp-3',
         'leading-relaxed',

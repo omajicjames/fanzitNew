@@ -6,6 +6,7 @@
 
 import { PostView, PostAuthor, PostMedia, PostEngagement, PostPremium } from '../types'
 import { formatRelativeTime } from '@src/lib/format'
+import { AdminPostView } from '@src/features/feed/types/timeline-types'
 
 // ----------------------
 // Legacy Post Interface (from main-feed.tsx)
@@ -297,6 +298,247 @@ export class PostDataAdapter {
       console.error('PostView validation error:', error)
       return false
     }
+  }
+
+  // ----------------------
+  // Get Posts by Creator ID
+  // Provides creator-specific posts for profile Timeline component
+  // ----------------------
+  static getPostsByCreatorId(creatorId: string): PostView[] {
+    // Mock creator posts data - replace with actual API call
+    const creatorPosts: PostView[] = [
+      {
+        id: `${creatorId}-post-1`,
+        kind: "regular",
+        author: {
+          name: "Sarah Fitness",
+          username: "sarahfit",
+          avatarUrl: "/fitness-woman-avatar.svg",
+          verified: true
+        },
+        title: "Full Body HIIT Workout - 25 Minutes",
+        subtitle: "High-intensity interval training for maximum results. Join me for this intense full-body HIIT workout that will get your heart pumping and muscles burning! Perfect for all fitness levels.",
+        media: {
+          type: "video",
+          url: "/fitness-workout-video.svg",
+          thumbnailUrl: "/fitness-workout-video.svg",
+          durationSec: 1530,
+          altText: "Full Body HIIT Workout video"
+        },
+        engagement: {
+          likes: 1247,
+          comments: 89,
+          shares: 34
+        },
+        createdAt: "2024-01-15T10:30:00Z"
+      },
+        {
+        id: `${creatorId}-post-2`,
+        kind: "locked",
+        author: {
+          name: "Sarah Fitness",
+          username: "sarahfit",
+          avatarUrl: "/fitness-woman-avatar.svg",
+          verified: true
+        },
+        title: "Post-Workout Nutrition Guide",
+        subtitle: "Essential nutrition tips for optimal recovery. Learn the secrets to proper post-workout nutrition that will maximize your gains and speed up recovery.",
+        media: {
+          type: "image",
+          url: "/gourmet-pasta.png",
+          thumbnailUrl: "/gourmet-pasta.png",
+          altText: "Healthy post-workout meal"
+        },
+        engagement: {
+          likes: 892,
+          comments: 156,
+          shares: 67
+        },
+        createdAt: "2024-01-13T14:20:00Z",
+        premium: {
+          locked: true,
+          priceCents: 299,
+          tier: "premium",
+          previewText: "Unlock this exclusive nutrition guide..."
+        }
+      },
+      {
+        id: `${creatorId}-post-3`,
+        kind: "regular",
+        author: {
+          name: "Sarah Fitness",
+          username: "sarahfit",
+          avatarUrl: "/fitness-woman-avatar.svg",
+          verified: true
+        },
+        title: "Morning Yoga Flow - Start Your Day Right",
+        subtitle: "Gentle 15-minute morning routine. Begin your day with this peaceful yoga flow designed to energize your body and calm your mind.",
+        media: {
+          type: "image",
+          url: "/digital-art-portrait.png",
+          thumbnailUrl: "/digital-art-portrait.png",
+          altText: "Morning yoga flow image"
+        },
+        engagement: {
+          likes: 634,
+          comments: 67,
+          shares: 23
+        },
+        createdAt: "2024-01-11T08:15:00Z"
+      }
+    ]
+
+    return creatorPosts
+  }
+
+  // ----------------------
+  // Admin Posts Data Provider
+  // Purpose: Provides mock admin promotional content for Timeline admin context
+  // ----------------------
+  
+  /**
+   * Get admin posts for promotional content display
+   * Returns mock admin announcements, promotions, and updates
+   */
+  static getAdminPosts(): AdminPostView[] {
+    const adminPosts: AdminPostView[] = [
+      {
+        id: "admin-1",
+        kind: "featured" as const,
+        adminMeta: {
+           category: 'announcement',
+           priority: 'high',
+           pinned: true
+         },
+        author: {
+          name: "FanZit Team",
+          username: "fanzit",
+          avatarUrl: "/placeholder-logo.svg",
+          verified: true
+        },
+        title: "🎉 Welcome to FanZit 2.0!",
+        subtitle: "Experience the new and improved creator platform with enhanced features and better performance.",
+        media: {
+          type: "image" as const,
+          url: "/admin-announcement-banner.svg",
+          thumbnailUrl: "/admin-announcement-banner.svg",
+          altText: "FanZit 2.0 announcement banner"
+        },
+        engagement: {
+          likes: 2847,
+          comments: 156,
+          shares: 89
+        },
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+        metadata: {
+          category: "announcement"
+        }
+      },
+      {
+        id: "admin-2",
+        kind: "featured" as const,
+        adminMeta: {
+          category: 'promotion',
+          priority: 'medium',
+          pinned: false
+        },
+        author: {
+          name: "FanZit Team",
+          username: "fanzit",
+          avatarUrl: "/placeholder-logo.svg",
+          verified: true
+        },
+        title: "💰 Creator Monetization Update",
+        subtitle: "New revenue sharing model and enhanced analytics now available for all creators.",
+        media: {
+          type: "image" as const,
+          url: "/monetization-update-video.svg",
+          thumbnailUrl: "/monetization-update-thumb.svg",
+          altText: "Creator monetization update video"
+        },
+        engagement: {
+          likes: 1923,
+          comments: 234,
+          shares: 67
+        },
+        createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
+        metadata: {
+          category: "update"
+        }
+      },
+      {
+        id: "admin-3",
+        kind: "featured" as const,
+        adminMeta: {
+          category: 'update',
+          priority: 'low',
+          pinned: false
+        },
+        author: {
+          name: "FanZit Team",
+          username: "fanzit",
+          avatarUrl: "/placeholder-logo.svg",
+          verified: true
+        },
+        title: "🚀 Limited Time: Premium Features Free Trial",
+        subtitle: "Try all premium features free for 30 days. No credit card required.",
+        media: {
+          type: "image" as const,
+          url: "/premium-trial-promo.svg",
+          thumbnailUrl: "/premium-trial-promo.svg",
+          altText: "Premium features free trial promotion"
+        },
+        engagement: {
+          likes: 3456,
+          comments: 89,
+          shares: 234
+        },
+        createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000), // 12 hours ago
+        metadata: {
+          category: "promotion"
+        }
+      },
+      {
+        id: "admin-4",
+        kind: "locked" as const,
+        adminMeta: {
+          category: 'feature',
+          priority: 'high',
+          pinned: true
+        },
+        author: {
+          name: "FanZit Team",
+          username: "fanzit",
+          avatarUrl: "/placeholder-logo.svg",
+          verified: true
+        },
+        title: "🔒 Exclusive: Advanced Analytics Dashboard",
+        subtitle: "Get detailed insights into your audience engagement and revenue streams with our premium analytics suite.",
+        media: {
+          type: "image" as const,
+          url: "/analytics-dashboard-preview.svg",
+          thumbnailUrl: "/analytics-dashboard-preview.svg",
+          altText: "Advanced analytics dashboard preview"
+        },
+        engagement: {
+          likes: 892,
+          comments: 156,
+          shares: 43
+        },
+        premium: {
+          locked: true,
+          tier: "premium" as const,
+          priceCents: 999,
+          previewText: "Unlock advanced analytics to track your performance metrics, audience demographics, and revenue optimization opportunities."
+        },
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+        metadata: {
+          category: "feature"
+        }
+      }
+    ];
+
+    return adminPosts;
   }
 }
 

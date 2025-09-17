@@ -61,7 +61,7 @@ class VariantConfig {
    * @returns Tailwind size class for avatar
    */
   getAvatarSize(): string {
-    return this.variant === "regular" ? "h-10 w-10" : "h-6 w-6"
+    return this.variant === "regular" ? "h-12 w-12" : "h-10 w-10"
   }
 
   /**

@@ -6,6 +6,7 @@ import { ThreeColumnShell } from "@src/components/app/layout/three-column-shell"
 import { Sidebar } from "@src/components/app/layout/sidebar"
 import { MessagingPanel } from "@src/features/messaging/components/messaging-panel"
 import RightRailNavigator from "@src/features/navigation/components/right-rail-navigator"
+
 import { Button } from "@src/components/ui/button"
 import { Menu, X } from "lucide-react"
 
@@ -41,12 +42,13 @@ export default function CreatorProfilePage(props: CreatorProfilePageProps) {
 
   // ----------------------
   // Right Column Content
-  // Combines toggleable RightRailNavigator and MessagingPanel
+  // Combines toggleable RightRailNavigator, AnnouncementStack, and MessagingPanel
   // Location: /src/features/navigation/components/right-rail-navigator.tsx
+  // Location: /src/features/right-rail/AnnouncementStack.tsx
   // Location: /src/features/messaging/components/messaging-panel.tsx
   // ----------------------
   const rightColumnContent = (
-    <div className="flex flex-col h-full relative">
+    <div className="flex flex-col h-full relative space-y-4">
       {/* ----------------------
       // Navigator Toggle Button
       // Fixed position button to open/close navigator
@@ -75,6 +77,8 @@ export default function CreatorProfilePage(props: CreatorProfilePageProps) {
           <RightRailNavigator />
         </div>
       )}
+      
+
       
       <div className="flex-1">
         <MessagingPanel />

@@ -8,6 +8,9 @@ import { Badge } from "@src/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs"
 import { Crown, Heart, MessageCircle, Share, Play, Lock, Calendar, MapPin, LinkIcon, Star, Gift, ChevronUp, ChevronDown, Bell, BellRing } from "lucide-react"
 import LockedBranch from "@src/features/paywall/LockedBranch"
+import Timeline from "@src/features/feed/components/Timeline"
+import { PostDataAdapter } from "@src/features/post/adapters/PostDataAdapter"
+import { useAuth } from "@src/features/auth/components/auth-provider"
 
 interface CreatorProfileProps {
   creatorId: string
@@ -17,6 +20,14 @@ export function CreatorProfile({ creatorId }: CreatorProfileProps) {
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [isBioExpanded, setIsBioExpanded] = useState(false)
   const [isTabsSticky, setIsTabsSticky] = useState(false)
+  
+  // ----------------------
+  // Authentication Context
+  // Location: Gets current user from AuthProvider
+  // Purpose: Determines if viewing own profile (self-view) vs other creator's profile
+  // ----------------------
+  const { user } = useAuth()
+  const isOwnProfile = user?.id === creatorId
 
   // ----------------------
   // Scroll Behavior for Compact Profile
@@ -86,41 +97,10 @@ export function CreatorProfile({ creatorId }: CreatorProfileProps) {
     ],
   }
 
-  const posts = [
-    {
-      id: 1,
-      type: "video",
-      thumbnail: "/fitness-workout-video.svg",
-      title: "Full Body HIIT Workout",
-      duration: "25:30",
-      likes: 1247,
-      comments: 89,
-      isLocked: false,
-      timestamp: "2 days ago",
-    },
-    {
-      id: 2,
-      type: "image",
-      thumbnail: "/gourmet-pasta.png",
-      title: "Post-Workout Nutrition Guide",
-      likes: 892,
-      comments: 156,
-      isLocked: true,
-      price: "$2.99",
-      timestamp: "4 days ago",
-    },
-    {
-      id: 3,
-      type: "video",
-      thumbnail: "/digital-art-portrait.png",
-      title: "Morning Yoga Flow",
-      duration: "15:45",
-      likes: 634,
-      comments: 67,
-      isLocked: false,
-      timestamp: "1 week ago",
-    },
-  ]
+  // ----------------------
+  // Posts data now handled by Timeline component via PostDataAdapter.getPostsByCreatorId()
+  // Legacy posts array removed - Timeline uses PostView interface for consistency
+  // ----------------------
 
   return (
     <div className="w-full space-y-0 bg-black">
@@ -348,69 +328,19 @@ export function CreatorProfile({ creatorId }: CreatorProfileProps) {
         </div>
 
         <TabsContent value="posts" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <article key={post.id} className="rounded-2xl border border-border/50 bg-black overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow">
-                <div className="relative overflow-hidden z-0 h-48">
-                  {post.isLocked ? (
-                    <LockedBranch
-                      postId={String(post.id)}
-                      title={post.title}
-                      priceCents={parseFloat(post.price?.replace('$', '') || '2.99') * 100}
-                      previewUrl={post.thumbnail || "/placeholder.svg"}
-                      openPricingPlansModal={() => console.log('Open pricing modal')}
-                      author={{ name: creator.name, avatar: creator.avatar, username: creator.handle }}
-                      createdAt={post.timestamp}
-                      requiredTier="premium"
-                      className="absolute inset-0"
-                    />
-                  ) : (
-                    <>
-                      <img
-                        src={post.thumbnail || "/placeholder.svg"}
-                        alt={post.title}
-                        className="w-full h-full object-cover z-0"
-                      />
-
-                      {/* Hover Overlay - Only for unlocked content */}
-                      <div className="absolute inset-0 bg-black/20 invisible group-hover:visible transition-all z-0" />
-
-                      {/* Play Button */}
-                      {post.type === "video" && (
-                        <div className="absolute inset-0 flex items-center justify-center invisible group-hover:visible transition-all z-10">
-                          <Button size="lg" className="rounded-full">
-                            <Play className="h-6 w-6 ml-1" />
-                          </Button>
-                        </div>
-                      )}
-
-                      {/* Duration - Only for unlocked videos */}
-                      {post.type === "video" && post.duration && (
-                        <Badge className="absolute bottom-2 right-2 bg-black/30 text-white z-10">{post.duration}</Badge>
-                      )}
-                    </>
-                  )}
-                </div>
-
-                <div className="p-4">
-                  <h3 className="font-semibold text-white line-clamp-2">{post.title}</h3>
-                  <div className="flex items-center justify-between text-sm text-gray-400">
-                    <span>{post.timestamp}</span>
-                    <div className="flex items-center space-x-3">
-                      <span className="flex items-center space-x-1">
-                        <Heart className="h-4 w-4" />
-                        <span>{post.likes}</span>
-                      </span>
-                      <span className="flex items-center space-x-1">
-                        <MessageCircle className="h-4 w-4" />
-                        <span>{post.comments}</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+          {/* ---------------------- */}
+          {/* Timeline Component with Dynamic Context */}
+          {/* Component: Timeline from /src/features/feed/components/Timeline.tsx */}
+          {/* Context: "self" for own profile, "profile" for other creators */}
+          {/* Data: PostDataAdapter.getPostsByCreatorId() for profile, getAdminPosts() for self */}
+          {/* ---------------------- */}
+          <Timeline
+            views={isOwnProfile ? PostDataAdapter.getAdminPosts() : PostDataAdapter.getPostsByCreatorId(creatorId)}
+            context={isOwnProfile ? "self" : "profile"}
+            openPricingPlansModal={() => console.log('Open pricing modal')}
+            className="space-y-6"
+            emptyMessage={isOwnProfile ? "You haven't posted anything yet. Create your first post!" : "No posts yet. Check back later for new content!"}
+          />
         </TabsContent>
 
         <TabsContent value="about" className="mt-6">

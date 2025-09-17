@@ -261,8 +261,8 @@ export default function PostCard({ view, openPricingPlansModal, size = "default"
                     loading="lazy"
                   />
                 ) : (
-                  <div className="h-full w-full bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-500">No media</span>
+                  <div className="h-full w-full bg-muted flex items-center justify-center">
+                    <span className="text-muted-foreground">No media</span>
                   </div>
                 )}
               </div>

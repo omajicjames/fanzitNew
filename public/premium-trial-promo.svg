@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400" fill="none">
+  <!-- Background -->
+  <rect width="600" height="400" fill="url(#premiumGradient)"/>
+  
+  <!-- Decorative Stars -->
+  <g fill="#FCD34D">
+    <path d="M100 80 L105 90 L115 90 L107 97 L110 107 L100 100 L90 107 L93 97 L85 90 L95 90 Z"/>
+    <path d="M500 60 L503 66 L509 66 L504 70 L506 76 L500 73 L494 76 L496 70 L491 66 L497 66 Z"/>
+    <path d="M520 320 L525 330 L535 330 L527 337 L530 347 L520 340 L510 347 L513 337 L505 330 L515 330 Z"/>
+  </g>
+  
+  <!-- Premium Crown Icon -->
+  <g transform="translate(300, 120)">
+    <circle cx="0" cy="0" r="50" fill="rgba(255,255,255,0.2)" stroke="#FCD34D" stroke-width="3"/>
+    <path d="M-20 -10 L-10 -20 L0 -15 L10 -20 L20 -10 L15 10 L-15 10 Z" fill="#FCD34D"/>
+    <circle cx="-10" cy="-15" r="3" fill="#FCD34D"/>
+    <circle cx="0" cy="-20" r="4" fill="#FCD34D"/>
+    <circle cx="10" cy="-15" r="3" fill="#FCD34D"/>
+  </g>
+  
+  <!-- Main Title -->
+  <text x="300" y="220" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="42" font-weight="800" fill="white">Premium Features</text>
+  <text x="300" y="260" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600" fill="#FCD34D">FREE 30-Day Trial</text>
+  
+  <!-- Features -->
+  <g transform="translate(300, 320)">
+    <text x="-150" y="0" font-family="system-ui" font-size="16" fill="white">🚀 Advanced Analytics</text>
+    <text x="0" y="0" font-family="system-ui" font-size="16" fill="white">💎 Premium Content</text>
+    <text x="150" y="0" font-family="system-ui" font-size="16" fill="white">⚡ Priority Support</text>
+  </g>
+  
+  <!-- Call to Action -->
+  <text x="300" y="360" text-anchor="middle" font-family="system-ui" font-size="14" font-weight="500" fill="rgba(255,255,255,0.8)">No Credit Card Required</text>
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="premiumGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7C3AED;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#5B21B6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4C1D95;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>
