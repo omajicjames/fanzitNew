@@ -39,7 +39,9 @@ export default {
   // ----------------------
   // Plugins
   // ----------------------
-  // Additional plugins can be added here
-  // Current setup relies on CSS-based configuration in globals.css
-  plugins: [],
+  // Additional plugins for enhanced functionality
+  // @tailwindcss/line-clamp: Enables line-clamp-{n} utilities for text truncation
+  plugins: [
+    require('@tailwindcss/line-clamp'),
+  ],
 } satisfies Config;

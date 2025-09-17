@@ -203,3 +203,20 @@ html {
   /* Fallback for when theme script hasn't run yet */
   background-color: var(--background);
 }
+
+/* ---------------------- */
+/* Profile Tabs Compact Styling */
+/* ---------------------- */
+/* Handles visual changes when tabs become sticky/compact */
+#profile-tabs[data-compact="true"] {
+  /* Enhanced backdrop blur when sticky */
+  backdrop-filter: blur(12px);
+  background-color: oklch(0.22 0.02 255 / 0.95); /* More opaque when sticky */
+}
+
+#profile-tabs[data-compact="false"] {
+  /* Lighter styling when in normal position */
+  background-color: oklch(0.22 0.02 255 / 0.6);
+  border-top: 1px solid oklch(0.35 0.03 255 / 0.2);
+  border-bottom: 1px solid oklch(0.35 0.03 255);
+}

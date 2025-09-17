@@ -13,8 +13,11 @@ interface ThreeColumnShellProps {
 export function ThreeColumnShell({ leftColumn, centerColumn, rightColumn, className }: ThreeColumnShellProps) {
   return (
     <div className={cn("min-h-screen bg-background", className)}>
-      {/* Main container with three columns */}
-      <div className="flex h-screen">
+      {/* ----------------------
+      // Desktop Layout - Three Columns
+      // Hidden on mobile (lg:hidden), visible on large screens (lg:flex)
+      // ---------------------- */}
+      <div className="hidden lg:flex h-screen">
         {/* Left Sidebar - Navigation */}
         <aside className="w-64 flex-shrink-0 border-r border-border bg-sidebar overflow-y-auto">
           <div className="h-full">{leftColumn}</div>
@@ -31,7 +34,10 @@ export function ThreeColumnShell({ leftColumn, centerColumn, rightColumn, classN
         </aside>
       </div>
 
-      {/* Mobile responsive overlay */}
+      {/* ----------------------
+      // Mobile Layout - Single Column
+      // Visible on mobile (lg:hidden), hidden on large screens
+      // ---------------------- */}
       <div className="lg:hidden fixed inset-0 bg-background">
         <div className="flex flex-col h-full">
           {/* Mobile header */}
