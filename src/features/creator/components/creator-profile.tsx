@@ -6,11 +6,12 @@ import { Button } from "@src/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@src/components/ui/avatar"
 import { Badge } from "@src/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs"
-import { Crown, Heart, MessageCircle, Share, Play, Lock, Calendar, MapPin, LinkIcon, Star, Gift, ChevronUp, ChevronDown, Bell, BellRing } from "lucide-react"
-import LockedBranch from "@src/features/paywall/LockedBranch"
+import { Crown, Calendar, MapPin, LinkIcon, Star, Bell, BellRing } from "lucide-react"
 import Timeline from "@src/features/feed/components/Timeline"
 import { PostDataAdapter } from "@src/features/post/adapters/PostDataAdapter"
 import { useAuth } from "@src/features/auth/components/auth-provider"
+import { logger } from "@src/lib/logger"
+import Image from "next/image"
 
 interface CreatorProfileProps {
   creatorId: string
@@ -114,10 +115,11 @@ export function CreatorProfile({ creatorId }: CreatorProfileProps) {
         <div className="absolute inset-0 bg-gradient-radial from-white/8 via-transparent to-transparent" />
         
         {/* Cover Image Overlay */}
-        <img
+        <Image
           src={creator.coverImage}
           alt="Cover"
-          className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-20"
+          fill
+          className="object-cover mix-blend-overlay opacity-20"
         />
         
         {/* Profile Content Container */}
@@ -337,7 +339,7 @@ export function CreatorProfile({ creatorId }: CreatorProfileProps) {
           <Timeline
             views={isOwnProfile ? PostDataAdapter.getAdminPosts() : PostDataAdapter.getPostsByCreatorId(creatorId)}
             context={isOwnProfile ? "self" : "profile"}
-            openPricingPlansModal={() => console.log('Open pricing modal')}
+            openPricingPlansModal={() => logger.info('Open pricing modal', 'CreatorProfile')}
             className="space-y-6"
             emptyMessage={isOwnProfile ? "You haven't posted anything yet. Create your first post!" : "No posts yet. Check back later for new content!"}
           />

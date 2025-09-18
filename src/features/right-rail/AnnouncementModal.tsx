@@ -4,6 +4,7 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Save, AlertCircle } from "lucide-react";
 import { Button } from "@src/components/ui/button";
+import { logger } from "@src/lib/logger";
 
 // ----------------------
 // TypeScript Interfaces
@@ -224,7 +225,7 @@ export default function AnnouncementModal({
       await onSave(formData);
       onClose();
     } catch (error) {
-      console.error('Error saving announcement:', error);
+      logger.error('Error saving announcement', 'AnnouncementModal', error);
       // Handle error state if needed
     } finally {
       setIsSubmitting(false);

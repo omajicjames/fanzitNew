@@ -4,6 +4,7 @@ import React, { useEffect } from "react"
 import { useConsent } from "./ConsentContext"
 import type { ConsentState } from "./types"
 import Script from "next/script"
+import { logger } from "@src/lib/logger"
 
 // ----------------------
 // 1. Script Configuration Interface
@@ -32,7 +33,7 @@ const ANALYTICS_SCRIPTS: ConditionalScript[] = [
     consentType: "analytics",
     strategy: "afterInteractive",
     onLoad: () => {
-      console.log("[GatedScripts] Google Analytics loaded")
+      logger.info("Google Analytics loaded", "GatedScripts")
     }
   },
   {
@@ -74,7 +75,7 @@ const MARKETING_SCRIPTS: ConditionalScript[] = [
     consentType: "ads",
     strategy: "afterInteractive",
     onLoad: () => {
-      console.log("[GatedScripts] Facebook Pixel loaded")
+      logger.info("Facebook Pixel loaded", "GatedScripts")
     }
   },
   {
@@ -106,7 +107,7 @@ const PERSONALIZATION_SCRIPTS: ConditionalScript[] = [
     consentType: "personalization",
     strategy: "lazyOnload",
     onLoad: () => {
-      console.log("[GatedScripts] Hotjar loaded")
+      logger.info("Hotjar loaded", "GatedScripts")
     }
   }
 ]
@@ -160,9 +161,9 @@ class ScriptManager {
       }
       
       this.loadedScripts.add(script.id)
-      console.log(`[ScriptManager] Loaded script: ${script.id}`)
+      logger.info(`Loaded script: ${script.id}`, "ScriptManager")
     } catch (error) {
-      console.error(`[ScriptManager] Failed to load script ${script.id}:`, error)
+      logger.error(`Failed to load script ${script.id}`, "ScriptManager", error)
       if (script.onError) {
         script.onError()
       }
@@ -178,7 +179,7 @@ class ScriptManager {
     if (scriptElement) {
       scriptElement.remove()
       this.loadedScripts.delete(scriptId)
-      console.log(`[ScriptManager] Removed script: ${scriptId}`)
+      logger.info(`Removed script: ${scriptId}`, "ScriptManager")
     }
   }
   
@@ -212,7 +213,9 @@ export function GatedScripts() {
           dangerouslySetInnerHTML={{
             __html: `
               // Your analytics bootstrap here
-              console.log('Analytics enabled');
+              if (window.logger) {
+                window.logger.info('Analytics enabled', 'GatedScripts');
+              }
             `,
           }}
         />
@@ -228,7 +231,9 @@ export function GatedScripts() {
           dangerouslySetInnerHTML={{
             __html: `
               // Your personalization bootstrap here
-              console.log('Personalization enabled');
+              if (window.logger) {
+                window.logger.info('Personalization enabled', 'GatedScripts');
+              }
             `,
           }}
         />
@@ -244,7 +249,9 @@ export function GatedScripts() {
           dangerouslySetInnerHTML={{
             __html: `
               // Your advertising bootstrap here
-              console.log('Advertising enabled');
+              if (window.logger) {
+                window.logger.info('Advertising enabled', 'GatedScripts');
+              }
             `,
           }}
         />

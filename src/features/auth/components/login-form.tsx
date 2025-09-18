@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs"
 import { Separator } from "@src/components/ui/separator"
 import { Crown, Eye, EyeOff, Mail, Lock, User, Phone } from "lucide-react"
+import { logger } from "@src/lib/logger"
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -28,7 +29,7 @@ export function LoginForm() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('🔐 Login form submitted'); // Debug log
+    logger.debug('Login form submitted', 'LoginForm')
     setIsLoading(true)
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -44,17 +45,17 @@ export function LoginForm() {
           isCreator: true,
         }),
       )
-      console.log('💾 Login user stored in localStorage'); // Debug log
+      logger.debug('Login user stored in localStorage', 'LoginForm')
     }
 
     setIsLoading(false)
-    console.log('🚀 Login redirecting to home...'); // Debug log
+    logger.debug('Login redirecting to home', 'LoginForm')
     router.push("/")
   }
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('📝 Signup form submitted'); // Debug log
+    logger.debug('Signup form submitted', 'LoginForm')
     setIsLoading(true)
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -70,11 +71,11 @@ export function LoginForm() {
           isCreator: true,
         }),
       )
-      console.log('💾 Signup user stored in localStorage'); // Debug log
+      logger.debug('Signup user stored in localStorage', 'LoginForm')
     }
 
     setIsLoading(false)
-    console.log('🚀 Signup redirecting to home...'); // Debug log
+    logger.debug('Signup redirecting to home', 'LoginForm')
     router.push("/")
   }
 
@@ -84,27 +85,27 @@ export function LoginForm() {
   // Sets user data in localStorage and redirects to home page
   // ----------------------
   const handleDemoLogin = (userType: "creator" | "subscriber") => {
-    console.log('🔥 Demo login clicked:', userType); // Debug log
+    logger.debug('Demo login clicked', 'LoginForm', { userType })
     const demoUser =
       userType === "creator"
         ? { id: "1", name: "Demo Creator", email: "creator@demo.com", isCreator: true, subscriptions: [], createdAt: new Date().toISOString() }
         : { id: "2", name: "Demo Subscriber", email: "subscriber@demo.com", isCreator: false, subscriptions: ["sarah-fitness", "chef-marco"], createdAt: new Date().toISOString() }
 
-    console.log('👤 Demo user data:', demoUser); // Debug log
+    logger.debug('Demo user data prepared', 'LoginForm', { demoUser })
     
     // Store demo user data in localStorage for demo purposes (client-side only)
     if (typeof window !== 'undefined') {
       try {
         localStorage.setItem("user", JSON.stringify(demoUser))
-        console.log('💾 User stored in localStorage successfully'); // Debug log
-        console.log('📋 Stored data:', localStorage.getItem("user")); // Verify storage
+        logger.debug('User stored in localStorage successfully', 'LoginForm')
+        logger.debug('Stored data verified', 'LoginForm', { storedData: localStorage.getItem("user") })
       } catch (error) {
-        console.error('❌ Failed to store user in localStorage:', error);
+        logger.error('Failed to store user in localStorage', 'LoginForm', error);
         return;
       }
     }
     
-    console.log('🚀 Redirecting to home...'); // Debug log
+    logger.debug('Redirecting to home', 'LoginForm')
     // Force a page reload to ensure auth provider picks up the new user data
     window.location.href = "/";
   }

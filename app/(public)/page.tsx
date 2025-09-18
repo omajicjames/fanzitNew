@@ -9,6 +9,7 @@ import AnnouncementModal from "@src/features/right-rail/AnnouncementModal"
 import { ProtectedRoute } from "@src/features/auth/components/protected-route"
 import { PostDataAdapter } from "@src/features/post/adapters/PostDataAdapter"
 import * as React from "react"
+import { logger } from "@src/lib/logger"
 
 // ----------------------
 // HomePage Component
@@ -59,7 +60,7 @@ export default function HomePage() {
   };
 
   const handleDeleteAnnouncement = (id: string) => {
-    console.log('Deleting announcement:', id);
+    logger.info(`Deleting announcement: ${id}`, "HomePage");
     // Additional delete logic can be added here
   };
 
@@ -68,7 +69,7 @@ export default function HomePage() {
   };
 
   const handleModalSave = (data: any) => {
-    console.log('Saving announcement:', data);
+    logger.info("Saving announcement", "HomePage", data);
     // Additional save logic can be added here
     setModalState(prev => ({ ...prev, isOpen: false }));
   };

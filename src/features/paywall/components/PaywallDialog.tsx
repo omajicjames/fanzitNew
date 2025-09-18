@@ -8,11 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@src/components/ui/car
 import { Separator } from '@src/components/ui/separator'
 import { cn } from '@src/lib/utils'
 import { toast } from '@src/hooks/use-toast'
+import { logger } from '@src/lib/logger'
 import { 
   Crown, 
   Star, 
   Check, 
-  X, 
   Loader2,
   Sparkles,
   Shield,
@@ -176,7 +176,7 @@ export function PaywallDialog({
         throw new Error('Upgrade failed')
       }
     } catch (error) {
-      console.error('Subscription upgrade failed:', error)
+      logger.error('Subscription upgrade failed', 'PaywallDialog', error)
       toast({
         title: 'Upgrade Failed',
         description: 'There was an issue upgrading your subscription. Please try again.',
@@ -274,8 +274,8 @@ export function PaywallDialog({
         <CardContent className="pt-0">
           {/* Features list */}
           <ul className="space-y-2 mb-6">
-            {plan.features.map((feature, index) => (
-              <li key={index} className="flex items-center text-sm">
+            {plan.features.map((feature) => (
+              <li key={`${plan.tier}-${feature}`} className="flex items-center text-sm">
                 <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
                 <span>{feature}</span>
               </li>

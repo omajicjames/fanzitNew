@@ -1,15 +1,18 @@
 'use client'
 
 // ----------------------
-// PaywallClient Mock Service
-// Location: /src/features/paywall/mock/paywallClient.ts
-// Purpose: Mock service for subscription checking and paywall functionality
-// Used by: PaywallDialog, PaywallPill, LockedPostShell components
+// Mock Paywall Client
+// ----------------------
+// Simulates subscription management and content access control
+// Used for demo purposes - replace with real payment provider integration
+// Location: src/features/paywall/mock/paywallClient.ts
 // ----------------------
 
-/**
- * Subscription tier types for paywall system
- */
+import { logger } from '@src/lib/logger'
+
+// ----------------------
+// Type Definitions
+// ----------------------
 export type SubscriptionTier = 'free' | 'premium' | 'pro'
 
 /**
@@ -85,7 +88,7 @@ export class PaywallClient {
         this.setSubscription(this.DEFAULT_SUBSCRIPTION)
       }
     } catch (error) {
-      console.warn('Failed to initialize subscription from localStorage:', error)
+      logger.warn('Failed to initialize subscription from localStorage', 'PaywallClient', error)
       this.setSubscription(this.DEFAULT_SUBSCRIPTION)
     }
   }
@@ -112,7 +115,7 @@ export class PaywallClient {
         return subscription
       }
     } catch (error) {
-      console.warn('Failed to get subscription from localStorage:', error)
+      logger.warn('Failed to get subscription from localStorage', 'PaywallClient', error)
     }
     return this.DEFAULT_SUBSCRIPTION
   }
@@ -131,7 +134,7 @@ export class PaywallClient {
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(subscription))
     } catch (error) {
-      console.error('Failed to save subscription to localStorage:', error)
+      logger.error('Failed to save subscription to localStorage', 'PaywallClient', error)
     }
   }
 

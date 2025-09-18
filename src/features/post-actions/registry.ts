@@ -58,7 +58,11 @@ export function closeAll() {
 // Opens if closed, closes if open
 // ----------------------
 export function toggleActions(id: string) {
-  openPostId === id ? closeAll() : openActions(id)
+  if (openPostId === id) {
+    closeAll()
+  } else {
+    openActions(id)
+  }
 }
 
 // ----------------------

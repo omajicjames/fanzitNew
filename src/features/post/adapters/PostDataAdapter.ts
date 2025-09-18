@@ -5,8 +5,8 @@
 // ----------------------
 
 import { PostView, PostAuthor, PostMedia, PostEngagement, PostPremium } from '../types'
-import { formatRelativeTime } from '@src/lib/format'
 import { AdminPostView } from '@src/features/feed/types/timeline-types'
+import { logger } from '@src/lib/logger'
 
 // ----------------------
 // Legacy Post Interface (from main-feed.tsx)
@@ -295,7 +295,7 @@ export class PostDataAdapter {
 
       return true
     } catch (error) {
-      console.error('PostView validation error:', error)
+      logger.error('PostView validation error', 'PostDataAdapter', error)
       return false
     }
   }

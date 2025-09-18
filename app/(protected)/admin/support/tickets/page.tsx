@@ -11,6 +11,7 @@
 
 import { useState } from "react";
 import requireAdminPage from "@src/features/admin/auth/requireAdminPage";
+import { logger } from "@src/lib/logger";
 import { 
   MessageSquare, 
   Clock, 
@@ -248,7 +249,7 @@ export default function SupportTicketsPage() {
   // Handle ticket view action
   // ----------------------
   const handleViewTicket = (ticketId: string) => {
-    console.log("Viewing ticket:", ticketId);
+    logger.info(`Viewing ticket: ${ticketId}`, "SupportTickets");
     // TODO: Implement ticket detail view
   };
 

@@ -35,25 +35,22 @@ type Props = {
  * @returns LockedPostShell component with passed props
  */
 export default function LockedBranch({
-  postId,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  postId: _postId,
   title,
-  priceCents,
-  previewUrl,
-  openPricingPlansModal,
-  author,
-  createdAt,
   requiredTier = 'premium',
+  previewUrl,
+  priceCents,
+  openPricingPlansModal,
   className
 }: Props) {
   return (
     <LockedPostShell
       title={title}
-      author={author}
-      createdAt={createdAt}
       requiredTier={requiredTier}
       previewImage={previewUrl}
       priceCents={priceCents}
-      onUpgrade={openPricingPlansModal}
+      openPricingPlansModal={openPricingPlansModal}
       className={className}
     />
   )

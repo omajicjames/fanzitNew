@@ -9,12 +9,11 @@ import { motion, AnimatePresence } from "framer-motion"
 declare global {
   interface Window {
     analytics?: {
-      track: (event: string, properties?: Record<string, any>) => void
+      track: (event: string, properties?: Record<string, unknown>) => void
     }
   }
 }
 import { Button } from "@src/components/ui/button"
-import { Separator } from "@src/components/ui/separator"
 import { cn } from "@src/lib/utils"
 import { useToast } from "@src/hooks/use-toast"
 import {
@@ -107,7 +106,7 @@ export function InlineActions({
   // Handle action execution
   // Processes user actions and provides feedback
   // ----------------------
-  const handleAction = (actionType: string, data?: any) => {
+  const handleAction = (actionType: string, data?: Record<string, unknown>) => {
     // Analytics tracking if available
     if (typeof window !== 'undefined' && window.analytics) {
       window.analytics.track('post_action_clicked', {
@@ -119,7 +118,7 @@ export function InlineActions({
 
     // Execute the action callback
     if (onAction) {
-      onAction({ type: actionType as any, ...data })
+      onAction({ type: actionType as "pin" | "save" | "share" | "report", ...data })
     }
 
     // Show success toast based on action
@@ -292,7 +291,7 @@ export function InlineActions({
 // Export hook for toggling actions
 // Provides external control over the inline actions state
 // ----------------------
-export function useInlineActions(postId: string) {
+export function useInlineActions() {
   const [isOpen, setIsOpen] = useState(false)
 
   const toggle = () => setIsOpen(prev => !prev)

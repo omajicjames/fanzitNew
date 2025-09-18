@@ -259,7 +259,7 @@ export function ConsentPreferences({ children }: { children: React.ReactNode }) 
                   <div className="flex flex-wrap gap-1">
                     {category.examples.map((example, index) => (
                       <Badge 
-                        key={index} 
+                        key={`${category.id}-${example}`} 
                         variant="secondary" 
                         className="text-xs bg-zinc-800 text-zinc-400 border-zinc-700"
                       >

@@ -11,6 +11,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Shield, AlertTriangle, Loader2 } from "lucide-react";
+import { logger } from "@src/lib/logger";
 
 // ----------------------
 // Admin User Type
@@ -229,7 +230,7 @@ export function useAdminAuth() {
           setAuthState("unauthorized");
         }
       } catch (error) {
-        console.error("Admin auth error:", error);
+        logger.error("Admin auth error", "requireAdminPage", error);
         setAuthState("error");
       }
     };

@@ -222,7 +222,7 @@ export function AdminKnowledgeBaseClient() {
             <div className="flex flex-wrap gap-1 mb-4">
               {article.tags.map((tag, index) => (
                 <span
-                  key={index}
+                  key={`${article.id}-${tag}`}
                   className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full"
                 >
                   {tag}

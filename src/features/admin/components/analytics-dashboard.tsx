@@ -33,6 +33,7 @@ import {
   Crown,
   Play,
 } from "lucide-react"
+import Image from "next/image"
 
 export function AnalyticsDashboard() {
   const revenueData = [
@@ -323,12 +324,14 @@ export function AnalyticsDashboard() {
                   <ScrollArea className="h-96">
                     <div className="space-y-4">
                       {recentSubscribers.map((subscriber, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div key={subscriber.name} className="flex items-center justify-between p-3 border rounded-lg">
                           <div className="flex items-center space-x-3">
-                            <img
+                            <Image
                               src={subscriber.avatar || "/placeholder.svg"}
                               alt={subscriber.name}
-                              className="h-10 w-10 rounded-full"
+                              width={40}
+                              height={40}
+                              className="rounded-full"
                             />
                             <div>
                               <h4 className="font-semibold">{subscriber.name}</h4>
@@ -364,7 +367,7 @@ export function AnalyticsDashboard() {
                       dataKey="value"
                     >
                       {subscriptionTierData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
+                        <Cell key={entry.name} fill={entry.color} />
                       ))}
                     </Pie>
                     <Tooltip />

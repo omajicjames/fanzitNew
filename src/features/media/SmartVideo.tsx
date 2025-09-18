@@ -15,6 +15,10 @@
 import { useEffect, useRef, useState } from "react";
 
 // ----------------------
+// HLS.js Type (using unknown to avoid interface conflicts)
+// ----------------------
+
+// ----------------------
 // Minimal Class Utility
 // ----------------------
 // Lightweight class joiner to avoid pulling full utils
@@ -62,7 +66,8 @@ export default function SmartVideo({
   // Video Setup Effect
   // ----------------------
   useEffect(() => {
-    let hls: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let hls: any = null;
     const video = ref.current;
     setReady(false);
     setErrored(false);

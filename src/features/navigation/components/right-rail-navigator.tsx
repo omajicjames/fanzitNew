@@ -59,7 +59,7 @@ export default function RightRailNavigator() {
         sticky top-4
         max-w-full
         w-full
-        [--rail-w:theme(spacing.88)]
+        max-w-sm
       "
     >
       {/* ---------------------- */}

@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
+import { logger } from "@src/lib/logger"
 
 interface User {
   id: string
@@ -59,7 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         }
       } catch (error) {
-        console.error("Auth check failed:", error)
+        logger.error("Auth check failed", "AuthProvider", error)
         if (typeof window !== 'undefined') {
           localStorage.removeItem("user")
         }

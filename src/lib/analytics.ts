@@ -7,6 +7,8 @@
 // Children: Used by paywall components for event tracking
 // ----------------------
 
+import { logger } from "@src/lib/logger";
+
 // ----------------------
 // Event Type Definitions
 // ----------------------
@@ -31,8 +33,7 @@ type EventName =
 // ----------------------
 
 export function track(name: EventName, props: Record<string, unknown> = {}) {
-  // eslint-disable-next-line no-console
-  console.log("[analytics]", name, props);
+  logger.info(`Analytics event: ${name}`, "analytics", props);
   
   // TODO: In production, replace with actual analytics service:
   // - Google Analytics 4

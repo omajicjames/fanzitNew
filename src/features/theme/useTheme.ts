@@ -8,6 +8,7 @@
 // ----------------------
 
 import { useEffect, useState } from "react";
+import { logger } from "@src/lib/logger";
 
 /**
  * Custom hook for managing application theme state
@@ -59,7 +60,7 @@ export function useTheme() {
       }
     } catch (error) {
       // Fallback to dark theme if localStorage access fails
-      console.warn("Failed to access localStorage for theme preference:", error);
+      logger.warn("Failed to access localStorage for theme preference", "useTheme", error);
       setTheme("dark");
     }
   }, []);

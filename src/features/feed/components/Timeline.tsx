@@ -10,14 +10,12 @@
 
 import React from 'react';
 import PostCard from '@src/features/post/PostCard';
-import { PostView } from '@src/features/post/types';
 import { cn } from '@src/lib/utils';
 import { 
   TimelineContext, 
   TimelineProps, 
   AdminPostView, 
-  TIMELINE_CONTEXT_CONFIGS,
-  ContextHelpers 
+  TIMELINE_CONTEXT_CONFIGS
 } from '@src/features/feed/types/timeline-types';
 
 // ----------------------
@@ -41,14 +39,7 @@ function shouldUseAdminCard(context: TimelineContext): boolean {
   return TIMELINE_CONTEXT_CONFIGS[context].useAdminCard;
 }
 
-/**
- * Determines if timeline header should be hidden
- * @param context Timeline context type
- * @returns boolean indicating header visibility
- */
-function shouldHideHeader(context: TimelineContext): boolean {
-  return TIMELINE_CONTEXT_CONFIGS[context].hideHeader;
-}
+
 
 /**
  * Gets context-specific CSS classes for timeline container
@@ -67,7 +58,7 @@ function TimelineSkeleton() {
   return (
     <div className="flex flex-col gap-6">
       {Array.from({ length: 3 }).map((_, index) => (
-        <div key={index} className="rounded-2xl border border-border/50 bg-card overflow-hidden animate-pulse">
+        <div key={`skeleton-${index}`} className="rounded-2xl border border-border/50 bg-card overflow-hidden animate-pulse">
           <div className="px-4 pt-4 flex items-center gap-3">
             <div className="w-10 h-10 bg-muted rounded-full" />
             <div className="flex-1">

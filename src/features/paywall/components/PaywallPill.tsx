@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Badge } from '@src/components/ui/badge'
 import { Button } from '@src/components/ui/button'
 import { cn } from '@src/lib/utils'
 import { toast } from '@src/hooks/use-toast'
@@ -11,7 +10,6 @@ import {
   Star, 
   Sparkles,
   Eye,
-  EyeOff,
   Zap
 } from 'lucide-react'
 import { paywallClient, type SubscriptionTier } from '../mock/paywallClient'

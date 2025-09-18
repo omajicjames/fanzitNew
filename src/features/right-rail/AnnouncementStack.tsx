@@ -426,9 +426,9 @@ export default function AnnouncementStack({
       // ---------------------- */}
       {state.announcements.length > 1 && (
         <div className="flex justify-center gap-1 mt-4">
-          {state.announcements.map((_, index) => (
+          {state.announcements.map((announcement, index) => (
             <button
-              key={index}
+              key={announcement.id}
               onClick={() => setState(prev => ({ ...prev, currentIndex: index }))}
               className={`h-1.5 rounded-full transition-all duration-200 ${
                 index === state.currentIndex 

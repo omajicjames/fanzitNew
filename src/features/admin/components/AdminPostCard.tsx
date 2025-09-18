@@ -19,6 +19,8 @@ import SmartVideo from '@src/features/media/SmartVideo';
 import { Pin, Share2, Flag, MoreHorizontal } from 'lucide-react';
 import { cn } from '@src/lib/utils';
 import { LockedPostShell } from '@src/features/paywall/components/LockedPostShell';
+import { logger } from '@src/lib/logger';
+import Image from 'next/image';
 
 // ----------------------
 // Admin Post Card Props
@@ -188,17 +190,17 @@ export default function AdminPostCard({ view, className, onClick }: AdminPostCar
   // Purpose: Handle admin-specific actions
   // ----------------------
   const handlePin = (postId: string) => {
-    console.log('Admin pin action:', postId);
+    logger.info(`Admin pin action: ${postId}`, 'AdminPostCard');
     // TODO: Implement pin functionality
   };
 
   const handleShare = (postId: string) => {
-    console.log('Admin share action:', postId);
+    logger.info(`Admin share action: ${postId}`, 'AdminPostCard');
     // TODO: Implement share functionality
   };
 
   const handleReport = (postId: string) => {
-    console.log('Admin report action:', postId);
+    logger.info(`Admin report action: ${postId}`, 'AdminPostCard');
     // TODO: Implement admin options menu
   };
 
@@ -207,12 +209,12 @@ export default function AdminPostCard({ view, className, onClick }: AdminPostCar
   // Purpose: Handle paywall interactions for locked admin content
   // ----------------------
   const handleUnlock = () => {
-    console.log('Admin locked content unlock requested:', view.id);
+    logger.info(`Admin locked content unlock requested: ${view.id}`, 'AdminPostCard');
     onClick?.(view);
   };
 
   const handleUpgrade = () => {
-    console.log('Admin locked content upgrade requested:', view.id);
+    logger.info(`Admin locked content upgrade requested: ${view.id}`, 'AdminPostCard');
     // Open pricing modal or redirect to upgrade page
   };
 
@@ -241,20 +243,8 @@ export default function AdminPostCard({ view, className, onClick }: AdminPostCar
          <LockedPostShell
            postId={view.id}
            title={p.title}
-           excerpt={p.subtitle}
-           author={{
-             name: p.author.name,
-             username: p.author.handle,
-             avatar: p.author.avatar
-           }}
-           createdAt={typeof p.createdAt === 'string' ? p.createdAt : 
-             p.createdAt instanceof Date ? p.createdAt.toISOString() : 
-             typeof p.createdAt === 'number' ? new Date(p.createdAt).toISOString() : 
-             new Date().toISOString()}
            requiredTier={(view.premium?.tier === "pro" || view.premium?.tier === "vip") ? "premium" : (view.premium?.tier ?? "premium")}
            previewImage={p.media?.previewUrl}
-           onUnlock={handleUnlock}
-           onUpgrade={handleUpgrade}
            className="border-0 bg-transparent shadow-none"
          />
       </div>
@@ -318,11 +308,11 @@ export default function AdminPostCard({ view, className, onClick }: AdminPostCar
                 controls
               />
             ) : (
-              <img
+              <Image
                 src={p.media.previewUrl}
                 alt={p.title}
-                className="w-full h-full object-cover"
-                loading="lazy"
+                fill
+                className="object-cover"
               />
             )}
           </AspectRatio>

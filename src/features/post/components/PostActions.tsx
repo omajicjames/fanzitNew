@@ -12,7 +12,6 @@ import {
   Share,
   Flag,
   Copy,
-  ExternalLink,
   Download,
 } from 'lucide-react';
 import { Button } from '@src/components/ui/button';
@@ -196,7 +195,7 @@ export function PostActions({
           const isLastBeforeReport = index === actions.length - 2 && actions[actions.length - 1].destructive;
           
           return (
-            <React.Fragment key={`${action.type}-${index}`}>
+            <React.Fragment key={action.type}>
               <DropdownMenuItem
                 onClick={action.onClick}
                 className={cn(

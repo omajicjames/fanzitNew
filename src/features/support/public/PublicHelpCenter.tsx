@@ -49,7 +49,7 @@ const SUPPORT_TOPICS: SupportTopic[] = [
   },
   {
     slug: "content-safety",
-    title: "Content & Safety",
+    title: "Content &amp; Safety",
     description: "Community guidelines, reporting, and safety policies"
   },
   {
@@ -254,7 +254,7 @@ export default function PublicHelpCenter() {
         <div className="text-center mb-8">
           <h2 className="text-2xl font-semibold mb-2">Need More Help?</h2>
           <p className="text-muted-foreground">
-            Can't find what you're looking for? Get in touch with our support team
+            Can&apos;t find what you&apos;re looking for? Get in touch with our support team
           </p>
         </div>
         

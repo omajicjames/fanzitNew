@@ -24,6 +24,7 @@ import {
   Users,
   Crown,
 } from "lucide-react"
+import Image from "next/image"
 
 export function FullMessagingInterface() {
   const [selectedConversation, setSelectedConversation] = useState("1")
@@ -481,9 +482,11 @@ export function FullMessagingInterface() {
                           <p className="text-sm">{message.content}</p>
                         ) : message.type === "image" ? (
                           <div className="space-y-2">
-                            <img
+                            <Image
                               src={message.content || "/placeholder.svg"}
                               alt="Shared image"
+                              width={300}
+                              height={200}
                               className="rounded-lg max-w-full h-auto"
                             />
                           </div>

@@ -1,12 +1,25 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { Button } from "@src/components/ui/button"
 import PostCard from "@src/features/post/PostCard"
-import { PostDataAdapter } from "@src/features/post/adapters/PostDataAdapter"
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { PostDataAdapter, LegacyPost } from "@src/features/post/adapters/PostDataAdapter"
 
-import { usePostActionsRegistry, toggleActions } from "@src/features/post-actions/registry"
+// ----------------------
+// Custom Event Interfaces
+// ----------------------
+interface InlineActionsEscapeEvent extends CustomEvent {
+  type: 'inline-actions-escape'
+}
+
+interface InlineActionsOutsideClickEvent extends CustomEvent {
+  type: 'inline-actions-outside-click'
+}
+
+import { usePostActionsRegistry } from "@src/features/post-actions/registry"
 import { toast } from "@src/hooks/use-toast"
+import { logger } from "@src/lib/logger"
 
 export function MainFeed() {
   // ----------------------
@@ -18,36 +31,34 @@ export function MainFeed() {
   // Post Actions Registry for inline actions
   // Manages which post has expanded actions (only one at a time)
   // ----------------------
-  const { openPostId, openActions, closeAll, isOpen } = usePostActionsRegistry()
+  const { closeAll } = usePostActionsRegistry()
   
   // ----------------------
   // Handle ESC and outside-click events from InlineActions
   // ----------------------
   useEffect(() => {
-    const handleEscape = (event: CustomEvent) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const handleEscape = (_event: InlineActionsEscapeEvent) => {
       closeAll()
     }
     
-    const handleOutsideClick = (event: CustomEvent) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const handleOutsideClick = (_event: InlineActionsOutsideClickEvent) => {
       closeAll()
     }
     
-    window.addEventListener('inline-actions-escape' as any, handleEscape)
-    window.addEventListener('inline-actions-outside-click' as any, handleOutsideClick)
+    window.addEventListener('inline-actions-escape', handleEscape as EventListener)
+    window.addEventListener('inline-actions-outside-click', handleOutsideClick as EventListener)
     
     return () => {
-      window.removeEventListener('inline-actions-escape' as any, handleEscape)
-      window.removeEventListener('inline-actions-outside-click' as any, handleOutsideClick)
+      window.removeEventListener('inline-actions-escape', handleEscape as EventListener)
+      window.removeEventListener('inline-actions-outside-click', handleOutsideClick as EventListener)
     }
   }, [closeAll])
   
   // ----------------------
-  // Mock current user data
+  // Mock current user data (removed - not currently used)
   // ----------------------
-  const currentUser = {
-    id: "user123",
-    role: "subscriber" as const // Change to "creator" to test creator actions
-  }
   
   // ----------------------
   // Mock posts data
@@ -169,49 +180,6 @@ export function MainFeed() {
   // Action Handlers
   // ----------------------
 
-  
-  // ----------------------
-  // Handle toggling inline actions for a post
-  // Uses the new functional registry with toggleActions
-  // ----------------------
-  const handleToggleInlineActions = (post: any) => {
-    const postId = post.id.toString()
-    const creatorId = post.id === "1" ? "user123" : "creator456" // Use the same logic as in handleOpenModal
-    const wasOpen = isOpen(postId)
-    
-    // Toggle the actions using the new functional approach
-    toggleActions(postId)
-    
-    // Analytics: track the action
-    if (typeof window !== 'undefined' && window.analytics) {
-      window.analytics.track(wasOpen ? 'post_actions_closed' : 'post_actions_opened', {
-        postId,
-        role: currentUser?.id === creatorId ? 'creator' : 'subscriber'
-      })
-    }
-  }
-  
-
-
-  // ----------------------
-  // Paywall Event Handlers
-  // ----------------------
-  const handlePaywallUnlock = (postId: string) => {
-    console.log('Paywall unlock requested for post:', postId)
-    toast({
-      title: "Unlock Content",
-      description: "Opening subscription options...",
-    })
-  }
-
-  const handlePaywallUpgrade = (postId: string, tier: string) => {
-    console.log('Paywall upgrade requested for post:', postId, 'tier:', tier)
-    toast({
-      title: "Subscription Upgrade",
-      description: `Upgrading to ${tier} tier...`,
-    })
-  }
-
   return (
     <div className="relative z-0 p-6">
       {/* Feed Header */}
@@ -250,7 +218,7 @@ export function MainFeed() {
               <PostCard
                 view={postView}
                 openPricingPlansModal={() => {
-                  console.log('Opening pricing plans modal for post:', post.id)
+                  logger.info(`Opening pricing plans modal for post: ${post.id}`, "MainFeed")
                   toast({
                     title: "Subscription Required",
                     description: "Opening subscription options...",

@@ -229,7 +229,7 @@ export function AdminFaqClient() {
                   <div className="flex flex-wrap gap-2">
                     {faq.tags.map((tag, index) => (
                       <span
-                        key={index}
+                        key={`${faq.id}-${tag}`}
                         className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full"
                       >
                         {tag}

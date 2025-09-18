@@ -13,7 +13,7 @@
  */
 
 import { BasePostCard } from "./BasePostCard";
-import { formatHandle, formatRelativeTime } from "@src/lib/format";
+import { formatHandle } from "@src/lib/format";
 import LockedBranch from "@src/features/paywall/LockedBranch";
 import SmartVideo from "@src/features/media/SmartVideo";
 import AuthorHeader, { createAuthorCore } from "@src/components/post/AuthorHeader";
@@ -22,6 +22,9 @@ import { toggleActions, usePostActionsOpen, closeAll } from "@src/features/post-
 import { InlineActions } from "@src/features/post-actions/InlineActions";
 import { MoreHorizontal } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { logger } from "@src/lib/logger";
+import { type SubscriptionTier } from "@src/features/paywall/mock/paywallClient";
+import Image from "next/image";
 
 import { PostView } from "./types";
 
@@ -72,7 +75,7 @@ function derivePresentation(view: PostView) {
     "/fitness-workout-banner.svg"; // Mock fitness image fallback
 
   // Gating
-  const priceRaw = (view.premium?.priceCents ?? 0) as any;
+  const priceRaw = (view.premium?.priceCents ?? 0) as number;
   const priceCents = Number(priceRaw) || 0;
   const requiresTier = (view.premium?.tier ?? null) as null | string;
 
@@ -246,7 +249,7 @@ export default function PostCard({ view, openPricingPlansModal, size = "default"
                 openPricingPlansModal={openPricingPlansModal}
                 author={{ name: p.author.name, avatar: p.author.avatar, username: p.author.handle }}
                 createdAt={String(p.createdAt || new Date().toISOString())}
-                requiredTier={p.gate.tier as any}
+                requiredTier={p.gate.tier as SubscriptionTier | undefined}
                 className="absolute inset-0"
               />
             ) : (
@@ -254,10 +257,11 @@ export default function PostCard({ view, openPricingPlansModal, size = "default"
                 {p.media.kind === "video" ? (
                   <SmartVideo src={p.media.src} poster={p.media.poster} controls className="h-full w-full" />
                 ) : p.media.src ? (
-                  <img
+                  <Image
                     src={p.media.src}
                     alt={p.title}
-                    className="h-full w-full object-cover"
+                    fill
+                    className="object-cover"
                     loading="lazy"
                   />
                 ) : (
@@ -325,16 +329,16 @@ export default function PostCard({ view, openPricingPlansModal, size = "default"
             onAction={(event) => {
               switch (event.type) {
                 case "pin":
-                  console.log('Pin post:', view.id);
+                  logger.info(`Pin post: ${view.id}`, "PostCard");
                   break;
                 case "save":
-                  console.log('Save post:', view.id);
+                  logger.info(`Save post: ${view.id}`, "PostCard");
                   break;
                 case "share":
-                  console.log('Share post:', view.id);
+                  logger.info(`Share post: ${view.id}`, "PostCard");
                   break;
                 case "report":
-                  console.log('Report post:', view.id);
+                  logger.info(`Report post: ${view.id}`, "PostCard");
                   break;
               }
             }}

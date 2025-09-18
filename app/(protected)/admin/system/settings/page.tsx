@@ -11,6 +11,7 @@
 
 import { useState, useEffect } from "react";
 import requireAdminPage from "@src/features/admin/auth/requireAdminPage";
+import { logger } from "@src/lib/logger";
 import { 
   Settings, 
   Save, 
@@ -142,7 +143,7 @@ function SystemSettingsPage() {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       // Here you would make actual API calls to save settings
-      console.log("Saving settings:", {
+      logger.info("Saving settings", "SystemSettings", {
         general: generalSettings,
         security: securitySettings,
         email: emailSettings,

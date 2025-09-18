@@ -175,7 +175,7 @@ export default function AdminKpis({ className = "" }: AdminKpisProps) {
       // ---------------------- */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {kpiDisplayData.map((data, index) => (
-          <KpiCard key={`${data.kpi.kind}-${index}`} data={data} />
+          <KpiCard key={data.kpi.kind} data={data} />
         ))}
       </div>
     </div>
