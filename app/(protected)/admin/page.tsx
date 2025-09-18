@@ -2,7 +2,10 @@
 
 import { ProtectedRoute } from "@src/features/auth/components/protected-route"
 import { ThreeColumnShell } from "@src/components/app/layout/three-column-shell"
-import { CheckCircle, XCircle, AlertCircle, Clock, User, Settings, FileText, Shield, TrendingUp, MessageSquare } from "lucide-react"
+import { CheckCircle, XCircle, AlertCircle, Clock, User, Settings, FileText, Shield, TrendingUp, MessageSquare, Megaphone } from "lucide-react"
+import AnnouncementModal from "@src/features/right-rail/AnnouncementModal"
+import AnnouncementStack from "@src/features/right-rail/AnnouncementStack"
+import { useState } from "react"
 
 // ----------------------
 // Admin Support Dashboard Page
@@ -150,7 +153,7 @@ function AdminToolsTile({ title, desc }: { title: string; desc: string }) {
   )
 }
 
-function CenterColumn() {
+function CenterColumn({ onOpenAnnouncementModal }: { onOpenAnnouncementModal: () => void }) {
   return (
     <div className="space-y-6">
       <div>
@@ -162,6 +165,22 @@ function CenterColumn() {
           <AdminToolsTile title="Content Moderation" desc="Flagged posts, DMCA, reports" />
           <AdminToolsTile title="Platform Settings" desc="Feature toggles, system configs" />
           <AdminToolsTile title="Analytics" desc="KPIs, growth metrics, performance" />
+          
+          {/* Announcement Management Tool */}
+          <div 
+            onClick={onOpenAnnouncementModal}
+            className="cursor-pointer rounded-2xl border border-white/10 bg-white/5 p-4 transition-all hover:bg-white/10 hover:border-white/20"
+          >
+            <div className="flex items-center gap-3">
+              <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple-600/20">
+                <Megaphone className="h-5 w-5 text-purple-400" />
+              </div>
+              <div>
+                <div className="text-base font-semibold text-white">Announcements</div>
+                <div className="mt-1 text-sm leading-6 text-white/70">Manage platform announcements</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div className="space-y-4">
@@ -290,15 +309,54 @@ function RightRail() {
 // Three-column layout with admin profile, tools, and system status
 // ----------------------
 export default function AdminPage() {
+  // ----------------------
+  // State Management
+  // Purpose: Handle announcement modal visibility and data
+  // Location: /app/(protected)/admin/page.tsx
+  // ----------------------
+  const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false)
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null)
+  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
+
+  // ----------------------
+  // Modal Handler Functions
+  // Purpose: Control announcement modal operations
+  // ----------------------
+  const handleOpenCreateModal = () => {
+    setSelectedAnnouncement(null)
+    setModalMode('create')
+    setIsAnnouncementModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsAnnouncementModalOpen(false)
+    setSelectedAnnouncement(null)
+  }
+
+  const handleSaveAnnouncement = (data: any) => {
+    // TODO: Implement actual save logic
+    console.log('Saving announcement:', data)
+    handleCloseModal()
+  }
+
   return (
     <ProtectedRoute requireAdmin={true}>
       <main className="min-h-screen bg-neutral-950 text-white">
         <ThreeColumnShell 
           leftColumn={<LeftRail />} 
-          centerColumn={<CenterColumn />} 
+          centerColumn={<CenterColumn onOpenAnnouncementModal={handleOpenCreateModal} />} 
           rightColumn={<RightRail />} 
         />
       </main>
+      
+      {/* Announcement Modal */}
+      <AnnouncementModal
+        isOpen={isAnnouncementModalOpen}
+        onClose={handleCloseModal}
+        onSave={handleSaveAnnouncement}
+        announcement={selectedAnnouncement}
+        mode={modalMode}
+      />
     </ProtectedRoute>
   )
 }

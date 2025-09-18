@@ -101,7 +101,7 @@ const MODAL_CONTENT_CLASSES = [
   "bg-card border border-border",
   "rounded-2xl shadow-2xl",
   "w-full max-w-md",
-  "max-h-[90vh] overflow-y-auto"
+  "h-auto"
 ].join(" ");
 
 const INPUT_CLASSES = [
