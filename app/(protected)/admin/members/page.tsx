@@ -1,11 +1,12 @@
 "use client";
 
-import { AdminPillNavigationComponent } from "@src/components/admin/AdminPillNavigation";
+import { useState, useEffect } from "react";
+import { AdminPageTemplate, MetricCard, UserCard } from "@src/components/admin/AdminPageTemplate";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@src/components/ui/select";
 import { 
   Users, 
   Plus, 
@@ -66,13 +67,14 @@ interface Member {
   email: string;
   avatar_url: string;
   bio: string;
-  role: 'admin' | 'moderator' | 'creator' | 'subscriber' | 'user';
+  role: 'admin' | 'moderator' | 'creator' | 'subscriber' | 'user' | 'normal';
   status: 'active' | 'inactive' | 'banned' | 'suspended' | 'pending';
   is_verified: boolean;
   is_premium: boolean;
   created_at: string;
   updated_at: string;
   last_seen: string;
+  last_login: string;
   location: string;
   website: string;
   social_links: {
@@ -91,6 +93,10 @@ interface Member {
     earnings: number;
     total_views: number;
   };
+  financial: {
+    balance: number;
+    wallet: number;
+  };
   subscription: {
     plan: 'free' | 'basic' | 'premium' | 'pro';
     status: 'active' | 'cancelled' | 'expired';
@@ -105,6 +111,7 @@ interface Member {
   country: string;
   city: string;
   timezone: string;
+  verification_status: 'verified' | 'pending' | 'rejected' | 'not_required';
 }
 
 interface MemberStats {
@@ -130,6 +137,51 @@ class MembersManagementService {
   private initializeMockData() {
     this.members = [
       {
+        id: "267",
+        username: "@donron",
+        name: "Donron",
+        email: "donron@example.com",
+        avatar_url: "/placeholder-user.jpg",
+        bio: "Creative content creator and digital artist",
+        role: "normal",
+        status: "active",
+        is_verified: false,
+        is_premium: false,
+        created_at: "2025-09-16T10:00:00Z",
+        updated_at: "2025-09-16T14:30:00Z",
+        last_seen: "2025-09-16T14:30:00Z",
+        last_login: "2025-09-16T14:30:00Z",
+        location: "New York, NY",
+        website: "",
+        social_links: {},
+        stats: {
+          posts_count: 0,
+          followers_count: 0,
+          following_count: 0,
+          likes_received: 0,
+          comments_count: 0,
+          earnings: 0,
+          total_views: 0
+        },
+        financial: {
+          balance: 0.00,
+          wallet: 0.00
+        },
+        subscription: {
+          plan: "free",
+          status: "active"
+        },
+        permissions: ["create_content"],
+        flags: [],
+        last_activity: "2025-09-16T14:30:00Z",
+        ip_address: "72.27.20.240",
+        user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        country: "United States",
+        city: "New York",
+        timezone: "America/New_York",
+        verification_status: "pending"
+      },
+      {
         id: "1",
         username: "@sarahj",
         name: "Sarah Johnson",
@@ -143,6 +195,7 @@ class MembersManagementService {
         created_at: "2024-01-15T10:00:00Z",
         updated_at: "2024-01-27T14:30:00Z",
         last_seen: "2024-01-27T14:30:00Z",
+        last_login: "2024-01-27T14:30:00Z",
         location: "Los Angeles, CA",
         website: "https://sarahfitness.com",
         social_links: {
@@ -159,6 +212,10 @@ class MembersManagementService {
           earnings: 12500.50,
           total_views: 890000
         },
+        financial: {
+          balance: 1250.50,
+          wallet: 890.25
+        },
         subscription: {
           plan: "premium",
           status: "active",
@@ -171,7 +228,8 @@ class MembersManagementService {
         user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         country: "United States",
         city: "Los Angeles",
-        timezone: "America/Los_Angeles"
+        timezone: "America/Los_Angeles",
+        verification_status: "verified"
       },
       {
         id: "2",
@@ -187,6 +245,7 @@ class MembersManagementService {
         created_at: "2024-01-10T08:30:00Z",
         updated_at: "2024-01-26T16:45:00Z",
         last_seen: "2024-01-26T16:45:00Z",
+        last_login: "2024-01-26T16:45:00Z",
         location: "Toronto, Canada",
         website: "https://mikechencooks.com",
         social_links: {
@@ -203,6 +262,10 @@ class MembersManagementService {
           earnings: 5600.25,
           total_views: 450000
         },
+        financial: {
+          balance: 560.25,
+          wallet: 320.10
+        },
         subscription: {
           plan: "basic",
           status: "active"
@@ -214,7 +277,8 @@ class MembersManagementService {
         user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
         country: "Canada",
         city: "Toronto",
-        timezone: "America/Toronto"
+        timezone: "America/Toronto",
+        verification_status: "verified"
       },
       {
         id: "3",
@@ -342,23 +406,34 @@ class MembersManagementService {
   }
 }
 
-class MemberCardComponent {
-  private member: Member;
-
-  constructor(member: Member) {
-    this.member = member;
-  }
-
-  private getStatusBadge() {
+// ----------------------
+// Professional Member Card Component
+// Purpose: Displays member information in a structured, professional layout
+// Note: Similar to verification card with member-specific data
+// ----------------------
+function ProfessionalMemberCard({
+  member,
+  onView,
+  onEdit,
+  onMore,
+  className = ""
+}: {
+  member: Member;
+  onView?: () => void;
+  onEdit?: () => void;
+  onMore?: () => void;
+  className?: string;
+}) {
+  const getStatusBadge = () => {
     const statusConfig = {
-      active: { variant: "default" as const, icon: CheckCircle, text: "Active" },
-      inactive: { variant: "secondary" as const, icon: Clock, text: "Inactive" },
-      banned: { variant: "destructive" as const, icon: Ban, text: "Banned" },
-      suspended: { variant: "destructive" as const, icon: AlertTriangle, text: "Suspended" },
-      pending: { variant: "outline" as const, icon: Clock, text: "Pending" }
+      active: { variant: "default" as const, icon: CheckCircle, text: "Active", color: "text-green-600" },
+      inactive: { variant: "secondary" as const, icon: Clock, text: "Inactive", color: "text-gray-600" },
+      banned: { variant: "destructive" as const, icon: Ban, text: "Banned", color: "text-red-600" },
+      suspended: { variant: "destructive" as const, icon: AlertTriangle, text: "Suspended", color: "text-red-600" },
+      pending: { variant: "outline" as const, icon: Clock, text: "Pending", color: "text-yellow-600" }
     };
 
-    const config = statusConfig[this.member.status];
+    const config = statusConfig[member.status];
     const Icon = config.icon;
 
     return (
@@ -367,18 +442,19 @@ class MemberCardComponent {
         {config.text}
       </Badge>
     );
-  }
+  };
 
-  private getRoleBadge() {
+  const getRoleBadge = () => {
     const roleConfig = {
-      admin: { variant: "default" as const, icon: Shield, text: "Admin" },
-      moderator: { variant: "default" as const, icon: UserCheck, text: "Moderator" },
-      creator: { variant: "default" as const, icon: Star, text: "Creator" },
-      subscriber: { variant: "secondary" as const, icon: Heart, text: "Subscriber" },
-      user: { variant: "outline" as const, icon: User, text: "User" }
+      admin: { variant: "default" as const, icon: Shield, text: "Admin", color: "text-red-600" },
+      moderator: { variant: "default" as const, icon: UserCheck, text: "Moderator", color: "text-blue-600" },
+      creator: { variant: "default" as const, icon: Star, text: "Creator", color: "text-purple-600" },
+      subscriber: { variant: "secondary" as const, icon: Heart, text: "Subscriber", color: "text-pink-600" },
+      user: { variant: "outline" as const, icon: User, text: "User", color: "text-gray-600" },
+      normal: { variant: "outline" as const, icon: User, text: "Normal", color: "text-gray-600" }
     };
 
-    const config = roleConfig[this.member.role];
+    const config = roleConfig[member.role];
     const Icon = config.icon;
 
     return (
@@ -387,269 +463,592 @@ class MemberCardComponent {
         {config.text}
       </Badge>
     );
-  }
+  };
 
-  public render() {
+  const getVerificationBadge = () => {
+    const verificationConfig = {
+      verified: { variant: "default" as const, text: "Verified", color: "text-green-600" },
+      pending: { variant: "secondary" as const, text: "Pending", color: "text-yellow-600" },
+      rejected: { variant: "destructive" as const, text: "Rejected", color: "text-red-600" },
+      not_required: { variant: "outline" as const, text: "Not Required", color: "text-gray-600" }
+    };
+
+    const config = verificationConfig[member.verification_status];
+
     return (
-      <Card className="group hover:shadow-lg transition-all duration-200">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="space-y-1 flex-1">
-              <CardTitle className="text-lg flex items-center gap-2">
-                {this.member.name}
-                {this.member.is_verified && (
+      <Badge variant={config.variant} className="text-xs">
+        {config.text}
+      </Badge>
+    );
+  };
+
+  return (
+    <Card className={`bg-admin-card border-line-soft hover:shadow-lg transition-all duration-200 ${className}`}>
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-full bg-surface-elev2 flex items-center justify-center border border-line-soft">
+              <User className="h-6 w-6 text-text-muted" />
+            </div>
+            <div>
+              <CardTitle className="text-lg text-text flex items-center gap-2">
+                {member.name}
+                {member.is_verified && (
                   <BadgeCheck className="h-4 w-4 text-blue-600" />
                 )}
-                {this.member.is_premium && (
+                {member.is_premium && (
                   <Crown className="h-4 w-4 text-yellow-600" />
                 )}
               </CardTitle>
-              <CardDescription>@{this.member.username}</CardDescription>
-            </div>
-            <div className="flex flex-col gap-1 ml-2">
-              {this.getStatusBadge()}
-              {this.getRoleBadge()}
+              <CardDescription className="text-text-muted">@{member.username}</CardDescription>
             </div>
           </div>
-        </CardHeader>
-        
-        <CardContent className="space-y-4">
-          {/* Member Info */}
-          <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
-              <User className="h-6 w-6" />
+          <div className="flex flex-col gap-1">
+            {getStatusBadge()}
+            {getRoleBadge()}
+          </div>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="space-y-6">
+        {/* Key Metrics Grid */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <DollarSign className="h-4 w-4" />
+              <span className="text-xs font-medium">Balance</span>
             </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium">{this.member.bio}</p>
-              <div className="flex items-center gap-2 mt-1">
-                <MapPin className="h-3 w-3 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">{this.member.location}</span>
-              </div>
+            <div className="text-lg font-bold text-text">
+              ${member.financial.balance.toFixed(2)}
             </div>
           </div>
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <FileImage className="h-4 w-4 text-muted-foreground" />
-              <span>{this.member.stats.posts_count} posts</span>
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <CreditCard className="h-4 w-4" />
+              <span className="text-xs font-medium">Wallet</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-muted-foreground" />
-              <span>{this.member.stats.followers_count.toLocaleString()} followers</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Heart className="h-4 w-4 text-muted-foreground" />
-              <span>{this.member.stats.likes_received.toLocaleString()} likes</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-              <span>${this.member.stats.earnings.toFixed(2)}</span>
+            <div className="text-lg font-bold text-text">
+              ${member.financial.wallet.toFixed(2)}
             </div>
           </div>
-
-          {/* Subscription Info */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Crown className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Subscription:</span>
-              <Badge variant="outline" className="text-xs">
-                {this.member.subscription.plan.toUpperCase()}
-              </Badge>
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <FileImage className="h-4 w-4" />
+              <span className="text-xs font-medium">Posts</span>
             </div>
-            {this.member.subscription.expires_at && (
-              <p className="text-xs text-muted-foreground">
-                Expires: {new Date(this.member.subscription.expires_at).toLocaleDateString()}
-              </p>
-            )}
-          </div>
-
-          {/* Social Links */}
-          {Object.keys(this.member.social_links).length > 0 && (
-            <div className="space-y-2">
-              <span className="text-sm font-medium">Social Links:</span>
-              <div className="flex flex-wrap gap-1">
-                {Object.entries(this.member.social_links).map(([platform, handle]) => (
-                  <Badge key={platform} variant="outline" className="text-xs">
-                    {platform}: {handle}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Flags */}
-          {this.member.flags.length > 0 && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-              <div className="flex items-center gap-2 text-red-800 mb-2">
-                <Flag className="h-4 w-4" />
-                <span className="text-sm font-medium">Flags</span>
-              </div>
-              <div className="flex flex-wrap gap-1">
-                {this.member.flags.map((flag) => (
-                  <Badge key={flag} variant="destructive" className="text-xs">
-                    {flag.replace('_', ' ')}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Notes */}
-          {this.member.notes && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <div className="flex items-center gap-2 text-blue-800 mb-1">
-                <MessageCircle className="h-4 w-4" />
-                <span className="text-sm font-medium">Notes</span>
-              </div>
-              <p className="text-sm text-blue-700">{this.member.notes}</p>
-            </div>
-          )}
-
-          {/* Last Activity */}
-          <div className="text-xs text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Activity className="h-3 w-3" />
-              <span>Last seen: {new Date(this.member.last_seen).toLocaleString()}</span>
-            </div>
-            <div className="flex items-center gap-2 mt-1">
-              <Globe className="h-3 w-3" />
-              <span>{this.member.country}, {this.member.city}</span>
+            <div className="text-lg font-bold text-text">
+              {member.stats.posts_count}
             </div>
           </div>
+        </div>
 
-          {/* Actions */}
-          <div className="flex gap-2 pt-2">
-            <Button variant="outline" size="sm" className="flex-1">
-              <Eye className="h-4 w-4 mr-2" />
-              View
-            </Button>
-            <Button variant="outline" size="sm" className="flex-1">
-              <Edit className="h-4 w-4 mr-2" />
-              Edit
-            </Button>
-            <Button variant="outline" size="sm">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
+        {/* Member Information */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <User className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Member Information</span>
           </div>
-        </CardContent>
-      </Card>
-    );
-  }
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <span className="text-sm text-text-muted">ID:</span>
+              <span className="ml-2 text-sm font-mono text-text">{member.id}</span>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Email:</span>
+              <span className="ml-2 text-sm text-text">{member.email}</span>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Location:</span>
+              <span className="ml-2 text-sm text-text">{member.location}</span>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Bio:</span>
+              <span className="ml-2 text-sm text-text">{member.bio}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Activity Information */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <Activity className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Activity Information</span>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <span className="text-sm text-text-muted">Join Date:</span>
+              <span className="ml-2 text-sm text-text">
+                {new Date(member.created_at).toLocaleDateString()}
+              </span>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Last Login:</span>
+              <span className="ml-2 text-sm text-text">
+                {new Date(member.last_login).toLocaleDateString()}
+              </span>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">IP Address:</span>
+              <span className="ml-2 text-sm font-mono text-text">{member.ip_address}</span>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Timezone:</span>
+              <span className="ml-2 text-sm text-text">{member.timezone}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Status & Verification */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+            <div className="flex items-center gap-2 mb-2">
+              <Shield className="h-4 w-4 text-text-muted" />
+              <span className="text-sm font-medium text-text">Role</span>
+            </div>
+            {getRoleBadge()}
+          </div>
+          <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle className="h-4 w-4 text-text-muted" />
+              <span className="text-sm font-medium text-text">Verification</span>
+            </div>
+            {getVerificationBadge()}
+          </div>
+        </div>
+
+        {/* Social Links */}
+        {Object.keys(member.social_links).length > 0 && (
+          <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+            <div className="flex items-center gap-2 mb-3">
+              <Share2 className="h-5 w-5 text-text-muted" />
+              <span className="font-medium text-text">Social Links</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(member.social_links).map(([platform, handle]) => (
+                <Badge key={platform} variant="outline" className="text-xs">
+                  {platform}: {handle}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Flags */}
+        {member.flags.length > 0 && (
+          <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Flag className="h-5 w-5 text-red-400" />
+              <span className="font-medium text-red-300">Flags & Issues</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {member.flags.map((flag) => (
+                <Badge key={flag} variant="destructive" className="text-xs">
+                  {flag.replace('_', ' ')}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Notes */}
+        {member.notes && (
+          <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <MessageCircle className="h-5 w-5 text-blue-400" />
+              <span className="font-medium text-blue-300">Notes</span>
+            </div>
+            <p className="text-sm text-blue-200">{member.notes}</p>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex gap-3 pt-2 border-t border-line-soft">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onView}
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            View
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onEdit}
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Edit
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onMore}
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
 }
 
-export default function MembersPage() {
-  const membersService = new MembersManagementService();
-  const members = membersService.getMembers();
-  const stats = membersService.getStats();
+// ----------------------
+// Members Detail View Component
+// Purpose: Single card view with filtering and quick stats
+// Note: Similar to verification page with member-specific data
+// ----------------------
+function MembersDetailView({
+  members,
+  selectedMemberId,
+  onMemberSelect,
+  onView,
+  onEdit,
+  onMore,
+  className = ""
+}: {
+  members: Member[];
+  selectedMemberId?: string;
+  onMemberSelect?: (memberId: string) => void;
+  onView?: (memberId: string) => void;
+  onEdit?: (memberId: string) => void;
+  onMore?: (memberId: string) => void;
+  className?: string;
+}) {
+  const selectedMember = members.find(m => m.id === selectedMemberId) || members[0];
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      active: { variant: "default" as const, color: "text-green-600", bgColor: "bg-green-100" },
+      inactive: { variant: "secondary" as const, color: "text-gray-600", bgColor: "bg-gray-100" },
+      banned: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" },
+      suspended: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" },
+      pending: { variant: "outline" as const, color: "text-yellow-600", bgColor: "bg-yellow-100" }
+    };
+    return statusConfig[status as keyof typeof statusConfig] || statusConfig.inactive;
+  };
+
+  const getRoleBadge = (role: string) => {
+    const roleConfig = {
+      admin: { variant: "default" as const, color: "text-red-600", bgColor: "bg-red-100" },
+      moderator: { variant: "default" as const, color: "text-blue-600", bgColor: "bg-blue-100" },
+      creator: { variant: "default" as const, color: "text-purple-600", bgColor: "bg-purple-100" },
+      subscriber: { variant: "secondary" as const, color: "text-pink-600", bgColor: "bg-pink-100" },
+      user: { variant: "outline" as const, color: "text-gray-600", bgColor: "bg-gray-100" }
+    };
+    return roleConfig[role as keyof typeof roleConfig] || roleConfig.user;
+  };
+
+  const statusInfo = getStatusBadge(selectedMember?.status || 'inactive');
+  const roleInfo = getRoleBadge(selectedMember?.role || 'user');
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Members Management</h1>
-          <p className="text-muted-foreground">Manage platform members, roles, and permissions</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <Filter className="h-4 w-4 mr-2" />
-            Filters
-          </Button>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Member
-          </Button>
-        </div>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Members</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalMembers}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.activeMembers} active, {stats.newMembers} new this month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Premium Members</CardTitle>
-            <Crown className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.premiumMembers}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.verifiedMembers} verified
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${stats.totalEarnings.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
-              From {stats.topCreators} top creators
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Moderators</CardTitle>
-            <Shield className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.moderators}</div>
-            <p className="text-xs text-muted-foreground">
-              Platform moderators
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Search and Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search members, emails, or usernames..."
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-            </Button>
-            <Button variant="outline">
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Refresh
-            </Button>
+    <div className={`space-y-6 ${className}`}>
+      {/* Filter Section */}
+      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <label className="text-sm font-medium text-text-muted mb-2 block">Select Member</label>
+            <Select value={selectedMemberId || members[0]?.id} onValueChange={onMemberSelect}>
+              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
+                <SelectValue placeholder="Choose a member..." />
+              </SelectTrigger>
+              <SelectContent className="bg-surface-elev2 border-line-soft">
+                {members.map((member) => (
+                  <SelectItem 
+                    key={member.id} 
+                    value={member.id}
+                    className="text-text hover:bg-surface-elev1"
+                  >
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      <span>{member.name}</span>
+                      <Badge 
+                        variant={member.status === 'active' ? 'default' : 'secondary'}
+                        className="text-xs"
+                      >
+                        {member.status}
+                      </Badge>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Members Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {members.map((member) => {
-          const memberCard = new MemberCardComponent(member);
-          return <div key={member.id}>{memberCard.render()}</div>;
-        })}
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Member Card */}
+        <div className="lg:col-span-2">
+          {selectedMember ? (
+            <ProfessionalMemberCard
+              member={selectedMember}
+              onView={() => onView?.(selectedMember.id)}
+              onEdit={() => onEdit?.(selectedMember.id)}
+              onMore={() => onMore?.(selectedMember.id)}
+            />
+          ) : (
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-8 text-center">
+              <User className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <p className="text-gray-400">No member selected</p>
+            </div>
+          )}
+        </div>
+
+        {/* Right: Quick Stats */}
+        <div className="space-y-4">
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Stats</CardTitle>
+              <CardDescription className="text-text-muted">Key information at a glance</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Status */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Status</span>
+                </div>
+                <div className={`px-2 py-1 rounded text-xs font-semibold ${statusInfo.bgColor} ${statusInfo.color}`}>
+                  {selectedMember?.status || 'N/A'}
+                </div>
+              </div>
+
+              {/* Role */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Role</span>
+                </div>
+                <div className={`px-2 py-1 rounded text-xs font-semibold ${roleInfo.bgColor} ${roleInfo.color}`}>
+                  {selectedMember?.role || 'N/A'}
+                </div>
+              </div>
+
+              {/* Posts Count */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <FileImage className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Posts</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedMember?.stats?.posts_count || 0}
+                </span>
+              </div>
+
+              {/* Followers */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Followers</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedMember?.stats?.followers_count?.toLocaleString() || 0}
+                </span>
+              </div>
+
+              {/* Earnings */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Earnings</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  ${selectedMember?.stats?.earnings?.toFixed(2) || '0.00'}
+                </span>
+              </div>
+
+              {/* Location */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Location</span>
+                </div>
+                <span className="text-sm text-text-muted">
+                  {selectedMember?.city}, {selectedMember?.country}
+                </span>
+              </div>
+
+              {/* Join Date */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Joined</span>
+                </div>
+                <span className="text-sm text-text-muted">
+                  {selectedMember?.created_at ? new Date(selectedMember.created_at).toLocaleDateString() : 'N/A'}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Additional Actions */}
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onView?.(selectedMember?.id || '')}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                View Profile
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onEdit?.(selectedMember?.id || '')}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Member
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
+}
+
+// ----------------------
+// Members Page Client Component
+// Purpose: Manages state and interactions for the members page
+// ----------------------
+function MembersPageClient() {
+  const [selectedMemberId, setSelectedMemberId] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  const membersService = new MembersManagementService();
+  const allMembers = membersService.getMembers();
+  const stats = membersService.getStats();
+
+  // Filter members based on search and status
+  const filteredMembers = allMembers.filter(member => {
+    const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         member.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         member.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || member.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  // Set default selected member
+  useEffect(() => {
+    if (filteredMembers.length > 0 && !selectedMemberId) {
+      setSelectedMemberId(filteredMembers[0].id);
+    }
+  }, [filteredMembers, selectedMemberId]);
+
+  const handleMemberSelect = (memberId: string) => {
+    setSelectedMemberId(memberId);
+  };
+
+  const handleView = (memberId: string) => {
+    console.log('View member:', memberId);
+  };
+
+  const handleEdit = (memberId: string) => {
+    console.log('Edit member:', memberId);
+  };
+
+  const handleMore = (memberId: string) => {
+    console.log('More actions for member:', memberId);
+  };
+
+  const handleRefresh = () => {
+    console.log('Refresh members');
+  };
+
+  const handleExport = () => {
+    console.log('Export members');
+  };
+
+  const statsCards = (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <MetricCard
+        title="Total Members"
+        value={stats.totalMembers}
+        growth={12}
+        icon={Users}
+        format="number"
+      />
+      <MetricCard
+        title="Premium Members"
+        value={stats.premiumMembers}
+        growth={8}
+        icon={Crown}
+        format="number"
+      />
+      <MetricCard
+        title="Total Earnings"
+        value={stats.totalEarnings}
+        growth={15}
+        icon={DollarSign}
+        format="currency"
+      />
+      <MetricCard
+        title="Moderators"
+        value={stats.moderators}
+        growth={0}
+        icon={Shield}
+        format="number"
+      />
+    </div>
+  );
+
+  const filters = (
+    <div className="flex items-center gap-2">
+      <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
+          <SelectValue placeholder="Status" />
+        </SelectTrigger>
+        <SelectContent className="bg-surface-elev2 border-line-soft">
+          <SelectItem value="all" className="text-text hover:bg-surface-elev1">All Status</SelectItem>
+          <SelectItem value="active" className="text-text hover:bg-surface-elev1">Active</SelectItem>
+          <SelectItem value="inactive" className="text-text hover:bg-surface-elev1">Inactive</SelectItem>
+          <SelectItem value="banned" className="text-text hover:bg-surface-elev1">Banned</SelectItem>
+          <SelectItem value="suspended" className="text-text hover:bg-surface-elev1">Suspended</SelectItem>
+          <SelectItem value="pending" className="text-text hover:bg-surface-elev1">Pending</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
+  return (
+    <AdminPageTemplate
+      title="Members Management"
+      description="Manage platform members, roles, and permissions"
+      icon={<Users className="h-6 w-6" />}
+      searchPlaceholder="Search members, emails, or usernames..."
+      searchValue={searchTerm}
+      onSearchChange={setSearchTerm}
+      showSearch={true}
+      showFilters={true}
+      showRefresh={true}
+      showExport={true}
+      onRefresh={handleRefresh}
+      onExport={handleExport}
+      filters={filters}
+      stats={statsCards}
+    >
+      <MembersDetailView
+        members={filteredMembers}
+        selectedMemberId={selectedMemberId}
+        onMemberSelect={handleMemberSelect}
+        onView={handleView}
+        onEdit={handleEdit}
+        onMore={handleMore}
+      />
+    </AdminPageTemplate>
+  );
+}
+
+export default function MembersPage() {
+  return <MembersPageClient />;
 }
