@@ -500,95 +500,152 @@ export default function EventsPage() {
   const stats = eventsService.getEventStats();
 
   return (
-    <div className="space-y-6">
-      {/* Header with Pills */}
-      <div className="space-y-4">
-        <div>
-          <h1 className="text-3xl font-bold">Events & Scheduling</h1>
-          <p className="text-muted-foreground">Manage live events, scheduled content, and platform events</p>
+    <div className="p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Events & Scheduling</h1>
+            <p className="text-neutral-400">Manage live events, scheduled content, and platform events</p>
+          </div>
+          <Badge className="bg-orange-500 text-white">Super Admin</Badge>
         </div>
-        <AdminPillNavigationComponent />
+      </div>
+
+      {/* Key Performance Indicators */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-white mb-2">Events Overview</h2>
+        <p className="text-neutral-400 mb-6">Live events, scheduled content, and platform metrics</p>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Total Events</p>
+                <p className="text-2xl font-bold text-white">{stats.total}</p>
+                <div className="flex items-center gap-1 text-sm text-blue-500">
+                  <Calendar className="h-4 w-4" />
+                  +15.3% from last month
+                </div>
+              </div>
+              <Calendar className="h-8 w-8 text-blue-500" />
+            </div>
+          </div>
+          
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Live Now</p>
+                <p className="text-2xl font-bold text-white">{stats.live}</p>
+                <div className="flex items-center gap-1 text-sm text-red-500">
+                  <Play className="h-4 w-4" />
+                  Currently streaming
+                </div>
+              </div>
+              <Play className="h-8 w-8 text-red-500" />
+            </div>
+          </div>
+          
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Scheduled</p>
+                <p className="text-2xl font-bold text-white">{stats.scheduled}</p>
+                <div className="flex items-center gap-1 text-sm text-orange-500">
+                  <Clock className="h-4 w-4" />
+                  Upcoming events
+                </div>
+              </div>
+              <Clock className="h-8 w-8 text-orange-500" />
+            </div>
+          </div>
+          
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Completed</p>
+                <p className="text-2xl font-bold text-white">{stats.completed}</p>
+                <div className="flex items-center gap-1 text-sm text-green-500">
+                  <CheckCircle className="h-4 w-4" />
+                  +8.2% from last month
+                </div>
+              </div>
+              <CheckCircle className="h-8 w-8 text-green-500" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Events Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <Card className="bg-neutral-800 border-neutral-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Video className="h-5 w-5 text-blue-500" />
+              Live Events Timeline
+            </CardTitle>
+            <CardDescription className="text-neutral-400">Live events and streaming activity over time</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
+              <div className="text-center">
+                <Video className="h-12 w-12 text-neutral-400 mx-auto mb-2" />
+                <p className="text-neutral-400">Live events chart</p>
+                <p className="text-sm text-neutral-500">Line chart showing live events over time</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-neutral-800 border-neutral-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-green-500" />
+              Event Categories
+            </CardTitle>
+            <CardDescription className="text-neutral-400">Distribution of events by category</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
+              <div className="text-center">
+                <Calendar className="h-12 w-12 text-neutral-400 mx-auto mb-2" />
+                <p className="text-neutral-400">Event categories chart</p>
+                <p className="text-sm text-neutral-500">Pie chart showing event distribution</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
           <Input 
             placeholder="Search events and scheduled content..."
-            className="pl-10"
+            className="pl-10 bg-neutral-800 border-neutral-700 text-white"
           />
         </div>
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button variant="outline" className="flex items-center gap-2 bg-neutral-800 border-neutral-700 text-white hover:bg-neutral-700">
           <Filter className="h-4 w-4" />
           Filters
         </Button>
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white">
           <Plus className="h-4 w-4" />
           Create Event
         </Button>
       </div>
 
-      {/* Event Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Events</p>
-                <p className="text-2xl font-bold">{stats.total}</p>
-              </div>
-              <Calendar className="h-8 w-8 text-muted-foreground" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Live Now</p>
-                <p className="text-2xl font-bold text-red-600">{stats.live}</p>
-              </div>
-              <Play className="h-8 w-8 text-red-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Scheduled</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.scheduled}</p>
-              </div>
-              <Clock className="h-8 w-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
-                <p className="text-2xl font-bold text-green-600">${stats.totalRevenue}</p>
-              </div>
-              <DollarSign className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Events Tabs */}
       <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="all">All Events</TabsTrigger>
-          <TabsTrigger value="live">Live Streams</TabsTrigger>
-          <TabsTrigger value="creator">Creator Events</TabsTrigger>
-          <TabsTrigger value="platform">Platform Events</TabsTrigger>
-          <TabsTrigger value="scheduled">Scheduled Content</TabsTrigger>
-          <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-6 bg-neutral-800 border-neutral-700">
+          <TabsTrigger value="all" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">All Events</TabsTrigger>
+          <TabsTrigger value="live" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Live Streams</TabsTrigger>
+          <TabsTrigger value="creator" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Creator Events</TabsTrigger>
+          <TabsTrigger value="platform" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Platform Events</TabsTrigger>
+          <TabsTrigger value="scheduled" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Scheduled Content</TabsTrigger>
+          <TabsTrigger value="upcoming" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Upcoming</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">

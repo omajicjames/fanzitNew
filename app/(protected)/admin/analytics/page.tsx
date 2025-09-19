@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { AdminPillNavigationComponent } from "@src/components/admin/AdminPillNavigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
@@ -17,7 +18,8 @@ import {
   Calendar,
   Download,
   Filter,
-  RefreshCw
+  RefreshCw,
+  Clock
 } from "lucide-react";
 
 // ----------------------
@@ -123,66 +125,51 @@ class AnalyticsService {
   }
 }
 
-class MetricCardComponent {
-  private title: string;
-  private value: number;
-  private growth: number;
-  private icon: React.ComponentType<any>;
-  private format: 'number' | 'currency' | 'percentage';
+interface MetricCardProps {
+  title: string;
+  value: number;
+  growth: number;
+  icon: React.ComponentType<any>;
+  format?: 'number' | 'currency' | 'percentage';
+}
 
-  constructor(
-    title: string, 
-    value: number, 
-    growth: number, 
-    icon: React.ComponentType<any>,
-    format: 'number' | 'currency' | 'percentage' = 'number'
-  ) {
-    this.title = title;
-    this.value = value;
-    this.growth = growth;
-    this.icon = icon;
-    this.format = format;
-  }
-
-  private formatValue(): string {
-    switch (this.format) {
+function MetricCardComponent({ title, value, growth, icon: Icon, format = 'number' }: MetricCardProps) {
+  const formatValue = (): string => {
+    switch (format) {
       case 'currency':
-        return `$${this.value.toLocaleString()}`;
+        return `$${value.toLocaleString()}`;
       case 'percentage':
-        return `${this.value}%`;
+        return `${value}%`;
       default:
-        return this.value.toLocaleString();
+        return value.toLocaleString();
     }
-  }
+  };
 
-  public render() {
-    const Icon = this.icon;
-    const isPositive = this.growth > 0;
-    
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">{this.title}</p>
-              <p className="text-2xl font-bold">{this.formatValue()}</p>
-              <div className={`flex items-center gap-1 text-sm ${
-                isPositive ? 'text-green-600' : 'text-red-600'
-              }`}>
-                {isPositive ? (
-                  <TrendingUp className="h-4 w-4" />
-                ) : (
-                  <TrendingDown className="h-4 w-4" />
-                )}
-                {Math.abs(this.growth)}%
-              </div>
+  const isPositive = growth > 0;
+  
+  return (
+    <Card className="bg-neutral-800 border-neutral-700">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">{title}</p>
+            <p className="text-2xl font-bold text-white">{formatValue()}</p>
+            <div className={`flex items-center gap-1 text-sm ${
+              isPositive ? 'text-green-500' : 'text-red-500'
+            }`}>
+              {isPositive ? (
+                <TrendingUp className="h-4 w-4" />
+              ) : (
+                <TrendingDown className="h-4 w-4" />
+              )}
+              +{Math.abs(growth)}% from last month
             </div>
-            <Icon className="h-8 w-8 text-muted-foreground" />
           </div>
-        </CardContent>
-      </Card>
-    );
-  }
+          <Icon className="h-8 w-8 text-neutral-400" />
+        </div>
+      </CardContent>
+    </Card>
+  );
 }
 
 class CohortTableComponent {
@@ -243,69 +230,191 @@ export default function AnalyticsPage() {
   const cohortData = analyticsService.getCohortData();
 
   return (
-    <div className="space-y-6">
-      {/* Header with Pills */}
-      <div className="space-y-4">
-        <div>
-          <h1 className="text-3xl font-bold">Analytics</h1>
-          <p className="text-muted-foreground">Platform performance and user insights</p>
+    <div className="p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Analytics Dashboard</h1>
+            <p className="text-neutral-400">Platform performance and user insights</p>
+          </div>
+          <Badge className="bg-orange-500 text-white">Super Admin</Badge>
         </div>
-        <AdminPillNavigationComponent />
       </div>
 
-      {/* Controls */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex gap-2">
-          <Button variant="outline" className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            Last 30 days
-          </Button>
-          <Button variant="outline" className="flex items-center gap-2">
-            <Filter className="h-4 w-4" />
-            Filters
-          </Button>
-          <Button variant="outline" className="flex items-center gap-2">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
+      {/* Analytics Overview Metrics */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-white mb-2">Analytics Overview</h2>
+        <p className="text-neutral-400 mb-6">Platform performance and user insights</p>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <MetricCardComponent
+            title="Page Views"
+            value={2540000}
+            growth={18.5}
+            icon={Eye}
+            format="number"
+          />
+          <MetricCardComponent
+            title="Engagement Rate"
+            value={78.5}
+            growth={5.2}
+            icon={Heart}
+            format="percentage"
+          />
+          <MetricCardComponent
+            title="Conversion Rate"
+            value={12.3}
+            growth={2.1}
+            icon={TrendingUp}
+            format="percentage"
+          />
+          <MetricCardComponent
+            title="Avg. Session Time"
+            value={4.2}
+            growth={8.7}
+            icon={Clock}
+            format="number"
+          />
         </div>
-        <div className="flex-1" />
-        <Button variant="outline" className="flex items-center gap-2">
-          <RefreshCw className="h-4 w-4" />
-          Refresh
-        </Button>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCardComponent
-          title="Total Users"
-          value={currentAnalytics.totalUsers}
-          growth={12.5}
-          icon={Users}
-          format="number"
-        />
-        <MetricCardComponent
-          title="Active Users"
-          value={currentAnalytics.activeUsers}
-          growth={8.3}
-          icon={Eye}
-          format="number"
-        />
-        <MetricCardComponent
-          title="Total Revenue"
-          value={currentAnalytics.totalRevenue}
-          growth={currentAnalytics.revenueGrowth}
-          icon={DollarSign}
-          format="currency"
-        />
-        <MetricCardComponent
-          title="Retention Rate"
-          value={currentAnalytics.retentionRate}
-          growth={3.3}
-          icon={TrendingUp}
-          format="percentage"
-        />
+      {/* Analytics Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="bg-neutral-800 border-neutral-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-green-500" />
+              Traffic Analytics
+            </CardTitle>
+            <CardDescription className="text-neutral-400">Page views and user sessions over time</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
+              <div className="text-center">
+                <BarChart3 className="h-12 w-12 text-neutral-400 mx-auto mb-2" />
+                <p className="text-neutral-400">Traffic analytics chart</p>
+                <p className="text-sm text-neutral-500">Line chart showing daily page views</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-neutral-800 border-neutral-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-blue-500" />
+              Engagement Metrics
+            </CardTitle>
+            <CardDescription className="text-neutral-400">User engagement and interaction rates</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
+              <div className="text-center">
+                <TrendingUp className="h-12 w-12 text-neutral-400 mx-auto mb-2" />
+                <p className="text-neutral-400">Engagement metrics chart</p>
+                <p className="text-sm text-neutral-500">Bar chart showing engagement rates</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Analytics Data Tables */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="bg-neutral-800 border-neutral-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Users className="h-5 w-5 text-purple-500" />
+              Top Performing Content
+            </CardTitle>
+            <CardDescription className="text-neutral-400">Most viewed and engaged content</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 bg-neutral-700/50 rounded-lg">
+                <div>
+                  <p className="text-white font-medium">Morning Workout Routine</p>
+                  <p className="text-sm text-neutral-400">by sarah_fitness</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-green-500 font-semibold">15.4K views</p>
+                  <p className="text-sm text-neutral-400">+12.5%</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-neutral-700/50 rounded-lg">
+                <div>
+                  <p className="text-white font-medium">Gourmet Pasta Recipe</p>
+                  <p className="text-sm text-neutral-400">by chef_marco</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-green-500 font-semibold">8.9K views</p>
+                  <p className="text-sm text-neutral-400">+8.2%</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-neutral-700/50 rounded-lg">
+                <div>
+                  <p className="text-white font-medium">Exclusive Behind-the-Scenes</p>
+                  <p className="text-sm text-neutral-400">by sarah_fitness</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-green-500 font-semibold">6.2K views</p>
+                  <p className="text-sm text-neutral-400">+15.3%</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-neutral-800 border-neutral-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <MessageCircle className="h-5 w-5 text-orange-500" />
+              User Activity
+            </CardTitle>
+            <CardDescription className="text-neutral-400">Recent user interactions and activity</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 bg-neutral-700/50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <Users className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">New user registration</p>
+                    <p className="text-sm text-neutral-400">2 minutes ago</p>
+                  </div>
+                </div>
+                <Badge className="bg-green-500 text-white">+1</Badge>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-neutral-700/50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                    <Heart className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">Content liked</p>
+                    <p className="text-sm text-neutral-400">5 minutes ago</p>
+                  </div>
+                </div>
+                <Badge className="bg-blue-500 text-white">+1</Badge>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-neutral-700/50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                    <MessageCircle className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">New comment posted</p>
+                    <p className="text-sm text-neutral-400">8 minutes ago</p>
+                  </div>
+                </div>
+                <Badge className="bg-orange-500 text-white">+1</Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Detailed Analytics Tabs */}

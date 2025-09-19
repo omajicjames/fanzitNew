@@ -372,75 +372,132 @@ export default function SystemManagementPage() {
   const stats = systemService.getSystemStats();
 
   return (
-    <div className="space-y-6">
-      {/* Header with Pills */}
-      <div className="space-y-4">
-        <div>
-          <h1 className="text-3xl font-bold">System Management</h1>
-          <p className="text-muted-foreground">Monitor system health, backups, and maintenance</p>
+    <div className="p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white">System Management</h1>
+            <p className="text-neutral-400">Monitor system health, backups, and maintenance</p>
+          </div>
+          <Badge className="bg-orange-500 text-white">Super Admin</Badge>
         </div>
-        <AdminPillNavigationComponent />
       </div>
 
-      {/* System Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
+      {/* Key Performance Indicators */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-white mb-2">System Overview</h2>
+        <p className="text-neutral-400 mb-6">System health, performance, and maintenance status</p>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Components</p>
-                <p className="text-2xl font-bold">{stats.totalComponents}</p>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Total Components</p>
+                <p className="text-2xl font-bold text-white">{stats.totalComponents}</p>
+                <div className="flex items-center gap-1 text-sm text-blue-500">
+                  <Server className="h-4 w-4" />
+                  All systems
+                </div>
               </div>
-              <Server className="h-8 w-8 text-muted-foreground" />
+              <Server className="h-8 w-8 text-blue-500" />
+            </div>
+          </div>
+          
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Healthy</p>
+                <p className="text-2xl font-bold text-white">{stats.healthyComponents}</p>
+                <div className="flex items-center gap-1 text-sm text-green-500">
+                  <CheckCircle className="h-4 w-4" />
+                  +5.2% from last week
+                </div>
+              </div>
+              <CheckCircle className="h-8 w-8 text-green-500" />
+            </div>
+          </div>
+          
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Warnings</p>
+                <p className="text-2xl font-bold text-white">{stats.warningComponents}</p>
+                <div className="flex items-center gap-1 text-sm text-orange-500">
+                  <AlertTriangle className="h-4 w-4" />
+                  Needs attention
+                </div>
+              </div>
+              <AlertTriangle className="h-8 w-8 text-orange-500" />
+            </div>
+          </div>
+          
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Uptime</p>
+                <p className="text-2xl font-bold text-white">99.9%</p>
+                <div className="flex items-center gap-1 text-sm text-green-500">
+                  <Clock className="h-4 w-4" />
+                  Last 30 days
+                </div>
+              </div>
+              <Clock className="h-8 w-8 text-green-500" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* System Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <Card className="bg-neutral-800 border-neutral-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Activity className="h-5 w-5 text-blue-500" />
+              System Performance
+            </CardTitle>
+            <CardDescription className="text-neutral-400">CPU, memory, and disk usage over time</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
+              <div className="text-center">
+                <Activity className="h-12 w-12 text-neutral-400 mx-auto mb-2" />
+                <p className="text-neutral-400">System performance chart</p>
+                <p className="text-sm text-neutral-500">Line chart showing system metrics</p>
+              </div>
             </div>
           </CardContent>
         </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Healthy</p>
-                <p className="text-2xl font-bold text-green-600">{stats.healthyComponents}</p>
+
+        <Card className="bg-neutral-800 border-neutral-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Database className="h-5 w-5 text-green-500" />
+              Backup Status
+            </CardTitle>
+            <CardDescription className="text-neutral-400">Recent backups and storage usage</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
+              <div className="text-center">
+                <Database className="h-12 w-12 text-neutral-400 mx-auto mb-2" />
+                <p className="text-neutral-400">Backup status chart</p>
+                <p className="text-sm text-neutral-500">Bar chart showing backup history</p>
               </div>
-              <CheckCircle className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Warnings</p>
-                <p className="text-2xl font-bold text-yellow-600">{stats.warningComponents}</p>
-              </div>
-              <AlertTriangle className="h-8 w-8 text-yellow-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Avg Uptime</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.avgUptime}%</p>
-              </div>
-              <Activity className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>
       </div>
+
 
       {/* System Tabs */}
       <Tabs defaultValue="status" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="status">System Status</TabsTrigger>
-          <TabsTrigger value="backups">Backups</TabsTrigger>
-          <TabsTrigger value="logs">Logs</TabsTrigger>
-          <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-5 bg-neutral-800 border-neutral-700">
+          <TabsTrigger value="status" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">System Status</TabsTrigger>
+          <TabsTrigger value="backups" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Backups</TabsTrigger>
+          <TabsTrigger value="logs" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Logs</TabsTrigger>
+          <TabsTrigger value="maintenance" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Maintenance</TabsTrigger>
+          <TabsTrigger value="settings" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="status" className="space-y-4">

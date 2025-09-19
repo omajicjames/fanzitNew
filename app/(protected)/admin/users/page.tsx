@@ -162,11 +162,11 @@ class UserCardComponent {
 
   public render() {
     return (
-      <Card className="hover:shadow-lg transition-shadow duration-200">
+      <Card className="bg-neutral-800 border-neutral-700 hover:shadow-lg transition-shadow duration-200">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+              <div className="w-12 h-12 rounded-full bg-neutral-700 flex items-center justify-center overflow-hidden">
                 <img 
                   src={this.user.avatar} 
                   alt={this.user.username}
@@ -174,13 +174,13 @@ class UserCardComponent {
                 />
               </div>
               <div>
-                <CardTitle className="text-lg flex items-center gap-2">
+                <CardTitle className="text-lg flex items-center gap-2 text-white">
                   {this.user.username}
                   {this.user.isVerified && (
-                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <CheckCircle className="h-4 w-4 text-green-500" />
                   )}
                 </CardTitle>
-                <CardDescription>{this.user.email}</CardDescription>
+                <CardDescription className="text-neutral-400">{this.user.email}</CardDescription>
               </div>
             </div>
             <div className="flex gap-2">
@@ -193,38 +193,38 @@ class UserCardComponent {
         <CardContent className="space-y-4">
           {this.user.role === 'creator' && (
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-3 bg-muted/50 rounded-lg">
-                <div className="flex items-center justify-center gap-1 text-green-600">
+              <div className="text-center p-3 bg-neutral-700/50 rounded-lg">
+                <div className="flex items-center justify-center gap-1 text-green-500">
                   <DollarSign className="h-4 w-4" />
                   <span className="font-semibold">${this.user.earnings.toLocaleString()}</span>
                 </div>
-                <p className="text-xs text-muted-foreground">Earnings</p>
+                <p className="text-xs text-neutral-400">Earnings</p>
               </div>
-              <div className="text-center p-3 bg-muted/50 rounded-lg">
-                <div className="flex items-center justify-center gap-1 text-blue-600">
+              <div className="text-center p-3 bg-neutral-700/50 rounded-lg">
+                <div className="flex items-center justify-center gap-1 text-blue-500">
                   <Users className="h-4 w-4" />
                   <span className="font-semibold">{this.user.subscribers.toLocaleString()}</span>
                 </div>
-                <p className="text-xs text-muted-foreground">Subscribers</p>
+                <p className="text-xs text-neutral-400">Subscribers</p>
               </div>
             </div>
           )}
           
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <div className="flex items-center justify-between text-sm text-neutral-400">
             <span>Joined: {new Date(this.user.joinDate).toLocaleDateString()}</span>
             <span>Last active: {this.user.lastActive}</span>
           </div>
           
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1">
+            <Button variant="outline" size="sm" className="flex-1 bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
               <Eye className="h-4 w-4 mr-1" />
               View
             </Button>
-            <Button variant="outline" size="sm" className="flex-1">
+            <Button variant="outline" size="sm" className="flex-1 bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
               <Edit className="h-4 w-4 mr-1" />
               Edit
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </div>
@@ -243,89 +243,104 @@ export default function UserManagementPage() {
   const topEarners = userService.getTopEarners(5);
 
   return (
-    <div className="space-y-6">
-      {/* Header with Pills */}
-      <div className="space-y-4">
-        <div>
-          <h1 className="text-3xl font-bold">User Management</h1>
-          <p className="text-muted-foreground">Manage creators, subscribers, and user verification</p>
+    <div className="p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white">User Management</h1>
+            <p className="text-neutral-400">Manage creators, subscribers, and user verification</p>
+          </div>
+          <Badge className="bg-orange-500 text-white">Super Admin</Badge>
         </div>
-        <AdminPillNavigationComponent />
+      </div>
+
+      {/* Key Performance Indicators */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-white mb-2">Key Performance Indicators</h2>
+        <p className="text-neutral-400 mb-6">User metrics and statistics</p>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Total Users</p>
+                <p className="text-2xl font-bold text-white">12,847</p>
+                <div className="flex items-center gap-1 text-sm text-green-500">
+                  <TrendingUp className="h-4 w-4" />
+                  +12.5% from last month
+                </div>
+              </div>
+              <Users className="h-8 w-8 text-neutral-400" />
+            </div>
+          </div>
+
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Verified Creators</p>
+                <p className="text-2xl font-bold text-white">1,234</p>
+                <div className="flex items-center gap-1 text-sm text-green-500">
+                  <TrendingUp className="h-4 w-4" />
+                  +8.2% from last month
+                </div>
+              </div>
+              <UserCheck className="h-8 w-8 text-neutral-400" />
+            </div>
+          </div>
+
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Active Subscribers</p>
+                <p className="text-2xl font-bold text-white">45,678</p>
+                <div className="flex items-center gap-1 text-sm text-green-500">
+                  <TrendingUp className="h-4 w-4" />
+                  +15.3% from last month
+                </div>
+              </div>
+              <Users className="h-8 w-8 text-neutral-400" />
+            </div>
+          </div>
+
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Pending Verification</p>
+                <p className="text-2xl font-bold text-white">89</p>
+                <div className="flex items-center gap-1 text-sm text-red-500">
+                  <AlertTriangle className="h-4 w-4" />
+                  -5.2% from last month
+                </div>
+              </div>
+              <AlertTriangle className="h-8 w-8 text-neutral-400" />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="mb-6 flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
           <Input 
             placeholder="Search users by username or email..."
-            className="pl-10"
+            className="pl-10 bg-neutral-800 border-neutral-700 text-white"
           />
         </div>
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button variant="outline" className="flex items-center gap-2 bg-neutral-800 border-neutral-700 text-white hover:bg-neutral-700">
           <Filter className="h-4 w-4" />
           Filters
         </Button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Users</p>
-                <p className="text-2xl font-bold">{allUsers.length}</p>
-              </div>
-              <Users className="h-8 w-8 text-muted-foreground" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Creators</p>
-                <p className="text-2xl font-bold">{creators.length}</p>
-              </div>
-              <Crown className="h-8 w-8 text-muted-foreground" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Subscribers</p>
-                <p className="text-2xl font-bold">{subscribers.length}</p>
-              </div>
-              <Users className="h-8 w-8 text-muted-foreground" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Pending Verification</p>
-                <p className="text-2xl font-bold">{pendingVerification.length}</p>
-              </div>
-              <AlertTriangle className="h-8 w-8 text-muted-foreground" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* User Tabs */}
       <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="all">All Users</TabsTrigger>
-          <TabsTrigger value="creators">Creators</TabsTrigger>
-          <TabsTrigger value="subscribers">Subscribers</TabsTrigger>
-          <TabsTrigger value="pending">Pending</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 bg-neutral-800 border-neutral-700">
+          <TabsTrigger value="all" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">All Users</TabsTrigger>
+          <TabsTrigger value="creators" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Creators</TabsTrigger>
+          <TabsTrigger value="subscribers" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Subscribers</TabsTrigger>
+          <TabsTrigger value="pending" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Pending</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">

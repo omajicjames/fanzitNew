@@ -248,25 +248,25 @@ class SecurityEventCardComponent {
 
   public render() {
     return (
-      <Card className="hover:shadow-lg transition-shadow duration-200">
+      <Card className="bg-neutral-800 border-neutral-700 hover:shadow-lg transition-shadow duration-200">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
+              <div className="w-12 h-12 rounded-lg bg-neutral-700 flex items-center justify-center">
                 {this.getTypeIcon()}
               </div>
               <div className="flex-1 min-w-0">
-                <CardTitle className="text-lg flex items-center gap-2">
+                <CardTitle className="text-lg flex items-center gap-2 text-white">
                   {this.event.username}
                 </CardTitle>
-                <CardDescription className="line-clamp-2">
+                <CardDescription className="line-clamp-2 text-neutral-400">
                   {this.event.description}
                 </CardDescription>
                 <div className="flex items-center gap-2 mt-2">
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs bg-neutral-700 border-neutral-600 text-neutral-300">
                     {this.event.type.replace('_', ' ')}
                   </Badge>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs bg-neutral-700 border-neutral-600 text-neutral-300">
                     {this.event.location}
                   </Badge>
                 </div>
@@ -275,12 +275,12 @@ class SecurityEventCardComponent {
             <div className="flex gap-2">
               {this.getSeverityBadge()}
               {this.event.resolved ? (
-                <Badge variant="default" className="flex items-center gap-1">
+                <Badge variant="default" className="flex items-center gap-1 bg-green-600 text-white">
                   <CheckCircle className="h-3 w-3" />
                   Resolved
                 </Badge>
               ) : (
-                <Badge variant="secondary" className="flex items-center gap-1">
+                <Badge variant="secondary" className="flex items-center gap-1 bg-neutral-700 text-neutral-300">
                   <Clock className="h-3 w-3" />
                   Pending
                 </Badge>
@@ -292,41 +292,41 @@ class SecurityEventCardComponent {
         <CardContent className="space-y-4">
           {/* Event Details */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <div className="flex items-center justify-center gap-1 text-blue-600">
+            <div className="text-center p-3 bg-neutral-700/50 rounded-lg">
+              <div className="flex items-center justify-center gap-1 text-blue-500">
                 <Activity className="h-4 w-4" />
                 <span className="font-semibold text-sm">{this.event.ipAddress}</span>
               </div>
-              <p className="text-xs text-muted-foreground">IP Address</p>
+              <p className="text-xs text-neutral-400">IP Address</p>
             </div>
-            <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <div className="flex items-center justify-center gap-1 text-green-600">
+            <div className="text-center p-3 bg-neutral-700/50 rounded-lg">
+              <div className="flex items-center justify-center gap-1 text-green-500">
                 <Clock className="h-4 w-4" />
                 <span className="font-semibold text-sm">
                   {new Date(this.event.timestamp).toLocaleTimeString()}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">Time</p>
+              <p className="text-xs text-neutral-400">Time</p>
             </div>
           </div>
 
           {/* User Agent */}
-          <div className="text-sm text-muted-foreground truncate">
+          <div className="text-sm text-neutral-400 truncate">
             {this.event.userAgent}
           </div>
           
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1">
+            <Button variant="outline" size="sm" className="flex-1 bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
               <Eye className="h-4 w-4 mr-1" />
               View Details
             </Button>
             {!this.event.resolved && (
-              <Button variant="outline" size="sm" className="flex-1">
+              <Button variant="outline" size="sm" className="flex-1 bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
                 <CheckCircle className="h-4 w-4 mr-1" />
                 Resolve
               </Button>
             )}
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </div>
@@ -426,93 +426,150 @@ export default function SecurityPage() {
   const stats = securityService.getSecurityStats();
 
   return (
-    <div className="space-y-6">
-      {/* Header with Pills */}
-      <div className="space-y-4">
-        <div>
-          <h1 className="text-3xl font-bold">Security & Privacy</h1>
-          <p className="text-muted-foreground">Monitor security events and manage privacy settings</p>
+    <div className="p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Security & Privacy</h1>
+            <p className="text-neutral-400">Monitor security events and manage privacy settings</p>
+          </div>
+          <Badge className="bg-orange-500 text-white">Super Admin</Badge>
         </div>
-        <AdminPillNavigationComponent />
+      </div>
+
+      {/* Key Performance Indicators */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-white mb-2">Security Overview</h2>
+        <p className="text-neutral-400 mb-6">Security events, threats, and system status</p>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Total Events</p>
+                <p className="text-2xl font-bold text-white">{stats.totalEvents}</p>
+                <div className="flex items-center gap-1 text-sm text-blue-500">
+                  <Activity className="h-4 w-4" />
+                  +8.2% from last week
+                </div>
+              </div>
+              <Activity className="h-8 w-8 text-blue-500" />
+            </div>
+          </div>
+          
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Critical Alerts</p>
+                <p className="text-2xl font-bold text-white">{criticalEvents.length}</p>
+                <div className="flex items-center gap-1 text-sm text-red-500">
+                  <AlertTriangle className="h-4 w-4" />
+                  Requires attention
+                </div>
+              </div>
+              <AlertTriangle className="h-8 w-8 text-red-500" />
+            </div>
+          </div>
+          
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Unresolved</p>
+                <p className="text-2xl font-bold text-white">{unresolvedEvents.length}</p>
+                <div className="flex items-center gap-1 text-sm text-orange-500">
+                  <Clock className="h-4 w-4" />
+                  Pending review
+                </div>
+              </div>
+              <Clock className="h-8 w-8 text-orange-500" />
+            </div>
+          </div>
+          
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">System Status</p>
+                <p className="text-2xl font-bold text-white">Secure</p>
+                <div className="flex items-center gap-1 text-sm text-green-500">
+                  <CheckCircle className="h-4 w-4" />
+                  All systems operational
+                </div>
+              </div>
+              <Shield className="h-8 w-8 text-green-500" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Security Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <Card className="bg-neutral-800 border-neutral-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Activity className="h-5 w-5 text-blue-500" />
+              Security Events Timeline
+            </CardTitle>
+            <CardDescription className="text-neutral-400">Security events over the last 30 days</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
+              <div className="text-center">
+                <Activity className="h-12 w-12 text-neutral-400 mx-auto mb-2" />
+                <p className="text-neutral-400">Security events chart</p>
+                <p className="text-sm text-neutral-500">Line chart showing security events over time</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-neutral-800 border-neutral-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Shield className="h-5 w-5 text-green-500" />
+              Threat Analysis
+            </CardTitle>
+            <CardDescription className="text-neutral-400">Security threats and risk assessment</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
+              <div className="text-center">
+                <Shield className="h-12 w-12 text-neutral-400 mx-auto mb-2" />
+                <p className="text-neutral-400">Threat analysis chart</p>
+                <p className="text-sm text-neutral-500">Pie chart showing threat distribution</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
           <Input 
             placeholder="Search security events..."
-            className="pl-10"
+            className="pl-10 bg-neutral-800 border-neutral-700 text-white"
           />
         </div>
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button variant="outline" className="flex items-center gap-2 bg-neutral-800 border-neutral-700 text-white hover:bg-neutral-700">
           <Filter className="h-4 w-4" />
           Filters
         </Button>
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button variant="outline" className="flex items-center gap-2 bg-neutral-800 border-neutral-700 text-white hover:bg-neutral-700">
           <Download className="h-4 w-4" />
           Export
         </Button>
       </div>
 
-      {/* Security Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Events</p>
-                <p className="text-2xl font-bold">{stats.totalEvents}</p>
-              </div>
-              <Activity className="h-8 w-8 text-muted-foreground" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Unresolved</p>
-                <p className="text-2xl font-bold text-red-600">{stats.unresolvedEvents}</p>
-              </div>
-              <AlertTriangle className="h-8 w-8 text-red-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Critical</p>
-                <p className="text-2xl font-bold text-red-600">{stats.criticalEvents}</p>
-              </div>
-              <Ban className="h-8 w-8 text-red-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Resolved Rate</p>
-                <p className="text-2xl font-bold text-green-600">{stats.resolvedRate}%</p>
-              </div>
-              <CheckCircle className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Security Tabs */}
       <Tabs defaultValue="events" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="events">Security Events</TabsTrigger>
-          <TabsTrigger value="privacy">Privacy Settings</TabsTrigger>
-          <TabsTrigger value="access">Access Control</TabsTrigger>
-          <TabsTrigger value="compliance">Compliance</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 bg-neutral-800 border-neutral-700">
+          <TabsTrigger value="events" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Security Events</TabsTrigger>
+          <TabsTrigger value="privacy" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Privacy Settings</TabsTrigger>
+          <TabsTrigger value="access" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Access Control</TabsTrigger>
+          <TabsTrigger value="compliance" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Compliance</TabsTrigger>
         </TabsList>
 
         <TabsContent value="events" className="space-y-4">

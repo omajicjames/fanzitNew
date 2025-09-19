@@ -281,7 +281,7 @@ function UserManagementPage() {
   // Main Component Render
   // ----------------------
   return (
-    <div className="min-h-screen bg-neutral-950 text-white p-6">
+    <div className="text-white p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-neutral-800 pb-6">

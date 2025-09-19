@@ -28,33 +28,94 @@ function DashboardTab() {
   return (
     <div className="space-y-8">
       {/* ----------------------
-      // KPIs Section
-      // Purpose: Display key performance indicators
+      // Key Performance Indicators
+      // Purpose: Display key performance indicators matching photo design
       // ---------------------- */}
-      <AdminKpis />
+      <div>
+        <h2 className="text-xl font-semibold text-white mb-2">Key Performance Indicators</h2>
+        <p className="text-neutral-400 mb-6">Platform metrics and statistics</p>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Total Users</p>
+                <p className="text-2xl font-bold text-white">12,847</p>
+                <div className="flex items-center gap-1 text-sm text-green-500">
+                  <BarChart3 className="h-4 w-4" />
+                  +12.5% from last month
+                </div>
+              </div>
+              <Users className="h-8 w-8 text-neutral-400" />
+            </div>
+          </div>
+
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Verified Creators</p>
+                <p className="text-2xl font-bold text-white">1,234</p>
+                <div className="flex items-center gap-1 text-sm text-green-500">
+                  <BarChart3 className="h-4 w-4" />
+                  +8.2% from last month
+                </div>
+              </div>
+              <Users className="h-8 w-8 text-neutral-400" />
+            </div>
+          </div>
+
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Total Posts</p>
+                <p className="text-2xl font-bold text-white">45,678</p>
+                <div className="flex items-center gap-1 text-sm text-green-500">
+                  <BarChart3 className="h-4 w-4" />
+                  +15.3% from last month
+                </div>
+              </div>
+              <BarChart3 className="h-8 w-8 text-neutral-400" />
+            </div>
+          </div>
+
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Monthly Revenue</p>
+                <p className="text-2xl font-bold text-white">$89,432</p>
+                <div className="flex items-center gap-1 text-sm text-green-500">
+                  <BarChart3 className="h-4 w-4" />
+                  +23.1% from last month
+                </div>
+              </div>
+              <BarChart3 className="h-8 w-8 text-neutral-400" />
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* ----------------------
       // Analytics Panels
-      // Purpose: Revenue and user analytics
+      // Purpose: Revenue and user analytics matching photo design
       // ---------------------- */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl border border-white/5 bg-white/5 p-6">
+        <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
           <div className="mb-4 flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-emerald-400" />
+            <BarChart3 className="h-5 w-5 text-green-500" />
             <h3 className="text-lg font-semibold text-white">Revenue Analytics</h3>
           </div>
-          <div className="h-64 rounded-lg bg-white/5 flex items-center justify-center">
-            <p className="text-white/60">Chart placeholder - Revenue trends</p>
+          <div className="h-64 rounded-lg bg-neutral-900/50 flex items-center justify-center">
+            <p className="text-neutral-400">Chart placeholder - Revenue trends</p>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-white/5 bg-white/5 p-6">
+        <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
           <div className="mb-4 flex items-center gap-2">
-            <Users className="h-5 w-5 text-blue-400" />
+            <Users className="h-5 w-5 text-blue-500" />
             <h3 className="text-lg font-semibold text-white">User Growth</h3>
           </div>
-          <div className="h-64 rounded-lg bg-white/5 flex items-center justify-center">
-            <p className="text-white/60">Chart placeholder - User growth</p>
+          <div className="h-64 rounded-lg bg-neutral-900/50 flex items-center justify-center">
+            <p className="text-neutral-400">Chart placeholder - User growth</p>
           </div>
         </div>
       </div>
@@ -260,16 +321,16 @@ export default function EnhancedAdminPageClient() {
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* ----------------------
         // Header Section
-        // Purpose: Page title, subtitle, and admin badge
-        // Note: Removed test button - testing moved to dedicated section
+        // Purpose: Page title, subtitle, and admin badge matching photo design
+        // Note: Updated to match the dashboard photo layout
         // ---------------------- */}
         <header className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-white">Admin Dashboard</h1>
-            <p className="text-sm text-muted-foreground">Platform management and operations</p>
+            <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
+            <p className="text-neutral-400">Platform management and operations</p>
           </div>
           
-          <div className="rounded-full bg-amber-500/20 px-3 py-1 text-xs font-medium text-amber-400">
+          <div className="rounded-full bg-orange-500 px-3 py-1 text-xs font-medium text-white">
             Super Admin
           </div>
         </header>

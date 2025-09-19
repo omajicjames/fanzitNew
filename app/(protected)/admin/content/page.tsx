@@ -186,11 +186,11 @@ class ContentCardComponent {
 
   public render() {
     return (
-      <Card className="hover:shadow-lg transition-shadow duration-200">
+      <Card className="bg-neutral-800 border-neutral-700 hover:shadow-lg transition-shadow duration-200">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center overflow-hidden">
+              <div className="w-16 h-16 rounded-lg bg-neutral-700 flex items-center justify-center overflow-hidden">
                 <img 
                   src={this.content.thumbnail} 
                   alt={this.content.title}
@@ -198,13 +198,13 @@ class ContentCardComponent {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <CardTitle className="text-lg truncate flex items-center gap-2">
+                <CardTitle className="text-lg truncate flex items-center gap-2 text-white">
                   {this.getTypeIcon()}
                   {this.content.title}
                 </CardTitle>
-                <CardDescription>by {this.content.creator}</CardDescription>
+                <CardDescription className="text-neutral-400">by {this.content.creator}</CardDescription>
                 <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs bg-neutral-700 border-neutral-600 text-neutral-300">
                     {this.content.category}
                   </Badge>
                   {this.content.isExplicit && (
@@ -224,24 +224,24 @@ class ContentCardComponent {
         <CardContent className="space-y-4">
           {/* Engagement Stats */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <div className="flex items-center justify-center gap-1 text-blue-600">
+            <div className="text-center p-3 bg-neutral-700/50 rounded-lg">
+              <div className="flex items-center justify-center gap-1 text-blue-500">
                 <Eye className="h-4 w-4" />
                 <span className="font-semibold">{this.content.views.toLocaleString()}</span>
               </div>
-              <p className="text-xs text-muted-foreground">Views</p>
+              <p className="text-xs text-neutral-400">Views</p>
             </div>
-            <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <div className="flex items-center justify-center gap-1 text-green-600">
+            <div className="text-center p-3 bg-neutral-700/50 rounded-lg">
+              <div className="flex items-center justify-center gap-1 text-green-500">
                 <DollarSign className="h-4 w-4" />
                 <span className="font-semibold">${this.content.earnings.toLocaleString()}</span>
               </div>
-              <p className="text-xs text-muted-foreground">Earnings</p>
+              <p className="text-xs text-neutral-400">Earnings</p>
             </div>
           </div>
 
           {/* Additional Stats */}
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <div className="flex items-center justify-between text-sm text-neutral-400">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1">
                 <Heart className="h-3 w-3" />
@@ -258,12 +258,12 @@ class ContentCardComponent {
           {/* Tags */}
           <div className="flex flex-wrap gap-1">
             {this.content.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="secondary" className="text-xs">
+              <Badge key={tag} variant="secondary" className="text-xs bg-neutral-700 text-neutral-300">
                 #{tag}
               </Badge>
             ))}
             {this.content.tags.length > 3 && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-xs bg-neutral-700 text-neutral-300">
                 +{this.content.tags.length - 3} more
               </Badge>
             )}
@@ -271,7 +271,7 @@ class ContentCardComponent {
 
           {/* Report Count */}
           {this.content.reportCount > 0 && (
-            <div className="flex items-center gap-1 text-red-600 text-sm">
+            <div className="flex items-center gap-1 text-red-500 text-sm">
               <AlertTriangle className="h-4 w-4" />
               {this.content.reportCount} reports
             </div>
@@ -279,22 +279,22 @@ class ContentCardComponent {
 
           {/* DMCA Status */}
           {this.content.dmcaStatus && this.content.dmcaStatus !== 'none' && (
-            <div className="flex items-center gap-1 text-orange-600 text-sm">
+            <div className="flex items-center gap-1 text-orange-500 text-sm">
               <Shield className="h-4 w-4" />
               DMCA: {this.content.dmcaStatus}
             </div>
           )}
           
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1">
+            <Button variant="outline" size="sm" className="flex-1 bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
               <Eye className="h-4 w-4 mr-1" />
               View
             </Button>
-            <Button variant="outline" size="sm" className="flex-1">
+            <Button variant="outline" size="sm" className="flex-1 bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
               <Edit className="h-4 w-4 mr-1" />
               Edit
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </div>
@@ -314,93 +314,106 @@ export default function ContentManagementPage() {
   const dmcaContent = contentService.getDMCAContent();
 
   return (
-    <div className="space-y-6">
-      {/* Header with Pills */}
-      <div className="space-y-4">
-        <div>
-          <h1 className="text-3xl font-bold">Content Management</h1>
-          <p className="text-muted-foreground">Manage posts, media, and content moderation</p>
+    <div className="p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Content Management</h1>
+            <p className="text-neutral-400">Manage posts, media, and content moderation</p>
+          </div>
+          <Badge className="bg-orange-500 text-white">Super Admin</Badge>
         </div>
-        <AdminPillNavigationComponent />
+      </div>
+
+      {/* Key Performance Indicators */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-white mb-2">Key Performance Indicators</h2>
+        <p className="text-neutral-400 mb-6">Content metrics and statistics</p>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Total Content</p>
+                <p className="text-2xl font-bold text-white">45,678</p>
+                <div className="flex items-center gap-1 text-sm text-green-500">
+                  <FileText className="h-4 w-4" />
+                  +15.3% from last month
+                </div>
+              </div>
+              <FileText className="h-8 w-8 text-neutral-400" />
+            </div>
+          </div>
+
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Flagged Content</p>
+                <p className="text-2xl font-bold text-white">89</p>
+                <div className="flex items-center gap-1 text-sm text-red-500">
+                  <Flag className="h-4 w-4" />
+                  -5.2% from last month
+                </div>
+              </div>
+              <Flag className="h-8 w-8 text-neutral-400" />
+            </div>
+          </div>
+
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">DMCA Claims</p>
+                <p className="text-2xl font-bold text-white">12</p>
+                <div className="flex items-center gap-1 text-sm text-orange-500">
+                  <Shield className="h-4 w-4" />
+                  +2.1% from last month
+                </div>
+              </div>
+              <Shield className="h-8 w-8 text-neutral-400" />
+            </div>
+          </div>
+
+          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Content Revenue</p>
+                <p className="text-2xl font-bold text-white">$89,432</p>
+                <div className="flex items-center gap-1 text-sm text-green-500">
+                  <DollarSign className="h-4 w-4" />
+                  +23.1% from last month
+                </div>
+              </div>
+              <DollarSign className="h-8 w-8 text-neutral-400" />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="mb-6 flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
           <Input 
             placeholder="Search content by title or creator..."
-            className="pl-10"
+            className="pl-10 bg-neutral-800 border-neutral-700 text-white"
           />
         </div>
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button variant="outline" className="flex items-center gap-2 bg-neutral-800 border-neutral-700 text-white hover:bg-neutral-700">
           <Filter className="h-4 w-4" />
           Filters
         </Button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Content</p>
-                <p className="text-2xl font-bold">{allContent.length}</p>
-              </div>
-              <FileText className="h-8 w-8 text-muted-foreground" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Flagged Content</p>
-                <p className="text-2xl font-bold text-red-600">{flaggedContent.length}</p>
-              </div>
-              <Flag className="h-8 w-8 text-red-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">DMCA Claims</p>
-                <p className="text-2xl font-bold text-orange-600">{dmcaContent.length}</p>
-              </div>
-              <Shield className="h-8 w-8 text-orange-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Earnings</p>
-                <p className="text-2xl font-bold text-green-600">
-                  ${allContent.reduce((sum, item) => sum + item.earnings, 0).toLocaleString()}
-                </p>
-              </div>
-              <DollarSign className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Content Tabs */}
       <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="all">All Content</TabsTrigger>
-          <TabsTrigger value="posts">Posts</TabsTrigger>
-          <TabsTrigger value="images">Images</TabsTrigger>
-          <TabsTrigger value="videos">Videos</TabsTrigger>
-          <TabsTrigger value="flagged">Flagged</TabsTrigger>
-          <TabsTrigger value="dmca">DMCA</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-6 bg-neutral-800 border-neutral-700">
+          <TabsTrigger value="all" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">All Content</TabsTrigger>
+          <TabsTrigger value="posts" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Posts</TabsTrigger>
+          <TabsTrigger value="images" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Images</TabsTrigger>
+          <TabsTrigger value="videos" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Videos</TabsTrigger>
+          <TabsTrigger value="flagged" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Flagged</TabsTrigger>
+          <TabsTrigger value="dmca" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">DMCA</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">

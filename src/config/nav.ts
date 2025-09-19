@@ -35,7 +35,7 @@ export type PillItem = { label: string; href: string };
 // ----------------------
 export const ADMIN_SIDEBAR: readonly NavItem[] = [
   { label: "Dashboard", href: "/admin", scope: "admin", icon: Gauge },
-  { label: "Analytics", href: "/analytics", scope: "admin", icon: BarChart3 },
+  { label: "Analytics", href: "/admin/analytics", scope: "admin", icon: BarChart3 },
   { label: "User Management", href: "/admin/users", scope: "admin", icon: Users },
   { label: "Content Management", href: "/admin/content", scope: "admin", icon: FileText },
   { label: "Financial Management", href: "/admin/finance", scope: "admin", icon: DollarSign },
@@ -63,10 +63,10 @@ export const ADMIN_SECTION_PILLS: Record<AdminSection, readonly PillItem[]> = {
     { label: "Top Content", href: "/admin/content-insights" },
   ],
   analytics: [
-    { label: "Overview", href: "/analytics" },
-    { label: "Cohorts", href: "/analytics/cohorts" },
-    { label: "Funnels", href: "/analytics/funnels" },
-    { label: "Retention", href: "/analytics/retention" },
+    { label: "Overview", href: "/admin/analytics" },
+    { label: "Cohorts", href: "/admin/analytics/cohorts" },
+    { label: "Funnels", href: "/admin/analytics/funnels" },
+    { label: "Retention", href: "/admin/analytics/retention" },
   ],
   users: [
     { label: "All Users", href: "/admin/users" },
@@ -135,7 +135,7 @@ export function getAdminSection(path: string): AdminSection {
   if (path.startsWith("/admin/security")) return "security";
   if (path.startsWith("/admin/integrations")) return "integrations";
   if (path.startsWith("/admin/events")) return "events";
-  if (path.startsWith("/analytics")) return "analytics";
+  if (path.startsWith("/admin/analytics")) return "analytics";
   return "dashboard";
 }
 
