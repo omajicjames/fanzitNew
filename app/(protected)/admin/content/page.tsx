@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
+import { ContentSelectionCard } from "@src/components/admin/ContentSelectionCard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -538,42 +539,22 @@ function ContentDetailView({
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Filter Section */}
-      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <label className="text-sm font-medium text-text-muted mb-2 block">Select Content</label>
-            <Select value={selectedContentId || content[0]?.id} onValueChange={onContentSelect}>
-              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
-                <SelectValue placeholder="Choose content..." />
-              </SelectTrigger>
-              <SelectContent className="bg-surface-elev2 border-line-soft">
-                {content.map((item) => {
-                  const Icon = getTypeIcon(item.type);
-                  return (
-                    <SelectItem 
-                      key={item.id} 
-                      value={item.id}
-                      className="text-text hover:bg-surface-elev1"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                        <Badge 
-                          variant={item.status === 'published' ? 'default' : 'secondary'}
-                          className="text-xs"
-                        >
-                          {item.status}
-                        </Badge>
-                      </div>
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      {/* Content Selection */}
+      <ContentSelectionCard
+        title="Select Content"
+        description="Choose content to review and manage"
+        value={selectedContentId || content[0]?.id || ''}
+        onValueChange={onContentSelect || (() => {})}
+        content={content.map(item => ({
+          id: item.id,
+          title: item.title,
+          type: item.type,
+          status: item.status,
+          creator: item.creator,
+          thumbnail: item.thumbnail
+        }))}
+        placeholder="Choose content..."
+      />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

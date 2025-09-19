@@ -145,7 +145,46 @@ import { MetricSelectionCard } from "@src/components/admin/SelectionCard";
 - Matches verification page styling
 - Includes proper background and borders
 
-### 6. AdminCard
+### 6. ContentSelectionCard
+**Location:** `src/components/admin/ContentSelectionCard.tsx`
+**Purpose:** Reusable selection dropdown for content management
+
+```tsx
+import { ContentSelectionCard, PostSelectionCard, VideoSelectionCard, ImageSelectionCard } from "@src/components/admin/ContentSelectionCard";
+
+// Generic ContentSelectionCard
+<ContentSelectionCard
+  title="Select Content"
+  description="Choose content to review"
+  value={selectedId}
+  onValueChange={setSelectedId}
+  content={[
+    {
+      id: "1",
+      title: "Content Title",
+      type: "video",
+      status: "published",
+      creator: "creator_name",
+      thumbnail: "/path/to/thumb.jpg"
+    }
+  ]}
+  placeholder="Choose content..."
+/>
+
+// Pre-configured variants
+<PostSelectionCard value={postId} onValueChange={setPostId} posts={posts} />
+<VideoSelectionCard value={videoId} onValueChange={setVideoId} videos={videos} />
+<ImageSelectionCard value={imageId} onValueChange={setImageId} images={images} />
+```
+
+**Features:**
+- Thumbnail support with fallback icons
+- Status badges with appropriate colors
+- Type icons (post, image, video, audio)
+- Creator information display
+- Modern dropdown with proper theming
+
+### 7. AdminCard
 **Location:** `src/components/admin/AdminPageTemplate.tsx` (exported)
 **Purpose:** Standardized card with CSS variables
 
