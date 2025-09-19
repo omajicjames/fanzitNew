@@ -7,7 +7,8 @@ import type { LucideProps } from "lucide-react";
 import {
   Gauge, Users, FileText, DollarSign, Shield, MessagesSquare, Wrench, Database,
   Bug, ClipboardList, Flag, ImageIcon, MessageSquareWarning, Quote, FileWarning, Scale,
-  BadgeCheck, FolderKanban, Activity, BarChart3, Settings, Lock, Key, Calendar, Webhook
+  BadgeCheck, FolderKanban, Activity, BarChart3, Settings, Lock, Key, Calendar, Webhook,
+  Package, ShoppingBag, Tags, Gift, ReceiptText, Banknote, TrendingUp, PenTool, MessageCircle, Reply, PlaySquare, Phone, Video, Bell
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { JSX } from "react";
@@ -23,7 +24,7 @@ export type NavItem = {
   label: string;
   href: string;
   scope: Scope;
-  icon?: (props: { className?: string }) => JSX.Element;
+  icon?: LucideIcon;
 };
 
 export type PillItem = { label: string; href: string };
@@ -37,9 +38,23 @@ export const ADMIN_SIDEBAR: readonly NavItem[] = [
   { label: "Dashboard", href: "/admin", scope: "admin", icon: Gauge },
   { label: "Analytics", href: "/admin/analytics", scope: "admin", icon: BarChart3 },
   { label: "User Management", href: "/admin/users", scope: "admin", icon: Users },
+  { label: "Verification", href: "/admin/verification", scope: "admin", icon: BadgeCheck },
+  { label: "Members", href: "/admin/members", scope: "admin", icon: Users },
   { label: "Content Management", href: "/admin/content", scope: "admin", icon: FileText },
   { label: "Financial Management", href: "/admin/finance", scope: "admin", icon: DollarSign },
+  { label: "Products", href: "/admin/products", scope: "admin", icon: Package },
+  { label: "Sales", href: "/admin/sales", scope: "admin", icon: ReceiptText },
+  { label: "Shop", href: "/admin/shop", scope: "admin", icon: ShoppingBag },
+  { label: "Shop Categories", href: "/admin/shop-categories", scope: "admin", icon: Tags },
+  { label: "Gifts", href: "/admin/gifts", scope: "admin", icon: Gift },
+  { label: "Blog Management", href: "/admin/blog", scope: "admin", icon: PenTool },
+  { label: "Posts Management", href: "/admin/posts", scope: "admin", icon: FileText },
+  { label: "Comments Management", href: "/admin/comments", scope: "admin", icon: MessageCircle },
+  { label: "Replies Management", href: "/admin/replies", scope: "admin", icon: Reply },
+  { label: "Reels Management", href: "/admin/reels", scope: "admin", icon: PlaySquare },
+  { label: "Content Moderation", href: "/admin/moderation", scope: "admin", icon: Shield },
   { label: "Communications", href: "/admin/communications", scope: "admin", icon: MessagesSquare },
+  { label: "Announcements", href: "/admin/communications/announcements", scope: "admin", icon: Bell },
   { label: "System Management", href: "/admin/system", scope: "admin", icon: Shield },
   { label: "Security & Privacy", href: "/admin/security", scope: "admin", icon: Lock },
   { label: "Integrations", href: "/admin/integrations", scope: "admin", icon: Webhook },
@@ -53,7 +68,9 @@ export const ADMIN_SIDEBAR: readonly NavItem[] = [
 // ----------------------
 export type AdminSection =
   | "dashboard" | "analytics" | "users" | "content" | "finance"
-  | "communications" | "system" | "security" | "integrations" | "events";
+  | "products" | "sales" | "shop" | "shop-categories" | "gifts"
+  | "blog" | "posts" | "comments" | "replies" | "moderation" | "reels"
+  | "verification" | "members" | "communications" | "announcements" | "system" | "security" | "integrations" | "events";
 
 export const ADMIN_SECTION_PILLS: Record<AdminSection, readonly PillItem[]> = {
   dashboard: [
@@ -72,6 +89,7 @@ export const ADMIN_SECTION_PILLS: Record<AdminSection, readonly PillItem[]> = {
     { label: "All Users", href: "/admin/users" },
     { label: "Segments", href: "/admin/users/segments" },
     { label: "Roles", href: "/admin/users/roles" },
+    { label: "Verification", href: "/admin/verification" },
     { label: "Flags", href: "/admin/users/flags" },
   ],
   content: [
@@ -86,10 +104,93 @@ export const ADMIN_SECTION_PILLS: Record<AdminSection, readonly PillItem[]> = {
     { label: "Taxes", href: "/admin/finance/taxes" },
     { label: "Invoices", href: "/admin/finance/invoices" },
   ],
+  products: [
+    { label: "All Products", href: "/admin/products" },
+    { label: "Categories", href: "/admin/products/categories" },
+    { label: "Inventory", href: "/admin/products/inventory" },
+    { label: "Analytics", href: "/admin/products/analytics" },
+  ],
+  sales: [
+    { label: "Overview", href: "/admin/sales" },
+    { label: "Orders", href: "/admin/sales/orders" },
+    { label: "Customers", href: "/admin/sales/customers" },
+    { label: "Analytics", href: "/admin/sales/analytics" },
+  ],
+  shop: [
+    { label: "Settings", href: "/admin/shop" },
+    { label: "Products", href: "/admin/shop/products" },
+    { label: "Orders", href: "/admin/shop/orders" },
+    { label: "Analytics", href: "/admin/shop/analytics" },
+  ],
+  "shop-categories": [
+    { label: "All Categories", href: "/admin/shop-categories" },
+    { label: "Hierarchy", href: "/admin/shop-categories/hierarchy" },
+    { label: "Analytics", href: "/admin/shop-categories/analytics" },
+  ],
+  gifts: [
+    { label: "All Gifts", href: "/admin/gifts" },
+    { label: "Categories", href: "/admin/gifts/categories" },
+    { label: "Analytics", href: "/admin/gifts/analytics" },
+    { label: "Settings", href: "/admin/gifts/settings" },
+  ],
+  blog: [
+    { label: "All Posts", href: "/admin/blog" },
+    { label: "Categories", href: "/admin/blog/categories" },
+    { label: "Analytics", href: "/admin/blog/analytics" },
+    { label: "Settings", href: "/admin/blog/settings" },
+  ],
+  posts: [
+    { label: "All Posts", href: "/admin/posts" },
+    { label: "Pending", href: "/admin/posts/pending" },
+    { label: "Flagged", href: "/admin/posts/flagged" },
+    { label: "Analytics", href: "/admin/posts/analytics" },
+  ],
+  comments: [
+    { label: "All Comments", href: "/admin/comments" },
+    { label: "Pending", href: "/admin/comments/pending" },
+    { label: "Flagged", href: "/admin/comments/flagged" },
+    { label: "Spam", href: "/admin/comments/spam" },
+  ],
+  replies: [
+    { label: "All Replies", href: "/admin/replies" },
+    { label: "Pending", href: "/admin/replies/pending" },
+    { label: "Flagged", href: "/admin/replies/flagged" },
+    { label: "Threads", href: "/admin/replies/threads" },
+  ],
+  moderation: [
+    { label: "Queue", href: "/admin/moderation" },
+    { label: "Pending", href: "/admin/moderation/pending" },
+    { label: "Approved", href: "/admin/moderation/approved" },
+    { label: "Rejected", href: "/admin/moderation/rejected" },
+  ],
+  reels: [
+    { label: "All Reels", href: "/admin/reels" },
+    { label: "Trending", href: "/admin/reels/trending" },
+    { label: "Featured", href: "/admin/reels/featured" },
+    { label: "Analytics", href: "/admin/reels/analytics" },
+  ],
+  verification: [
+    { label: "All Requests", href: "/admin/verification" },
+    { label: "Pending", href: "/admin/verification/pending" },
+    { label: "Approved", href: "/admin/verification/approved" },
+    { label: "Rejected", href: "/admin/verification/rejected" },
+  ],
+  members: [
+    { label: "All Members", href: "/admin/members" },
+    { label: "Creators", href: "/admin/members/creators" },
+    { label: "Premium", href: "/admin/members/premium" },
+    { label: "Moderators", href: "/admin/members/moderators" },
+  ],
   communications: [
-    { label: "Announcements", href: "/admin/communications/announcements" },
+    { label: "All Communications", href: "/admin/communications" },
     { label: "Messages", href: "/admin/communications/messages" },
     { label: "Email", href: "/admin/communications/email" },
+  ],
+  announcements: [
+    { label: "All Announcements", href: "/admin/communications/announcements" },
+    { label: "Active", href: "/admin/communications/announcements/active" },
+    { label: "Draft", href: "/admin/communications/announcements/draft" },
+    { label: "Scheduled", href: "/admin/communications/announcements/scheduled" },
   ],
   system: [
     { label: "Status", href: "/admin/system" },
@@ -131,7 +232,21 @@ export function getAdminSection(path: string): AdminSection {
   if (path.startsWith("/admin/users")) return "users";
   if (path.startsWith("/admin/content")) return "content";
   if (path.startsWith("/admin/finance")) return "finance";
+  if (path.startsWith("/admin/products")) return "products";
+  if (path.startsWith("/admin/sales")) return "sales";
+  if (path.startsWith("/admin/shop")) return "shop";
+  if (path.startsWith("/admin/shop-categories")) return "shop-categories";
+  if (path.startsWith("/admin/gifts")) return "gifts";
+  if (path.startsWith("/admin/blog")) return "blog";
+  if (path.startsWith("/admin/posts")) return "posts";
+  if (path.startsWith("/admin/comments")) return "comments";
+  if (path.startsWith("/admin/replies")) return "replies";
+  if (path.startsWith("/admin/moderation")) return "moderation";
+  if (path.startsWith("/admin/reels")) return "reels";
+  if (path.startsWith("/admin/verification")) return "verification";
+  if (path.startsWith("/admin/members")) return "members";
   if (path.startsWith("/admin/communications")) return "communications";
+  if (path.startsWith("/admin/communications/announcements")) return "announcements";
   if (path.startsWith("/admin/security")) return "security";
   if (path.startsWith("/admin/integrations")) return "integrations";
   if (path.startsWith("/admin/events")) return "events";
@@ -218,3 +333,10 @@ export function isActive(current: string, href: string): boolean {
   if (href === "/ops") return current === "/ops";
   return current === href || current.startsWith(href + "/");
 }
+
+// ----------------------
+// System Pills Export
+// Purpose: Export system pills for SystemPills component
+// Location: SystemPills component
+// ----------------------
+export const SYSTEM_PILLS = ADMIN_SECTION_PILLS.system;

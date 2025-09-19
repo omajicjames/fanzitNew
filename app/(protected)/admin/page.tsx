@@ -12,6 +12,8 @@
 
 import requireAdminPage from '@src/features/admin/auth/requireAdminPage';
 import EnhancedAdminPageClient from '@src/features/admin/components/EnhancedAdminPageClient';
+import { AdminPageTemplate } from '@src/components/admin/AdminPageTemplate';
+import { BarChart3, TrendingUp, Users, DollarSign } from 'lucide-react';
 import { useEffect } from 'react';
 
 // ----------------------
@@ -28,10 +30,79 @@ function AdminDashboardPage() {
     console.log('localStorage admin_session:', localStorage.getItem('admin_session'));
   }, []);
 
-  return (
-    <div className="container mx-auto px-4 py-6">
-      <EnhancedAdminPageClient />
+  const stats = (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Total Revenue</p>
+            <p className="text-2xl font-bold text-white">$124,567</p>
+            <div className="flex items-center gap-1 text-sm text-green-500">
+              <TrendingUp className="h-4 w-4" />
+              +12.5% from last month
+            </div>
+          </div>
+          <DollarSign className="h-8 w-8 text-neutral-400" />
+        </div>
+      </div>
+
+      <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Active Users</p>
+            <p className="text-2xl font-bold text-white">12,847</p>
+            <div className="flex items-center gap-1 text-sm text-green-500">
+              <TrendingUp className="h-4 w-4" />
+              +8.2% from last month
+            </div>
+          </div>
+          <Users className="h-8 w-8 text-neutral-400" />
+        </div>
+      </div>
+
+      <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Content Views</p>
+            <p className="text-2xl font-bold text-white">45,678</p>
+            <div className="flex items-center gap-1 text-sm text-green-500">
+              <TrendingUp className="h-4 w-4" />
+              +15.3% from last month
+            </div>
+          </div>
+          <BarChart3 className="h-8 w-8 text-neutral-400" />
+        </div>
+      </div>
+
+      <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Conversion Rate</p>
+            <p className="text-2xl font-bold text-white">3.2%</p>
+            <div className="flex items-center gap-1 text-sm text-red-500">
+              <TrendingUp className="h-4 w-4 rotate-180" />
+              -0.5% from last month
+            </div>
+          </div>
+          <BarChart3 className="h-8 w-8 text-neutral-400" />
+        </div>
+      </div>
     </div>
+  );
+
+  return (
+    <AdminPageTemplate
+      title="Admin Dashboard"
+      description="Overview of platform performance and key metrics"
+      icon={<BarChart3 className="h-6 w-6" />}
+      showSearch={false}
+      showFilters={false}
+      showRefresh={true}
+      showExport={true}
+      stats={stats}
+    >
+      <EnhancedAdminPageClient />
+    </AdminPageTemplate>
   );
 }
 

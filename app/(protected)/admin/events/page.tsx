@@ -505,24 +505,24 @@ export default function EventsPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">Events & Scheduling</h1>
-            <p className="text-neutral-400">Manage live events, scheduled content, and platform events</p>
+            <h1 className="text-3xl font-bold text-[var(--admin-text-primary)]">Events & Scheduling</h1>
+            <p className="text-[var(--admin-text-secondary)]">Manage live events, scheduled content, and platform events</p>
           </div>
-          <Badge className="bg-orange-500 text-white">Super Admin</Badge>
+          <Badge className="bg-orange-500 text-[var(--admin-text-primary)]">Super Admin</Badge>
         </div>
       </div>
 
       {/* Key Performance Indicators */}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold text-white mb-2">Events Overview</h2>
-        <p className="text-neutral-400 mb-6">Live events, scheduled content, and platform metrics</p>
+        <h2 className="text-xl font-semibold text-[var(--admin-text-primary)] mb-2">Events Overview</h2>
+        <p className="text-[var(--admin-text-secondary)] mb-6">Live events, scheduled content, and platform metrics</p>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Total Events</p>
-                <p className="text-2xl font-bold text-white">{stats.total}</p>
+                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Total Events</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.total}</p>
                 <div className="flex items-center gap-1 text-sm text-blue-500">
                   <Calendar className="h-4 w-4" />
                   +15.3% from last month
@@ -532,11 +532,11 @@ export default function EventsPage() {
             </div>
           </div>
           
-          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Live Now</p>
-                <p className="text-2xl font-bold text-white">{stats.live}</p>
+                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Live Now</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.live}</p>
                 <div className="flex items-center gap-1 text-sm text-red-500">
                   <Play className="h-4 w-4" />
                   Currently streaming
@@ -546,11 +546,11 @@ export default function EventsPage() {
             </div>
           </div>
           
-          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Scheduled</p>
-                <p className="text-2xl font-bold text-white">{stats.scheduled}</p>
+                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Scheduled</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.scheduled}</p>
                 <div className="flex items-center gap-1 text-sm text-orange-500">
                   <Clock className="h-4 w-4" />
                   Upcoming events
@@ -560,11 +560,11 @@ export default function EventsPage() {
             </div>
           </div>
           
-          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Completed</p>
-                <p className="text-2xl font-bold text-white">{stats.completed}</p>
+                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Completed</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.completed}</p>
                 <div className="flex items-center gap-1 text-sm text-green-500">
                   <CheckCircle className="h-4 w-4" />
                   +8.2% from last month
@@ -578,38 +578,38 @@ export default function EventsPage() {
 
       {/* Events Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <Card className="bg-neutral-800 border-neutral-700">
+        <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
+            <CardTitle className="text-[var(--admin-text-primary)] flex items-center gap-2">
               <Video className="h-5 w-5 text-blue-500" />
               Live Events Timeline
             </CardTitle>
-            <CardDescription className="text-neutral-400">Live events and streaming activity over time</CardDescription>
+            <CardDescription className="text-[var(--admin-text-secondary)]">Live events and streaming activity over time</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
               <div className="text-center">
-                <Video className="h-12 w-12 text-neutral-400 mx-auto mb-2" />
-                <p className="text-neutral-400">Live events chart</p>
+                <Video className="h-12 w-12 text-[var(--admin-text-secondary)] mx-auto mb-2" />
+                <p className="text-[var(--admin-text-secondary)]">Live events chart</p>
                 <p className="text-sm text-neutral-500">Line chart showing live events over time</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-neutral-800 border-neutral-700">
+        <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
+            <CardTitle className="text-[var(--admin-text-primary)] flex items-center gap-2">
               <Calendar className="h-5 w-5 text-green-500" />
               Event Categories
             </CardTitle>
-            <CardDescription className="text-neutral-400">Distribution of events by category</CardDescription>
+            <CardDescription className="text-[var(--admin-text-secondary)]">Distribution of events by category</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
               <div className="text-center">
-                <Calendar className="h-12 w-12 text-neutral-400 mx-auto mb-2" />
-                <p className="text-neutral-400">Event categories chart</p>
+                <Calendar className="h-12 w-12 text-[var(--admin-text-secondary)] mx-auto mb-2" />
+                <p className="text-[var(--admin-text-secondary)]">Event categories chart</p>
                 <p className="text-sm text-neutral-500">Pie chart showing event distribution</p>
               </div>
             </div>
@@ -620,17 +620,17 @@ export default function EventsPage() {
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--admin-text-secondary)]" />
           <Input 
             placeholder="Search events and scheduled content..."
-            className="pl-10 bg-neutral-800 border-neutral-700 text-white"
+            className="pl-10 bg-[var(--admin-card-bg)] border-neutral-700 text-[var(--admin-text-primary)]"
           />
         </div>
-        <Button variant="outline" className="flex items-center gap-2 bg-neutral-800 border-neutral-700 text-white hover:bg-neutral-700">
+        <Button variant="outline" className="flex items-center gap-2 bg-[var(--admin-card-bg)] border-neutral-700 text-[var(--admin-text-primary)] hover:bg-[var(--admin-surface)]">
           <Filter className="h-4 w-4" />
           Filters
         </Button>
-        <Button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white">
+        <Button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-[var(--admin-text-primary)]">
           <Plus className="h-4 w-4" />
           Create Event
         </Button>
@@ -639,13 +639,13 @@ export default function EventsPage() {
 
       {/* Events Tabs */}
       <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6 bg-neutral-800 border-neutral-700">
-          <TabsTrigger value="all" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">All Events</TabsTrigger>
-          <TabsTrigger value="live" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Live Streams</TabsTrigger>
-          <TabsTrigger value="creator" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Creator Events</TabsTrigger>
-          <TabsTrigger value="platform" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Platform Events</TabsTrigger>
-          <TabsTrigger value="scheduled" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Scheduled Content</TabsTrigger>
-          <TabsTrigger value="upcoming" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Upcoming</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-6 bg-[var(--admin-card-bg)] border-neutral-700">
+          <TabsTrigger value="all" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">All Events</TabsTrigger>
+          <TabsTrigger value="live" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Live Streams</TabsTrigger>
+          <TabsTrigger value="creator" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Creator Events</TabsTrigger>
+          <TabsTrigger value="platform" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Platform Events</TabsTrigger>
+          <TabsTrigger value="scheduled" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Scheduled Content</TabsTrigger>
+          <TabsTrigger value="upcoming" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Upcoming</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">

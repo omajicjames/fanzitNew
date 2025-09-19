@@ -12,6 +12,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Original shadcn/ui colors (keep for compatibility)
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -66,6 +67,37 @@ export default {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        
+        // New Fanzit Admin Design System Colors
+        text: {
+          DEFAULT: 'hsl(var(--text))',
+          muted: 'hsl(var(--text-muted))',
+          subtle: 'hsl(var(--text-subtle))',
+        },
+        surface: {
+          canvas: 'hsl(var(--surface-canvas))',
+          elev1: 'hsl(var(--surface-elev-1))',
+          elev2: 'hsl(var(--surface-elev-2))',
+          panel: 'hsl(var(--surface-panel))',
+          panelQuiet: 'hsl(var(--surface-panel-quiet))',
+        },
+        line: {
+          soft: 'hsl(var(--line-soft))',
+          strong: 'hsl(var(--line-strong))',
+        },
+        brand: {
+          DEFAULT: 'hsl(var(--brand))',
+          contrast: 'hsl(var(--brand-contrast))',
+        },
+        gold: 'hsl(var(--accent-gold))',
+        success: 'hsl(var(--success))',
+        warning: 'hsl(var(--warning))',
+        danger: 'hsl(var(--danger))',
+        info: 'hsl(var(--info))',
+        
+        // Admin-specific hierarchy colors
+        'admin-card': 'var(--admin-card-bg)',
+        'admin-panel': 'var(--admin-panel-bg)',
       },
       borderRadius: {
         lg: "var(--radius)",

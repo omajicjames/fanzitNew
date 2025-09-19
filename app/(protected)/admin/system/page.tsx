@@ -377,24 +377,24 @@ export default function SystemManagementPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">System Management</h1>
-            <p className="text-neutral-400">Monitor system health, backups, and maintenance</p>
+            <h1 className="text-3xl font-bold text-[var(--admin-text-primary)]">System Management</h1>
+            <p className="text-[var(--admin-text-secondary)]">Monitor system health, backups, and maintenance</p>
           </div>
-          <Badge className="bg-orange-500 text-white">Super Admin</Badge>
+          <Badge className="bg-orange-500 text-[var(--admin-text-primary)]">Super Admin</Badge>
         </div>
       </div>
 
       {/* Key Performance Indicators */}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold text-white mb-2">System Overview</h2>
-        <p className="text-neutral-400 mb-6">System health, performance, and maintenance status</p>
+        <h2 className="text-xl font-semibold text-[var(--admin-text-primary)] mb-2">System Overview</h2>
+        <p className="text-[var(--admin-text-secondary)] mb-6">System health, performance, and maintenance status</p>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Total Components</p>
-                <p className="text-2xl font-bold text-white">{stats.totalComponents}</p>
+                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Total Components</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.totalComponents}</p>
                 <div className="flex items-center gap-1 text-sm text-blue-500">
                   <Server className="h-4 w-4" />
                   All systems
@@ -404,11 +404,11 @@ export default function SystemManagementPage() {
             </div>
           </div>
           
-          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Healthy</p>
-                <p className="text-2xl font-bold text-white">{stats.healthyComponents}</p>
+                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Healthy</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.healthyComponents}</p>
                 <div className="flex items-center gap-1 text-sm text-green-500">
                   <CheckCircle className="h-4 w-4" />
                   +5.2% from last week
@@ -418,11 +418,11 @@ export default function SystemManagementPage() {
             </div>
           </div>
           
-          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Warnings</p>
-                <p className="text-2xl font-bold text-white">{stats.warningComponents}</p>
+                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Warnings</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.warningComponents}</p>
                 <div className="flex items-center gap-1 text-sm text-orange-500">
                   <AlertTriangle className="h-4 w-4" />
                   Needs attention
@@ -432,11 +432,11 @@ export default function SystemManagementPage() {
             </div>
           </div>
           
-          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Uptime</p>
-                <p className="text-2xl font-bold text-white">99.9%</p>
+                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Uptime</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">99.9%</p>
                 <div className="flex items-center gap-1 text-sm text-green-500">
                   <Clock className="h-4 w-4" />
                   Last 30 days
@@ -450,38 +450,38 @@ export default function SystemManagementPage() {
 
       {/* System Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <Card className="bg-neutral-800 border-neutral-700">
+        <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
+            <CardTitle className="text-[var(--admin-text-primary)] flex items-center gap-2">
               <Activity className="h-5 w-5 text-blue-500" />
               System Performance
             </CardTitle>
-            <CardDescription className="text-neutral-400">CPU, memory, and disk usage over time</CardDescription>
+            <CardDescription className="text-[var(--admin-text-secondary)]">CPU, memory, and disk usage over time</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
               <div className="text-center">
-                <Activity className="h-12 w-12 text-neutral-400 mx-auto mb-2" />
-                <p className="text-neutral-400">System performance chart</p>
+                <Activity className="h-12 w-12 text-[var(--admin-text-secondary)] mx-auto mb-2" />
+                <p className="text-[var(--admin-text-secondary)]">System performance chart</p>
                 <p className="text-sm text-neutral-500">Line chart showing system metrics</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-neutral-800 border-neutral-700">
+        <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
+            <CardTitle className="text-[var(--admin-text-primary)] flex items-center gap-2">
               <Database className="h-5 w-5 text-green-500" />
               Backup Status
             </CardTitle>
-            <CardDescription className="text-neutral-400">Recent backups and storage usage</CardDescription>
+            <CardDescription className="text-[var(--admin-text-secondary)]">Recent backups and storage usage</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
               <div className="text-center">
-                <Database className="h-12 w-12 text-neutral-400 mx-auto mb-2" />
-                <p className="text-neutral-400">Backup status chart</p>
+                <Database className="h-12 w-12 text-[var(--admin-text-secondary)] mx-auto mb-2" />
+                <p className="text-[var(--admin-text-secondary)]">Backup status chart</p>
                 <p className="text-sm text-neutral-500">Bar chart showing backup history</p>
               </div>
             </div>
@@ -492,12 +492,12 @@ export default function SystemManagementPage() {
 
       {/* System Tabs */}
       <Tabs defaultValue="status" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5 bg-neutral-800 border-neutral-700">
-          <TabsTrigger value="status" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">System Status</TabsTrigger>
-          <TabsTrigger value="backups" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Backups</TabsTrigger>
-          <TabsTrigger value="logs" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Logs</TabsTrigger>
-          <TabsTrigger value="maintenance" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Maintenance</TabsTrigger>
-          <TabsTrigger value="settings" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Settings</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-5 bg-[var(--admin-card-bg)] border-neutral-700">
+          <TabsTrigger value="status" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">System Status</TabsTrigger>
+          <TabsTrigger value="backups" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Backups</TabsTrigger>
+          <TabsTrigger value="logs" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Logs</TabsTrigger>
+          <TabsTrigger value="maintenance" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Maintenance</TabsTrigger>
+          <TabsTrigger value="settings" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="status" className="space-y-4">

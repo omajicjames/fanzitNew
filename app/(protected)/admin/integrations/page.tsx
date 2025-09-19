@@ -272,26 +272,26 @@ class IntegrationCardComponent {
 
   public render() {
     return (
-      <Card className="bg-neutral-800 border-neutral-700 hover:shadow-lg transition-shadow duration-200">
+      <Card className="bg-[var(--admin-card-bg)] border-neutral-700 hover:shadow-lg transition-shadow duration-200">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-neutral-700 flex items-center justify-center text-2xl">
+              <div className="w-12 h-12 rounded-lg bg-[var(--admin-surface)] flex items-center justify-center text-2xl">
                 {this.integration.icon}
               </div>
               <div className="flex-1 min-w-0">
-                <CardTitle className="text-lg flex items-center gap-2 text-white">
+                <CardTitle className="text-lg flex items-center gap-2 text-[var(--admin-text-primary)]">
                   {this.integration.name}
                 </CardTitle>
-                <CardDescription className="line-clamp-2 text-neutral-400">
+                <CardDescription className="line-clamp-2 text-[var(--admin-text-secondary)]">
                   {this.integration.description}
                 </CardDescription>
                 <div className="flex items-center gap-2 mt-2">
-                  <Badge variant="outline" className="text-xs bg-neutral-700 border-neutral-600 text-neutral-300">
+                  <Badge variant="outline" className="text-xs bg-[var(--admin-surface)] border-neutral-600 text-neutral-300">
                     {this.integration.provider}
                   </Badge>
                   {this.getPricingBadge()}
-                  <Badge variant="outline" className="text-xs bg-neutral-700 border-neutral-600 text-neutral-300">
+                  <Badge variant="outline" className="text-xs bg-[var(--admin-surface)] border-neutral-600 text-neutral-300">
                     v{this.integration.version}
                   </Badge>
                 </div>
@@ -307,55 +307,55 @@ class IntegrationCardComponent {
         <CardContent className="space-y-4">
           {/* Usage Stats */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-3 bg-neutral-700/50 rounded-lg">
+            <div className="text-center p-3 bg-[var(--admin-surface)]/50 rounded-lg">
               <div className="flex items-center justify-center gap-1 text-blue-500">
                 <Activity className="h-4 w-4" />
                 <span className="font-semibold">
                   {this.integration.usage.requests.toLocaleString()}
                 </span>
               </div>
-              <p className="text-xs text-neutral-400">API Calls</p>
+              <p className="text-xs text-[var(--admin-text-secondary)]">API Calls</p>
             </div>
-            <div className="text-center p-3 bg-neutral-700/50 rounded-lg">
+            <div className="text-center p-3 bg-[var(--admin-surface)]/50 rounded-lg">
               <div className="flex items-center justify-center gap-1 text-green-500">
                 <Zap className="h-4 w-4" />
                 <span className="font-semibold">
                   {Math.round((this.integration.usage.requests / this.integration.usage.limit) * 100)}%
                 </span>
               </div>
-              <p className="text-xs text-neutral-400">Usage</p>
+              <p className="text-xs text-[var(--admin-text-secondary)]">Usage</p>
             </div>
           </div>
 
           {/* Features */}
           <div className="flex flex-wrap gap-1">
             {this.integration.features.slice(0, 3).map((feature) => (
-              <Badge key={feature} variant="secondary" className="text-xs bg-neutral-700 text-neutral-300">
+              <Badge key={feature} variant="secondary" className="text-xs bg-[var(--admin-surface)] text-neutral-300">
                 {feature.replace('_', ' ')}
               </Badge>
             ))}
             {this.integration.features.length > 3 && (
-              <Badge variant="secondary" className="text-xs bg-neutral-700 text-neutral-300">
+              <Badge variant="secondary" className="text-xs bg-[var(--admin-surface)] text-neutral-300">
                 +{this.integration.features.length - 3} more
               </Badge>
             )}
           </div>
 
           {/* Last Sync */}
-          <div className="text-sm text-neutral-400">
+          <div className="text-sm text-[var(--admin-text-secondary)]">
             Last sync: {new Date(this.integration.lastSync).toLocaleString()}
           </div>
           
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1 bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
+            <Button variant="outline" size="sm" className="flex-1 bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
               <Eye className="h-4 w-4 mr-1" />
               View
             </Button>
-            <Button variant="outline" size="sm" className="flex-1 bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
+            <Button variant="outline" size="sm" className="flex-1 bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
               <Settings className="h-4 w-4 mr-1" />
               Configure
             </Button>
-            <Button variant="outline" size="sm" className="bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
+            <Button variant="outline" size="sm" className="bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </div>
@@ -392,18 +392,18 @@ class WebhookEventCardComponent {
 
   public render() {
     return (
-      <Card className="bg-neutral-800 border-neutral-700 hover:shadow-lg transition-shadow duration-200">
+      <Card className="bg-[var(--admin-card-bg)] border-neutral-700 hover:shadow-lg transition-shadow duration-200">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <CardTitle className="text-lg flex items-center gap-2 text-white">
+              <CardTitle className="text-lg flex items-center gap-2 text-[var(--admin-text-primary)]">
                 {this.event.integration}
               </CardTitle>
-              <CardDescription className="text-neutral-400">
+              <CardDescription className="text-[var(--admin-text-secondary)]">
                 Event: {this.event.event}
               </CardDescription>
               <div className="flex items-center gap-2 mt-2">
-                <Badge variant="outline" className="text-xs bg-neutral-700 border-neutral-600 text-neutral-300">
+                <Badge variant="outline" className="text-xs bg-[var(--admin-surface)] border-neutral-600 text-neutral-300">
                   {this.event.event}
                 </Badge>
                 {this.event.retryCount > 0 && (
@@ -420,29 +420,29 @@ class WebhookEventCardComponent {
         </CardHeader>
         
         <CardContent className="space-y-4">
-          <div className="text-sm text-neutral-400">
+          <div className="text-sm text-[var(--admin-text-secondary)]">
             {new Date(this.event.timestamp).toLocaleString()}
           </div>
           
           {this.event.response && (
-            <div className="p-3 bg-neutral-700/50 rounded-lg">
+            <div className="p-3 bg-[var(--admin-surface)]/50 rounded-lg">
               <p className="text-sm font-medium text-red-500">Error Response:</p>
-              <p className="text-sm text-neutral-400">{this.event.response}</p>
+              <p className="text-sm text-[var(--admin-text-secondary)]">{this.event.response}</p>
             </div>
           )}
           
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1 bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
+            <Button variant="outline" size="sm" className="flex-1 bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
               <Eye className="h-4 w-4 mr-1" />
               View Payload
             </Button>
             {this.event.status === 'failed' && (
-              <Button variant="outline" size="sm" className="flex-1 bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
+              <Button variant="outline" size="sm" className="flex-1 bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
                 <RefreshCw className="h-4 w-4 mr-1" />
                 Retry
               </Button>
             )}
-            <Button variant="outline" size="sm" className="bg-neutral-700 border-neutral-600 text-white hover:bg-neutral-600">
+            <Button variant="outline" size="sm" className="bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </div>
@@ -468,24 +468,24 @@ export default function IntegrationsPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">Integrations</h1>
-            <p className="text-neutral-400">Manage third-party integrations and API connections</p>
+            <h1 className="text-3xl font-bold text-[var(--admin-text-primary)]">Integrations</h1>
+            <p className="text-[var(--admin-text-secondary)]">Manage third-party integrations and API connections</p>
           </div>
-          <Badge className="bg-orange-500 text-white">Super Admin</Badge>
+          <Badge className="bg-orange-500 text-[var(--admin-text-primary)]">Super Admin</Badge>
         </div>
       </div>
 
       {/* Key Performance Indicators */}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold text-white mb-2">Integration Overview</h2>
-        <p className="text-neutral-400 mb-6">Third-party services, API connections, and system health</p>
+        <h2 className="text-xl font-semibold text-[var(--admin-text-primary)] mb-2">Integration Overview</h2>
+        <p className="text-[var(--admin-text-secondary)] mb-6">Third-party services, API connections, and system health</p>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Total Integrations</p>
-                <p className="text-2xl font-bold text-white">{stats.total}</p>
+                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Total Integrations</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.total}</p>
                 <div className="flex items-center gap-1 text-sm text-blue-500">
                   <Webhook className="h-4 w-4" />
                   +2.1% from last month
@@ -495,11 +495,11 @@ export default function IntegrationsPage() {
             </div>
           </div>
           
-          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Active</p>
-                <p className="text-2xl font-bold text-white">{stats.active}</p>
+                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Active</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.active}</p>
                 <div className="flex items-center gap-1 text-sm text-green-500">
                   <CheckCircle className="h-4 w-4" />
                   +12.5% from last month
@@ -509,11 +509,11 @@ export default function IntegrationsPage() {
             </div>
           </div>
           
-          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Errors</p>
-                <p className="text-2xl font-bold text-white">{stats.errors}</p>
+                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Errors</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.errors}</p>
                 <div className="flex items-center gap-1 text-sm text-red-500">
                   <XCircle className="h-4 w-4" />
                   Requires attention
@@ -523,11 +523,11 @@ export default function IntegrationsPage() {
             </div>
           </div>
           
-          <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Health Rate</p>
-                <p className="text-2xl font-bold text-white">{stats.healthRate}%</p>
+                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Health Rate</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.healthRate}%</p>
                 <div className="flex items-center gap-1 text-sm text-purple-500">
                   <Activity className="h-4 w-4" />
                   +5.2% from last month
@@ -541,38 +541,38 @@ export default function IntegrationsPage() {
 
       {/* Integration Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <Card className="bg-neutral-800 border-neutral-700">
+        <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
+            <CardTitle className="text-[var(--admin-text-primary)] flex items-center gap-2">
               <Webhook className="h-5 w-5 text-green-500" />
               Integration Health
             </CardTitle>
-            <CardDescription className="text-neutral-400">System health and performance metrics</CardDescription>
+            <CardDescription className="text-[var(--admin-text-secondary)]">System health and performance metrics</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
               <div className="text-center">
-                <Webhook className="h-12 w-12 text-neutral-400 mx-auto mb-2" />
-                <p className="text-neutral-400">Integration health chart</p>
+                <Webhook className="h-12 w-12 text-[var(--admin-text-secondary)] mx-auto mb-2" />
+                <p className="text-[var(--admin-text-secondary)]">Integration health chart</p>
                 <p className="text-sm text-neutral-500">Pie chart showing integration status</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-neutral-800 border-neutral-700">
+        <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
+            <CardTitle className="text-[var(--admin-text-primary)] flex items-center gap-2">
               <Activity className="h-5 w-5 text-blue-500" />
               API Usage Trends
             </CardTitle>
-            <CardDescription className="text-neutral-400">API calls and usage patterns over time</CardDescription>
+            <CardDescription className="text-[var(--admin-text-secondary)]">API calls and usage patterns over time</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
               <div className="text-center">
-                <Activity className="h-12 w-12 text-neutral-400 mx-auto mb-2" />
-                <p className="text-neutral-400">API usage chart</p>
+                <Activity className="h-12 w-12 text-[var(--admin-text-secondary)] mx-auto mb-2" />
+                <p className="text-[var(--admin-text-secondary)]">API usage chart</p>
                 <p className="text-sm text-neutral-500">Line chart showing API usage trends</p>
               </div>
             </div>
@@ -583,17 +583,17 @@ export default function IntegrationsPage() {
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--admin-text-secondary)]" />
           <Input 
             placeholder="Search integrations..."
-            className="pl-10 bg-neutral-800 border-neutral-700 text-white"
+            className="pl-10 bg-[var(--admin-card-bg)] border-neutral-700 text-[var(--admin-text-primary)]"
           />
         </div>
-        <Button variant="outline" className="flex items-center gap-2 bg-neutral-800 border-neutral-700 text-white hover:bg-neutral-700">
+        <Button variant="outline" className="flex items-center gap-2 bg-[var(--admin-card-bg)] border-neutral-700 text-[var(--admin-text-primary)] hover:bg-[var(--admin-surface)]">
           <Filter className="h-4 w-4" />
           Filters
         </Button>
-        <Button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white">
+        <Button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-[var(--admin-text-primary)]">
           <Plus className="h-4 w-4" />
           Add Integration
         </Button>
@@ -601,13 +601,13 @@ export default function IntegrationsPage() {
 
       {/* Integration Tabs */}
       <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6 bg-neutral-800 border-neutral-700">
-          <TabsTrigger value="all" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">All</TabsTrigger>
-          <TabsTrigger value="payment" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Payment</TabsTrigger>
-          <TabsTrigger value="analytics" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Analytics</TabsTrigger>
-          <TabsTrigger value="communication" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Communication</TabsTrigger>
-          <TabsTrigger value="storage" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Storage</TabsTrigger>
-          <TabsTrigger value="webhooks" className="data-[state=active]:bg-neutral-700 data-[state=active]:text-white text-neutral-400">Webhooks</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-6 bg-[var(--admin-card-bg)] border-neutral-700">
+          <TabsTrigger value="all" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">All</TabsTrigger>
+          <TabsTrigger value="payment" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Payment</TabsTrigger>
+          <TabsTrigger value="analytics" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Analytics</TabsTrigger>
+          <TabsTrigger value="communication" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Communication</TabsTrigger>
+          <TabsTrigger value="storage" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Storage</TabsTrigger>
+          <TabsTrigger value="webhooks" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Webhooks</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">

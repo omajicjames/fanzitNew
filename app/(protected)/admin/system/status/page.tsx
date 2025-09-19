@@ -123,7 +123,7 @@ function SystemStatusPage() {
   // Purpose: Visual representation of usage percentages
   // ----------------------
   const ProgressBar = ({ percentage, color = "bg-blue-500" }: { percentage: number; color?: string }) => (
-    <div className="w-full bg-neutral-700 rounded-full h-2">
+    <div className="w-full bg-[var(--admin-surface)] rounded-full h-2">
       <div 
         className={`h-2 rounded-full transition-all duration-300 ${color}`}
         style={{ width: `${Math.min(100, Math.max(0, percentage))}%` }}
@@ -135,22 +135,22 @@ function SystemStatusPage() {
   // Main Component Render
   // ----------------------
   return (
-    <div className="text-white p-6">
+    <div className="text-[var(--admin-text-primary)] p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-neutral-800 pb-6">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">System Status</h1>
-            <p className="text-neutral-400">Real-time system monitoring and health dashboard</p>
+            <h1 className="text-3xl font-bold text-[var(--admin-text-primary)] mb-2">System Status</h1>
+            <p className="text-[var(--admin-text-secondary)]">Real-time system monitoring and health dashboard</p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="text-sm text-neutral-400">
+            <div className="text-sm text-[var(--admin-text-secondary)]">
               Last updated: {lastUpdated.toLocaleTimeString()}
             </div>
             <button
               onClick={refreshSystemData}
               disabled={isRefreshing}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-[var(--admin-text-primary)] rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
               <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
               Refresh
@@ -166,10 +166,10 @@ function SystemStatusPage() {
               <div className="p-2 bg-green-500/20 rounded-lg">
                 <Clock className="h-5 w-5 text-green-400" />
               </div>
-              <h3 className="font-semibold text-white">System Uptime</h3>
+              <h3 className="font-semibold text-[var(--admin-text-primary)]">System Uptime</h3>
             </div>
             <p className="text-xl font-bold text-green-400 mb-2">{systemMetrics.uptime}</p>
-            <p className="text-sm text-neutral-400">99.9% availability</p>
+            <p className="text-sm text-[var(--admin-text-secondary)]">99.9% availability</p>
           </div>
 
           {/* CPU Usage */}
@@ -178,11 +178,11 @@ function SystemStatusPage() {
               <div className="p-2 bg-blue-500/20 rounded-lg">
                 <Cpu className="h-5 w-5 text-blue-400" />
               </div>
-              <h3 className="font-semibold text-white">CPU Usage</h3>
+              <h3 className="font-semibold text-[var(--admin-text-primary)]">CPU Usage</h3>
             </div>
             <p className="text-xl font-bold text-blue-400 mb-2">{systemMetrics.cpu.usage.toFixed(1)}%</p>
             <ProgressBar percentage={systemMetrics.cpu.usage} color="bg-blue-500" />
-            <p className="text-sm text-neutral-400 mt-2">{systemMetrics.cpu.cores} cores, {systemMetrics.cpu.temperature}°C</p>
+            <p className="text-sm text-[var(--admin-text-secondary)] mt-2">{systemMetrics.cpu.cores} cores, {systemMetrics.cpu.temperature}°C</p>
           </div>
 
           {/* Memory Usage */}
@@ -191,11 +191,11 @@ function SystemStatusPage() {
               <div className="p-2 bg-purple-500/20 rounded-lg">
                 <MemoryStick className="h-5 w-5 text-purple-400" />
               </div>
-              <h3 className="font-semibold text-white">Memory Usage</h3>
+              <h3 className="font-semibold text-[var(--admin-text-primary)]">Memory Usage</h3>
             </div>
             <p className="text-xl font-bold text-purple-400 mb-2">{systemMetrics.memory.percentage.toFixed(1)}%</p>
             <ProgressBar percentage={systemMetrics.memory.percentage} color="bg-purple-500" />
-            <p className="text-sm text-neutral-400 mt-2">{systemMetrics.memory.used}GB / {systemMetrics.memory.total}GB</p>
+            <p className="text-sm text-[var(--admin-text-secondary)] mt-2">{systemMetrics.memory.used}GB / {systemMetrics.memory.total}GB</p>
           </div>
 
           {/* Disk Usage */}
@@ -204,11 +204,11 @@ function SystemStatusPage() {
               <div className="p-2 bg-orange-500/20 rounded-lg">
                 <HardDrive className="h-5 w-5 text-orange-400" />
               </div>
-              <h3 className="font-semibold text-white">Disk Usage</h3>
+              <h3 className="font-semibold text-[var(--admin-text-primary)]">Disk Usage</h3>
             </div>
             <p className="text-xl font-bold text-orange-400 mb-2">{systemMetrics.disk.percentage}%</p>
             <ProgressBar percentage={systemMetrics.disk.percentage} color="bg-orange-500" />
-            <p className="text-sm text-neutral-400 mt-2">{systemMetrics.disk.used}GB / {systemMetrics.disk.total}GB</p>
+            <p className="text-sm text-[var(--admin-text-secondary)] mt-2">{systemMetrics.disk.used}GB / {systemMetrics.disk.total}GB</p>
           </div>
         </div>
 
@@ -221,7 +221,7 @@ function SystemStatusPage() {
                 <div className="p-2 bg-cyan-500/20 rounded-lg">
                   <Wifi className="h-5 w-5 text-cyan-400" />
                 </div>
-                <h2 className="text-xl font-semibold text-white">Network Activity</h2>
+                <h2 className="text-xl font-semibold text-[var(--admin-text-primary)]">Network Activity</h2>
               </div>
             </div>
             <div className="p-6 space-y-4">
@@ -249,7 +249,7 @@ function SystemStatusPage() {
                 <div className="p-2 bg-emerald-500/20 rounded-lg">
                   <Database className="h-5 w-5 text-emerald-400" />
                 </div>
-                <h2 className="text-xl font-semibold text-white">Database Performance</h2>
+                <h2 className="text-xl font-semibold text-[var(--admin-text-primary)]">Database Performance</h2>
               </div>
             </div>
             <div className="p-6 space-y-4">
@@ -276,16 +276,16 @@ function SystemStatusPage() {
               <div className="p-2 bg-indigo-500/20 rounded-lg">
                 <Server className="h-5 w-5 text-indigo-400" />
               </div>
-              <h2 className="text-xl font-semibold text-white">Service Health</h2>
+              <h2 className="text-xl font-semibold text-[var(--admin-text-primary)]">Service Health</h2>
             </div>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {systemMetrics.services.map((service, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-neutral-800 rounded-lg">
+                <div key={index} className="flex items-center justify-between p-4 bg-[var(--admin-card-bg)] rounded-lg">
                   <div className="flex-1">
-                    <h3 className="font-medium text-white mb-1">{service.name}</h3>
-                    <div className="flex items-center gap-4 text-sm text-neutral-400">
+                    <h3 className="font-medium text-[var(--admin-text-primary)] mb-1">{service.name}</h3>
+                    <div className="flex items-center gap-4 text-sm text-[var(--admin-text-secondary)]">
                       <span>Response: {service.responseTime}ms</span>
                       <span>Uptime: {service.uptime}</span>
                     </div>

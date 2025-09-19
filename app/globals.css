@@ -6,111 +6,119 @@
 /* @import "tw-animate-css"; */
 
 :root {
-  /* Neutral foundations (cinematic dark) */
-  --background: oklch(0.27 0.02 255);     /* Zinc 800 */
-  --foreground: oklch(0.98 0 0);          /* White */
+  /* GUI-Friendly Colors (hex format for browser color picker) */
+  --background: #27272a;                  /* Zinc 800 - click to change */
+  --foreground: #fafafa;                  /* White - click to change */
 
   /* Surfaces */
-  --card: oklch(0.22 0.02 255);            /* Zinc 900 card on dark */
-  --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.25 0.02 255);
-  --popover-foreground: oklch(0.98 0 0);
+  --card: #18181b;                        /* Zinc 900 - click to change */
+  --card-foreground: #fafafa;             /* White - click to change */
+  --popover: #1f1f23;                     /* Zinc 800 - click to change */
+  --popover-foreground: #fafafa;          /* White - click to change */
 
   /* NEW: Brand accent (reserved, not used for primary CTAs) */
-  --brand: oklch(0.72 0.10 85);           /* Muted gold; tasteful, not shouty */
-  --brand-foreground: oklch(0.15 0.02 255);
+  --brand: #eab308;                       /* Yellow 500 - click to change */
+  --brand-foreground: #18181b;            /* Dark - click to change */
 
   /* Primary = cool blue (drives CTAs, links, focus) */
-  --primary: oklch(0.72 0.12 235);        /* Electric-but-elegant blue */
-  --primary-foreground: oklch(0.15 0.02 255);
+  --primary: #3b82f6;                     /* Blue 500 - click to change */
+  --primary-foreground: #18181b;          /* Dark - click to change */
 
   /* Secondary / subtle fills */
-  --secondary: oklch(0.32 0.02 255);      /* Zinc 700 */
-  --secondary-foreground: oklch(0.92 0.01 250); /* Off-white */
+  --secondary: #52525b;                   /* Zinc 600 - click to change */
+  --secondary-foreground: #e4e4e7;        /* Zinc 200 - click to change */
 
   /* Muted text / separators */
-  --muted: oklch(0.24 0.02 255);
-  --muted-foreground: oklch(0.72 0.02 255); /* Zinc 400–500 text */
+  --muted: #3f3f46;                       /* Zinc 700 - click to change */
+  --muted-foreground: #a1a1aa;            /* Zinc 400 - click to change */
 
   /* Accent = teal to complement blue, for chips/pills, not CTAs */
-  --accent: oklch(0.67 0.10 210);         /* Teal-cyan */
-  --accent-foreground: oklch(0.12 0.02 255);
+  --accent: #06b6d4;                      /* Cyan 500 - click to change */
+  --accent-foreground: #18181b;           /* Dark - click to change */
 
   /* Semantic status */
-  --destructive: oklch(0.60 0.20 25);     /* Red-leaning orange */
-  --destructive-foreground: oklch(0.98 0 0);
+  --destructive: #ef4444;                 /* Red 500 - click to change */
+  --destructive-foreground: #fafafa;      /* White - click to change */
 
   /* Primitives */
-  --border: oklch(0.35 0.03 255);         /* Neutral border (no more gold borders) */
-  --input: oklch(0.24 0.02 255);
-  --ring: oklch(0.72 0.12 235);           /* Match primary for focus rings */
+  --border: #52525b;                      /* Zinc 600 - click to change */
+  --input: #3f3f46;                       /* Zinc 700 - click to change */
+  --ring: #3b82f6;                        /* Blue 500 - click to change */
 
   /* Charts (balanced cool-first, restrained warm) */
-  --chart-1: oklch(0.72 0.12 235);        /* Blue */
-  --chart-2: oklch(0.67 0.10 210);        /* Teal */
-  --chart-3: oklch(0.74 0.11 150);        /* Green */
-  --chart-4: oklch(0.72 0.10 85);         /* Gold (brand) */
-  --chart-5: oklch(0.60 0.20 25);         /* Orange/Red */
+  --chart-1: #3b82f6;                     /* Blue - click to change */
+  --chart-2: #06b6d4;                     /* Cyan - click to change */
+  --chart-3: #10b981;                     /* Green - click to change */
+  --chart-4: #eab308;                     /* Yellow - click to change */
+  --chart-5: #f59e0b;                     /* Orange - click to change */
 
   --radius: 0.5rem;
 
   /* Sidebar (keep cohesive; no gold as primary here) */
-  --sidebar: oklch(0.18 0.02 255);        /* Darker panel */
-  --sidebar-foreground: oklch(0.95 0.01 255);
+  --sidebar: #18181b;                     /* Darker panel - click to change */
+  --sidebar-foreground: #fafafa;          /* White - click to change */
   --sidebar-primary: var(--primary);      /* Use blue, not gold */
-  --sidebar-primary-foreground: oklch(0.12 0.02 255);
-  --sidebar-accent: var(--accent);
-  --sidebar-accent-foreground: oklch(0.12 0.02 255);
-  --sidebar-border: oklch(0.28 0.02 255);
-  --sidebar-ring: var(--ring);
+  --sidebar-primary-foreground: #18181b;  /* Dark - click to change */
+  --sidebar-accent: var(--accent);        /* Use accent color */
+  --sidebar-accent-foreground: #18181b;   /* Dark - click to change */
+  --sidebar-border: #404040;              /* Border - click to change */
+  --sidebar-ring: var(--ring);            /* Use ring color */
+
+  /* Admin-specific variables (for admin pages) */
+  --admin-card-bg: #b84242;               /* Admin card background - click to change */
+  --admin-panel-bg: #1a1a1a;              /* Admin panel background - click to change */
 }
 
 .dark {
-  /* Deepen but keep the same relationships */
-  --background: oklch(0.14 0.02 255);
-  --foreground: oklch(0.98 0 0);
+  /* Darker theme - GUI-friendly hex colors */
+  --background: #0a0a0a;                  /* Very dark - click to change */
+  --foreground: #fafafa;                  /* White - click to change */
 
-  --card: oklch(0.17 0.02 255);
-  --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.16 0.02 255);
-  --popover-foreground: oklch(0.98 0 0);
+  --card: #111111;                        /* Dark card - click to change */
+  --card-foreground: #fafafa;             /* White - click to change */
+  --popover: #0f0f0f;                     /* Dark popover - click to change */
+  --popover-foreground: #fafafa;          /* White - click to change */
 
-  --brand: oklch(0.68 0.10 85);           /* Slightly dimmed gold for dark */
-  --brand-foreground: oklch(0.12 0.02 255);
+  --brand: #d97706;                       /* Slightly dimmed gold - click to change */
+  --brand-foreground: #111111;            /* Dark - click to change */
 
-  --primary: oklch(0.68 0.12 235);
-  --primary-foreground: oklch(0.12 0.02 255);
+  --primary: #2563eb;                     /* Slightly dimmed blue - click to change */
+  --primary-foreground: #111111;          /* Dark - click to change */
 
-  --secondary: oklch(0.22 0.02 255);
-  --secondary-foreground: oklch(0.92 0.01 250);
+  --secondary: #404040;                   /* Darker secondary - click to change */
+  --secondary-foreground: #d4d4d8;        /* Light gray - click to change */
 
-  --muted: oklch(0.21 0.02 255);
-  --muted-foreground: oklch(0.70 0.02 255);
+  --muted: #262626;                       /* Darker muted - click to change */
+  --muted-foreground: #a3a3a3;            /* Muted text - click to change */
 
-  --accent: oklch(0.63 0.10 210);
-  --accent-foreground: oklch(0.12 0.02 255);
+  --accent: #0891b2;                      /* Slightly dimmed cyan - click to change */
+  --accent-foreground: #111111;           /* Dark - click to change */
 
-  --destructive: oklch(0.55 0.20 25);
-  --destructive-foreground: oklch(0.98 0 0);
+  --destructive: #dc2626;                 /* Slightly dimmed red - click to change */
+  --destructive-foreground: #fafafa;      /* White - click to change */
 
-  --border: oklch(0.28 0.02 255);
-  --input: oklch(0.21 0.02 255);
-  --ring: oklch(0.68 0.12 235);
+  --border: #404040;                      /* Darker border - click to change */
+  --input: #262626;                       /* Darker input - click to change */
+  --ring: #2563eb;                        /* Slightly dimmed blue - click to change */
 
-  --chart-1: oklch(0.68 0.12 235);
-  --chart-2: oklch(0.63 0.10 210);
-  --chart-3: oklch(0.67 0.11 150);
-  --chart-4: oklch(0.68 0.10 85);
-  --chart-5: oklch(0.55 0.20 25);
+  --chart-1: #2563eb;                     /* Blue - click to change */
+  --chart-2: #0891b2;                     /* Cyan - click to change */
+  --chart-3: #059669;                     /* Green - click to change */
+  --chart-4: #d97706;                     /* Yellow - click to change */
+  --chart-5: #ea580c;                     /* Orange - click to change */
 
-  --sidebar: oklch(0.12 0.02 255);
-  --sidebar-foreground: oklch(0.95 0.01 255);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: oklch(0.10 0.02 255);
-  --sidebar-accent: var(--accent);
-  --sidebar-accent-foreground: oklch(0.10 0.02 255);
-  --sidebar-border: oklch(0.24 0.02 255);
-  --sidebar-ring: var(--ring);
+  --sidebar: #0f0f0f;                     /* Very dark sidebar - click to change */
+  --sidebar-foreground: #fafafa;          /* White - click to change */
+  --sidebar-primary: var(--primary);      /* Use primary color */
+  --sidebar-primary-foreground: #111111;  /* Dark - click to change */
+  --sidebar-accent: var(--accent);        /* Use accent color */
+  --sidebar-accent-foreground: #111111;   /* Dark - click to change */
+  --sidebar-border: #333333;              /* Darker border - click to change */
+  --sidebar-ring: var(--ring);            /* Use ring color */
+
+  /* Admin-specific variables (for admin pages) */
+  --admin-card-bg: #8b1a1a;               /* Darker admin card background - click to change */
+  --admin-panel-bg: #0f0f0f;              /* Darker admin panel background - click to change */
 }
 
 /* ---------------------- */
@@ -161,14 +169,14 @@ html {
 #profile-tabs[data-compact="true"] {
   /* Enhanced backdrop blur when sticky */
   backdrop-filter: blur(12px);
-  background-color: oklch(0.22 0.02 255 / 0.95); /* More opaque when sticky */
+  background-color: rgba(24, 24, 27, 0.95); /* More opaque when sticky - click to change */
 }
 
 #profile-tabs[data-compact="false"] {
   /* Lighter styling when in normal position */
-  background-color: oklch(0.22 0.02 255 / 0.6);
-  border-top: 1px solid oklch(0.35 0.03 255 / 0.2);
-  border-bottom: 1px solid oklch(0.35 0.03 255);
+  background-color: rgba(24, 24, 27, 0.6); /* Semi-transparent - click to change */
+  border-top: 1px solid rgba(82, 82, 91, 0.2); /* Light border - click to change */
+  border-bottom: 1px solid #52525b; /* Solid border - click to change */
 }
 
 /* ---------------------- */

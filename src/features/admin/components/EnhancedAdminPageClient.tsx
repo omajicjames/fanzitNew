@@ -317,32 +317,46 @@ export default function EnhancedAdminPageClient() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-white">
-      <div className="container mx-auto px-4 py-8 space-y-8">
-        {/* ----------------------
-        // Header Section
-        // Purpose: Page title, subtitle, and admin badge matching photo design
-        // Note: Updated to match the dashboard photo layout
-        // ---------------------- */}
-        <header className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
-            <p className="text-neutral-400">Platform management and operations</p>
+    <div className="container mx-auto px-4 py-8 space-y-8">
+      {/* ----------------------
+      // Header Section
+      // Purpose: Page title, subtitle, and admin badge matching photo design
+      // Note: Updated to match the dashboard photo layout
+      // ---------------------- */}
+      <header className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
+          <p className="text-neutral-400">Platform management and operations</p>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <div className="flex gap-2">
+            <button className="rounded-lg bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20 transition-colors">
+              <span className="mr-2">+</span>
+              Add New
+            </button>
+            <button className="rounded-lg bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20 transition-colors">
+              <span className="mr-2">✏️</span>
+              Edit
+            </button>
+            <button className="rounded-lg bg-red-600/20 px-4 py-2 text-sm text-red-400 hover:bg-red-600/30 transition-colors">
+              <span className="mr-2">🗑️</span>
+              Delete
+            </button>
           </div>
-          
           <div className="rounded-full bg-orange-500 px-3 py-1 text-xs font-medium text-white">
             Super Admin
           </div>
-        </header>
-
-        {/* ----------------------
-        // Main Content
-        // Purpose: Display content based on current URL section
-        // Note: Navigation handled by SectionPills component above
-        // ---------------------- */}
-        <div className="min-h-[600px]">
-          {renderContent()}
         </div>
+      </header>
+
+      {/* ----------------------
+      // Main Content
+      // Purpose: Display content based on current URL section
+      // Note: Navigation handled by sidebar navigation
+      // ---------------------- */}
+      <div className="min-h-[600px]">
+        {renderContent()}
       </div>
     </div>
   );

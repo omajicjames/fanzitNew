@@ -281,26 +281,26 @@ function UserManagementPage() {
   // Main Component Render
   // ----------------------
   return (
-    <div className="text-white p-6">
+    <div className="text-[var(--admin-text-primary)] p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-neutral-800 pb-6">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">User Management</h1>
-            <p className="text-neutral-400">Manage users, roles, and permissions</p>
+            <h1 className="text-3xl font-bold text-[var(--admin-text-primary)] mb-2">User Management</h1>
+            <p className="text-[var(--admin-text-secondary)]">Manage users, roles, and permissions</p>
           </div>
           <div className="flex items-center gap-4">
-            <button className="flex items-center gap-2 px-4 py-2 bg-neutral-800 text-white rounded-lg hover:bg-neutral-700 transition-colors">
+            <button className="flex items-center gap-2 px-4 py-2 bg-[var(--admin-card-bg)] text-[var(--admin-text-primary)] rounded-lg hover:bg-[var(--admin-surface)] transition-colors">
               <Download className="h-4 w-4" />
               Export
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-neutral-800 text-white rounded-lg hover:bg-neutral-700 transition-colors">
+            <button className="flex items-center gap-2 px-4 py-2 bg-[var(--admin-card-bg)] text-[var(--admin-text-primary)] rounded-lg hover:bg-[var(--admin-surface)] transition-colors">
               <Upload className="h-4 w-4" />
               Import
             </button>
             <button 
               onClick={() => setShowUserModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-[var(--admin-text-primary)] rounded-lg hover:bg-blue-700 transition-colors"
             >
               <Plus className="h-4 w-4" />
               Add User
@@ -316,8 +316,8 @@ function UserManagementPage() {
                 <Users className="h-5 w-5 text-blue-400" />
               </div>
               <div>
-                <p className="text-sm text-neutral-400">Total Users</p>
-                <p className="text-2xl font-bold text-white">{users.length}</p>
+                <p className="text-sm text-[var(--admin-text-secondary)]">Total Users</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{users.length}</p>
               </div>
             </div>
           </div>
@@ -328,8 +328,8 @@ function UserManagementPage() {
                 <UserCheck className="h-5 w-5 text-green-400" />
               </div>
               <div>
-                <p className="text-sm text-neutral-400">Active Users</p>
-                <p className="text-2xl font-bold text-white">{users.filter(u => u.status === 'active').length}</p>
+                <p className="text-sm text-[var(--admin-text-secondary)]">Active Users</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{users.filter(u => u.status === 'active').length}</p>
               </div>
             </div>
           </div>
@@ -340,8 +340,8 @@ function UserManagementPage() {
                 <ShieldCheck className="h-5 w-5 text-red-400" />
               </div>
               <div>
-                <p className="text-sm text-neutral-400">Admins</p>
-                <p className="text-2xl font-bold text-white">{users.filter(u => u.role === 'admin').length}</p>
+                <p className="text-sm text-[var(--admin-text-secondary)]">Admins</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{users.filter(u => u.role === 'admin').length}</p>
               </div>
             </div>
           </div>
@@ -352,8 +352,8 @@ function UserManagementPage() {
                 <Ban className="h-5 w-5 text-yellow-400" />
               </div>
               <div>
-                <p className="text-sm text-neutral-400">Suspended</p>
-                <p className="text-2xl font-bold text-white">{users.filter(u => u.status === 'suspended').length}</p>
+                <p className="text-sm text-[var(--admin-text-secondary)]">Suspended</p>
+                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{users.filter(u => u.status === 'suspended').length}</p>
               </div>
             </div>
           </div>
@@ -365,13 +365,13 @@ function UserManagementPage() {
             <div className="flex flex-col sm:flex-row gap-4 flex-1">
               {/* Search */}
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--admin-text-secondary)]" />
                 <input
                   type="text"
                   placeholder="Search users..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg text-[var(--admin-text-primary)] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -379,7 +379,7 @@ function UserManagementPage() {
               <select
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value)}
-                className="px-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-2 bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg text-[var(--admin-text-primary)] focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="All">All Roles</option>
                 <option value="Admin">Admin</option>
@@ -391,7 +391,7 @@ function UserManagementPage() {
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-2 bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg text-[var(--admin-text-primary)] focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="All">All Status</option>
                 <option value="Active">Active</option>
@@ -403,22 +403,22 @@ function UserManagementPage() {
             {/* Bulk Actions */}
             {selectedUsers.length > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-neutral-400">{selectedUsers.length} selected</span>
+                <span className="text-sm text-[var(--admin-text-secondary)]">{selectedUsers.length} selected</span>
                 <button
                   onClick={() => handleBulkAction('activate')}
-                  className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition-colors"
+                  className="px-3 py-1 bg-green-600 text-[var(--admin-text-primary)] rounded text-sm hover:bg-green-700 transition-colors"
                 >
                   Activate
                 </button>
                 <button
                   onClick={() => handleBulkAction('suspend')}
-                  className="px-3 py-1 bg-yellow-600 text-white rounded text-sm hover:bg-yellow-700 transition-colors"
+                  className="px-3 py-1 bg-yellow-600 text-[var(--admin-text-primary)] rounded text-sm hover:bg-yellow-700 transition-colors"
                 >
                   Suspend
                 </button>
                 <button
                   onClick={() => handleBulkAction('delete')}
-                  className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors"
+                  className="px-3 py-1 bg-red-600 text-[var(--admin-text-primary)] rounded text-sm hover:bg-red-700 transition-colors"
                 >
                   Delete
                 </button>
@@ -432,12 +432,12 @@ function UserManagementPage() {
           {isLoading ? (
             <div className="p-8 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-              <p className="text-neutral-400 mt-4">Loading users...</p>
+              <p className="text-[var(--admin-text-secondary)] mt-4">Loading users...</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-neutral-800 border-b border-neutral-700">
+                <thead className="bg-[var(--admin-card-bg)] border-b border-neutral-700">
                   <tr>
                     <th className="px-6 py-4 text-left">
                       <input
@@ -450,7 +450,7 @@ function UserManagementPage() {
                             setSelectedUsers([]);
                           }
                         }}
-                        className="rounded border-neutral-600 bg-neutral-700 text-blue-600 focus:ring-blue-500"
+                        className="rounded border-neutral-600 bg-[var(--admin-surface)] text-blue-600 focus:ring-blue-500"
                       />
                     </th>
                     <th className="px-6 py-4 text-left text-sm font-medium text-neutral-300">User</th>
@@ -464,7 +464,7 @@ function UserManagementPage() {
                 </thead>
                 <tbody className="divide-y divide-neutral-800">
                   {filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-neutral-800/50 transition-colors">
+                    <tr key={user.id} className="hover:bg-[var(--admin-card-bg)]/50 transition-colors">
                       <td className="px-6 py-4">
                         <input
                           type="checkbox"
@@ -476,17 +476,17 @@ function UserManagementPage() {
                               setSelectedUsers(prev => prev.filter(id => id !== user.id));
                             }
                           }}
-                          className="rounded border-neutral-600 bg-neutral-700 text-blue-600 focus:ring-blue-500"
+                          className="rounded border-neutral-600 bg-[var(--admin-surface)] text-blue-600 focus:ring-blue-500"
                         />
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                          <div className="h-8 w-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-[var(--admin-text-primary)] font-medium text-sm">
                             {user.name.charAt(0)}
                           </div>
                           <div>
-                            <p className="font-medium text-white">{user.name}</p>
-                            <p className="text-sm text-neutral-400">{user.email}</p>
+                            <p className="font-medium text-[var(--admin-text-primary)]">{user.name}</p>
+                            <p className="text-sm text-[var(--admin-text-secondary)]">{user.email}</p>
                           </div>
                         </div>
                       </td>
@@ -505,28 +505,28 @@ function UserManagementPage() {
                       <td className="px-6 py-4 text-sm text-neutral-300">
                         <div>
                           <p>{user.totalPosts} posts</p>
-                          <p className="text-neutral-400">{user.totalComments} comments</p>
+                          <p className="text-[var(--admin-text-secondary)]">{user.totalComments} comments</p>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleEditUser(user)}
-                            className="p-1 text-neutral-400 hover:text-blue-400 transition-colors"
+                            className="p-1 text-[var(--admin-text-secondary)] hover:text-blue-400 transition-colors"
                             title="Edit user"
                           >
                             <Edit className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleSuspendUser(user.id)}
-                            className="p-1 text-neutral-400 hover:text-yellow-400 transition-colors"
+                            className="p-1 text-[var(--admin-text-secondary)] hover:text-yellow-400 transition-colors"
                             title={user.status === 'suspended' ? 'Activate user' : 'Suspend user'}
                           >
                             <Ban className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleDeleteUser(user.id)}
-                            className="p-1 text-neutral-400 hover:text-red-400 transition-colors"
+                            className="p-1 text-[var(--admin-text-secondary)] hover:text-red-400 transition-colors"
                             title="Delete user"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -541,7 +541,7 @@ function UserManagementPage() {
               {filteredUsers.length === 0 && (
                 <div className="p-8 text-center">
                   <Users className="h-12 w-12 text-neutral-600 mx-auto mb-4" />
-                  <p className="text-neutral-400">No users found matching your criteria</p>
+                  <p className="text-[var(--admin-text-secondary)]">No users found matching your criteria</p>
                 </div>
               )}
             </div>
