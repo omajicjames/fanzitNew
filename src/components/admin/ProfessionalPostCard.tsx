@@ -134,11 +134,45 @@ export function ProfessionalPostCard({
       return (
         <div className="aspect-video bg-[var(--admin-surface)] rounded-lg flex items-center justify-center border border-[var(--admin-border-soft)] relative overflow-hidden">
           {media.type === 'image' ? (
-            <img 
-              src={media.url} 
-              alt={post.title}
-              className="w-full h-full object-cover rounded-lg"
-            />
+            // Check if it's a placeholder image
+            media.url.includes('placeholder') ? (
+              <div className="flex flex-col items-center gap-3 text-[var(--admin-text-primary)]-muted">
+                <div className="p-4 bg-[var(--admin-card-bg)] rounded-full border border-[var(--admin-border-soft)]">
+                  <ImageIcon className="h-8 w-8 text-[var(--brand)]" />
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-medium text-[var(--admin-text-primary)]">Image Content</p>
+                  <p className="text-xs text-[var(--admin-text-primary)]-muted">Creative visual post</p>
+                </div>
+              </div>
+            ) : (
+              <img 
+                src={media.url} 
+                alt={post.title}
+                className="w-full h-full object-cover rounded-lg"
+                onError={(e) => {
+                  // If image fails to load, show modern placeholder
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const parent = target.parentElement;
+                  if (parent) {
+                    parent.innerHTML = `
+                      <div class="flex flex-col items-center gap-3 text-[var(--admin-text-primary)]-muted">
+                        <div class="p-4 bg-[var(--admin-card-bg)] rounded-full border border-[var(--admin-border-soft)]">
+                          <svg class="h-8 w-8 text-[var(--brand)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                          </svg>
+                        </div>
+                        <div class="text-center">
+                          <p class="text-sm font-medium text-[var(--admin-text-primary)]">Image Content</p>
+                          <p class="text-xs text-[var(--admin-text-primary)]-muted">Creative visual post</p>
+                        </div>
+                      </div>
+                    `;
+                  }
+                }}
+              />
+            )
           ) : (
             <div className="flex flex-col items-center gap-3 text-[var(--admin-text-primary)]-muted">
               <div className="p-4 bg-[var(--admin-card-bg)] rounded-full border border-[var(--admin-border-soft)]">

@@ -103,7 +103,7 @@ class PostsManagementService {
         isPremium: true,
         price: 9.99,
         media: [
-          { url: "/placeholder.jpg", type: "image", thumbnail: "/placeholder-thumb.jpg" }
+          { url: "", type: "image", thumbnail: "" }
         ],
         createdAt: "2024-01-25T10:00:00Z",
         publishedAt: "2024-01-25T10:30:00Z",
@@ -134,7 +134,7 @@ class PostsManagementService {
         isPremium: true,
         price: 19.99,
         media: [
-          { url: "/placeholder-video.mp4", type: "video", thumbnail: "/placeholder-thumb.jpg" }
+          { url: "", type: "video", thumbnail: "" }
         ],
         createdAt: "2024-01-24T15:20:00Z",
         publishedAt: "2024-01-24T15:45:00Z",
