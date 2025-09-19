@@ -1,244 +1,517 @@
-// ----------------------
-// System Management Main Page
-// Location: /app/(protected)/admin/system/page.tsx
-// Purpose: Main system management dashboard with overview and quick access to system tools
-// Protection: Requires admin authentication (inherited from parent layout)
-// Parent: Admin dashboard layout with AdminNav sidebar
-// Children: System management overview components and navigation cards
-// ----------------------
-
 "use client";
 
-import requireAdminPage from "@src/features/admin/auth/requireAdminPage";
+import { AdminPillNavigationComponent } from "@src/components/admin/AdminPillNavigation";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
+import { Badge } from "@src/components/ui/badge";
+import { Button } from "@src/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs";
 import { 
-  Activity, 
-  FileText, 
+  Shield, 
+  Server, 
   Database, 
   Settings, 
-  Users,
-  Shield,
+  Activity, 
+  AlertTriangle, 
+  CheckCircle, 
+  Clock,
   HardDrive,
   Cpu,
   MemoryStick,
   Wifi,
-  AlertTriangle,
-  CheckCircle,
-  Clock
+  HardDriveIcon,
+  Monitor,
+  Zap
 } from "lucide-react";
 
 // ----------------------
-// System Management Overview Component
-// Purpose: Display system overview and navigation to management tools
+// System Management Page
+// Location: /app/(protected)/admin/system/page.tsx
+// Purpose: Comprehensive system management for OnlyFans-like platform
+// Features: System status, backups, logs, maintenance, settings
+// Note: Mobile-first design with object-oriented structure
 // ----------------------
-function SystemManagementPage() {
-  // ----------------------
-  // Mock System Data
-  // Purpose: Placeholder data for system metrics and status
-  // ----------------------
-  const systemMetrics = {
-    uptime: "15 days, 4 hours",
-    cpuUsage: 45,
-    memoryUsage: 68,
-    diskUsage: 32,
-    activeUsers: 1247,
-    totalRequests: 89432,
-    errorRate: 0.02
+
+interface SystemStatus {
+  id: string;
+  component: string;
+  status: 'healthy' | 'warning' | 'error' | 'maintenance';
+  uptime: number;
+  lastCheck: string;
+  description: string;
+  metrics: {
+    cpu: number;
+    memory: number;
+    disk: number;
+    network: number;
   };
+}
 
-  const systemServices = [
-    { name: "Web Server", status: "running", uptime: "15d 4h" },
-    { name: "Database", status: "running", uptime: "15d 4h" },
-    { name: "Redis Cache", status: "running", uptime: "15d 4h" },
-    { name: "File Storage", status: "running", uptime: "15d 4h" },
-    { name: "Email Service", status: "warning", uptime: "2h 15m" },
-    { name: "Background Jobs", status: "running", uptime: "15d 4h" }
-  ];
+interface BackupInfo {
+  id: string;
+  name: string;
+  type: 'full' | 'incremental' | 'differential';
+  size: number;
+  createdAt: string;
+  status: 'completed' | 'in_progress' | 'failed';
+  location: string;
+}
 
-  const managementTools = [
+class SystemManagementService {
+  private systemStatus: SystemStatus[] = [
     {
-      title: "System Status",
-      description: "Monitor system health and performance metrics",
-      icon: Activity,
-      href: "/admin/system/status",
-      color: "bg-green-500"
+      id: '1',
+      component: 'Web Server',
+      status: 'healthy',
+      uptime: 99.9,
+      lastCheck: '2025-01-27T10:30:00Z',
+      description: 'Main web application server',
+      metrics: {
+        cpu: 45,
+        memory: 67,
+        disk: 23,
+        network: 89
+      }
     },
     {
-      title: "System Logs",
-      description: "View and analyze system logs and error reports",
-      icon: FileText,
-      href: "/admin/system/logs",
-      color: "bg-blue-500"
+      id: '2',
+      component: 'Database',
+      status: 'healthy',
+      uptime: 99.8,
+      lastCheck: '2025-01-27T10:29:00Z',
+      description: 'Primary database server',
+      metrics: {
+        cpu: 23,
+        memory: 45,
+        disk: 67,
+        network: 12
+      }
     },
     {
-      title: "Database Management",
-      description: "Manage database operations and backups",
-      icon: Database,
-      href: "/admin/system/database",
-      color: "bg-purple-500"
+      id: '3',
+      component: 'CDN',
+      status: 'warning',
+      uptime: 98.5,
+      lastCheck: '2025-01-27T10:28:00Z',
+      description: 'Content delivery network',
+      metrics: {
+        cpu: 78,
+        memory: 34,
+        disk: 12,
+        network: 95
+      }
     },
     {
-      title: "User Management",
-      description: "Manage user accounts and permissions",
-      icon: Users,
-      href: "/admin/system/users",
-      color: "bg-orange-500"
-    },
-    {
-      title: "Security Settings",
-      description: "Configure security policies and access controls",
-      icon: Shield,
-      href: "/admin/system/security",
-      color: "bg-red-500"
-    },
-    {
-      title: "System Configuration",
-      description: "Modify system settings and configurations",
-      icon: Settings,
-      href: "/admin/system/configuration",
-      color: "bg-gray-500"
+      id: '4',
+      component: 'File Storage',
+      status: 'healthy',
+      uptime: 99.7,
+      lastCheck: '2025-01-27T10:27:00Z',
+      description: 'Media file storage system',
+      metrics: {
+        cpu: 12,
+        memory: 23,
+        disk: 89,
+        network: 45
+      }
     }
   ];
 
-  // ----------------------
-  // Status Badge Component
-  // Purpose: Display service status with appropriate styling
-  // ----------------------
-  const StatusBadge = ({ status }: { status: string }) => {
+  private backups: BackupInfo[] = [
+    {
+      id: '1',
+      name: 'Daily Backup - 2025-01-27',
+      type: 'full',
+      size: 2048000000, // 2GB
+      createdAt: '2025-01-27T02:00:00Z',
+      status: 'completed',
+      location: 's3://fanzit-backups/daily/2025-01-27'
+    },
+    {
+      id: '2',
+      name: 'Incremental Backup - 2025-01-27',
+      type: 'incremental',
+      size: 512000000, // 512MB
+      createdAt: '2025-01-27T14:00:00Z',
+      status: 'in_progress',
+      location: 's3://fanzit-backups/incremental/2025-01-27'
+    },
+    {
+      id: '3',
+      name: 'Weekly Backup - 2025-01-20',
+      type: 'full',
+      size: 4096000000, // 4GB
+      createdAt: '2025-01-20T02:00:00Z',
+      status: 'completed',
+      location: 's3://fanzit-backups/weekly/2025-01-20'
+    }
+  ];
+
+  public getSystemStatus(): SystemStatus[] {
+    return this.systemStatus;
+  }
+
+  public getBackups(): BackupInfo[] {
+    return this.backups;
+  }
+
+  public getSystemStats() {
+    const totalComponents = this.systemStatus.length;
+    const healthyComponents = this.systemStatus.filter(s => s.status === 'healthy').length;
+    const warningComponents = this.systemStatus.filter(s => s.status === 'warning').length;
+    const errorComponents = this.systemStatus.filter(s => s.status === 'error').length;
+    const avgUptime = this.systemStatus.reduce((sum, s) => sum + s.uptime, 0) / totalComponents;
+
+    return {
+      totalComponents,
+      healthyComponents,
+      warningComponents,
+      errorComponents,
+      avgUptime: avgUptime.toFixed(1)
+    };
+  }
+}
+
+class SystemStatusCardComponent {
+  private status: SystemStatus;
+
+  constructor(status: SystemStatus) {
+    this.status = status;
+  }
+
+  private getStatusBadge() {
     const statusConfig = {
-      running: { color: "bg-green-100 text-green-800", icon: CheckCircle },
-      warning: { color: "bg-yellow-100 text-yellow-800", icon: AlertTriangle },
-      error: { color: "bg-red-100 text-red-800", icon: AlertTriangle }
+      healthy: { variant: 'default' as const, icon: CheckCircle, text: 'Healthy' },
+      warning: { variant: 'secondary' as const, icon: AlertTriangle, text: 'Warning' },
+      error: { variant: 'destructive' as const, icon: AlertTriangle, text: 'Error' },
+      maintenance: { variant: 'secondary' as const, icon: Clock, text: 'Maintenance' }
     };
 
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.error;
+    const config = statusConfig[this.status.status];
     const Icon = config.icon;
 
     return (
-      <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full ${config.color}`}>
+      <Badge variant={config.variant} className="flex items-center gap-1">
         <Icon className="h-3 w-3" />
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </span>
+        {config.text}
+      </Badge>
     );
-  };
+  }
 
-  // ----------------------
-  // Main Component Render
-  // ----------------------
-  return (
-    <div className="min-h-screen bg-neutral-950 text-white p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="border-b border-neutral-800 pb-6">
-          <h1 className="text-3xl font-bold text-white mb-2">System Management</h1>
-          <p className="text-neutral-400">Monitor and manage your system infrastructure</p>
-        </div>
+  private getComponentIcon() {
+    const componentIcons = {
+      'Web Server': Server,
+      'Database': Database,
+      'CDN': Wifi,
+      'File Storage': HardDrive
+    };
 
-        {/* System Overview Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-neutral-900 rounded-lg p-6 border border-neutral-800">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-green-500/20 rounded-lg">
-                <Clock className="h-5 w-5 text-green-400" />
+    const Icon = componentIcons[this.status.component as keyof typeof componentIcons] || Server;
+    return <Icon className="h-4 w-4" />;
+  }
+
+  public render() {
+    return (
+      <Card className="hover:shadow-lg transition-shadow duration-200">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
+                {this.getComponentIcon()}
               </div>
-              <h3 className="font-semibold text-white">System Uptime</h3>
-            </div>
-            <p className="text-2xl font-bold text-green-400">{systemMetrics.uptime}</p>
-          </div>
-
-          <div className="bg-neutral-900 rounded-lg p-6 border border-neutral-800">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-blue-500/20 rounded-lg">
-                <Cpu className="h-5 w-5 text-blue-400" />
-              </div>
-              <h3 className="font-semibold text-white">CPU Usage</h3>
-            </div>
-            <p className="text-2xl font-bold text-blue-400">{systemMetrics.cpuUsage}%</p>
-          </div>
-
-          <div className="bg-neutral-900 rounded-lg p-6 border border-neutral-800">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-purple-500/20 rounded-lg">
-                <MemoryStick className="h-5 w-5 text-purple-400" />
-              </div>
-              <h3 className="font-semibold text-white">Memory Usage</h3>
-            </div>
-            <p className="text-2xl font-bold text-purple-400">{systemMetrics.memoryUsage}%</p>
-          </div>
-
-          <div className="bg-neutral-900 rounded-lg p-6 border border-neutral-800">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-orange-500/20 rounded-lg">
-                <HardDrive className="h-5 w-5 text-orange-400" />
-              </div>
-              <h3 className="font-semibold text-white">Disk Usage</h3>
-            </div>
-            <p className="text-2xl font-bold text-orange-400">{systemMetrics.diskUsage}%</p>
-          </div>
-        </div>
-
-        {/* System Services Status */}
-        <div className="bg-neutral-900 rounded-lg border border-neutral-800">
-          <div className="p-6 border-b border-neutral-800">
-            <h2 className="text-xl font-semibold text-white">System Services</h2>
-            <p className="text-neutral-400 mt-1">Current status of critical system services</p>
-          </div>
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {systemServices.map((service, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-neutral-800 rounded-lg">
-                  <div>
-                    <h3 className="font-medium text-white">{service.name}</h3>
-                    <p className="text-sm text-neutral-400">Uptime: {service.uptime}</p>
-                  </div>
-                  <StatusBadge status={service.status} />
+              <div className="flex-1 min-w-0">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  {this.status.component}
+                </CardTitle>
+                <CardDescription className="line-clamp-2">
+                  {this.status.description}
+                </CardDescription>
+                <div className="flex items-center gap-2 mt-2">
+                  <Badge variant="outline" className="text-xs">
+                    {this.status.uptime}% uptime
+                  </Badge>
                 </div>
-              ))}
+              </div>
+            </div>
+            <div className="flex gap-2">
+              {this.getStatusBadge()}
             </div>
           </div>
-        </div>
+        </CardHeader>
+        
+        <CardContent className="space-y-4">
+          {/* Metrics */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center p-3 bg-muted/50 rounded-lg">
+              <div className="flex items-center justify-center gap-1 text-blue-600">
+                <Cpu className="h-4 w-4" />
+                <span className="font-semibold">{this.status.metrics.cpu}%</span>
+              </div>
+              <p className="text-xs text-muted-foreground">CPU</p>
+            </div>
+            <div className="text-center p-3 bg-muted/50 rounded-lg">
+              <div className="flex items-center justify-center gap-1 text-green-600">
+                <MemoryStick className="h-4 w-4" />
+                <span className="font-semibold">{this.status.metrics.memory}%</span>
+              </div>
+              <p className="text-xs text-muted-foreground">Memory</p>
+            </div>
+            <div className="text-center p-3 bg-muted/50 rounded-lg">
+              <div className="flex items-center justify-center gap-1 text-orange-600">
+                <HardDriveIcon className="h-4 w-4" />
+                <span className="font-semibold">{this.status.metrics.disk}%</span>
+              </div>
+              <p className="text-xs text-muted-foreground">Disk</p>
+            </div>
+            <div className="text-center p-3 bg-muted/50 rounded-lg">
+              <div className="flex items-center justify-center gap-1 text-purple-600">
+                <Wifi className="h-4 w-4" />
+                <span className="font-semibold">{this.status.metrics.network}%</span>
+              </div>
+              <p className="text-xs text-muted-foreground">Network</p>
+            </div>
+          </div>
 
-        {/* Management Tools */}
-        <div className="bg-neutral-900 rounded-lg border border-neutral-800">
-          <div className="p-6 border-b border-neutral-800">
-            <h2 className="text-xl font-semibold text-white">Management Tools</h2>
-            <p className="text-neutral-400 mt-1">Access system management and configuration tools</p>
+          <div className="text-sm text-muted-foreground">
+            Last check: {new Date(this.status.lastCheck).toLocaleString()}
           </div>
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {managementTools.map((tool, index) => {
-                const Icon = tool.icon;
-                return (
-                  <a
-                    key={index}
-                    href={tool.href}
-                    className="group block p-6 bg-neutral-800 rounded-lg border border-neutral-700 hover:border-neutral-600 transition-all duration-200 hover:bg-neutral-750"
-                  >
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className={`p-3 ${tool.color} rounded-lg group-hover:scale-110 transition-transform duration-200`}>
-                        <Icon className="h-6 w-6 text-white" />
-                      </div>
-                      <h3 className="font-semibold text-white group-hover:text-blue-400 transition-colors">
-                        {tool.title}
-                      </h3>
-                    </div>
-                    <p className="text-neutral-400 text-sm leading-relaxed">
-                      {tool.description}
-                    </p>
-                  </a>
-                );
-              })}
+        </CardContent>
+      </Card>
+    );
+  }
+}
+
+class BackupCardComponent {
+  private backup: BackupInfo;
+
+  constructor(backup: BackupInfo) {
+    this.backup = backup;
+  }
+
+  private getStatusBadge() {
+    const statusConfig = {
+      completed: { variant: 'default' as const, icon: CheckCircle, text: 'Completed' },
+      in_progress: { variant: 'secondary' as const, icon: Clock, text: 'In Progress' },
+      failed: { variant: 'destructive' as const, icon: AlertTriangle, text: 'Failed' }
+    };
+
+    const config = statusConfig[this.backup.status];
+    const Icon = config.icon;
+
+    return (
+      <Badge variant={config.variant} className="flex items-center gap-1">
+        <Icon className="h-3 w-3" />
+        {config.text}
+      </Badge>
+    );
+  }
+
+  private getTypeIcon() {
+    const typeIcons = {
+      full: HardDrive,
+      incremental: Database,
+      differential: HardDriveIcon
+    };
+
+    const Icon = typeIcons[this.backup.type];
+    return <Icon className="h-4 w-4" />;
+  }
+
+  private formatSize(bytes: number): string {
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes === 0) return '0 B';
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+  }
+
+  public render() {
+    return (
+      <Card className="hover:shadow-lg transition-shadow duration-200">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
+                {this.getTypeIcon()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  {this.backup.name}
+                </CardTitle>
+                <CardDescription className="line-clamp-2">
+                  {this.backup.location}
+                </CardDescription>
+                <div className="flex items-center gap-2 mt-2">
+                  <Badge variant="outline" className="text-xs">
+                    {this.backup.type}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    {this.formatSize(this.backup.size)}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              {this.getStatusBadge()}
             </div>
           </div>
+        </CardHeader>
+        
+        <CardContent className="space-y-4">
+          <div className="text-sm text-muted-foreground">
+            Created: {new Date(this.backup.createdAt).toLocaleString()}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+}
+
+export default function SystemManagementPage() {
+  const systemService = new SystemManagementService();
+  const systemStatus = systemService.getSystemStatus();
+  const backups = systemService.getBackups();
+  const stats = systemService.getSystemStats();
+
+  return (
+    <div className="space-y-6">
+      {/* Header with Pills */}
+      <div className="space-y-4">
+        <div>
+          <h1 className="text-3xl font-bold">System Management</h1>
+          <p className="text-muted-foreground">Monitor system health, backups, and maintenance</p>
         </div>
+        <AdminPillNavigationComponent />
       </div>
+
+      {/* System Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Components</p>
+                <p className="text-2xl font-bold">{stats.totalComponents}</p>
+              </div>
+              <Server className="h-8 w-8 text-muted-foreground" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Healthy</p>
+                <p className="text-2xl font-bold text-green-600">{stats.healthyComponents}</p>
+              </div>
+              <CheckCircle className="h-8 w-8 text-green-600" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Warnings</p>
+                <p className="text-2xl font-bold text-yellow-600">{stats.warningComponents}</p>
+              </div>
+              <AlertTriangle className="h-8 w-8 text-yellow-600" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Avg Uptime</p>
+                <p className="text-2xl font-bold text-blue-600">{stats.avgUptime}%</p>
+              </div>
+              <Activity className="h-8 w-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* System Tabs */}
+      <Tabs defaultValue="status" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="status">System Status</TabsTrigger>
+          <TabsTrigger value="backups">Backups</TabsTrigger>
+          <TabsTrigger value="logs">Logs</TabsTrigger>
+          <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="status" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {systemStatus.map((status) => {
+              const statusCard = new SystemStatusCardComponent(status);
+              return <div key={status.id}>{statusCard.render()}</div>;
+            })}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="backups" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {backups.map((backup) => {
+              const backupCard = new BackupCardComponent(backup);
+              return <div key={backup.id}>{backupCard.render()}</div>;
+            })}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="logs" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>System Logs</CardTitle>
+              <CardDescription>View and manage system logs</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64 flex items-center justify-center bg-muted/20 rounded-lg">
+                <div className="text-center">
+                  <Monitor className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-muted-foreground">System logs viewer placeholder</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="maintenance" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Maintenance Mode</CardTitle>
+              <CardDescription>Schedule and manage system maintenance</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64 flex items-center justify-center bg-muted/20 rounded-lg">
+                <div className="text-center">
+                  <Settings className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-muted-foreground">Maintenance scheduler placeholder</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="settings" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>System Settings</CardTitle>
+              <CardDescription>Configure system parameters and preferences</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64 flex items-center justify-center bg-muted/20 rounded-lg">
+                <div className="text-center">
+                  <Zap className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-muted-foreground">System settings placeholder</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
-
-// ----------------------
-// Protected System Management Page Export
-// Purpose: System management page wrapped with authentication HOC
-// ----------------------
-export default requireAdminPage(SystemManagementPage);
-
-/* End of System Management Page */

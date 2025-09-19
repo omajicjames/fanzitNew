@@ -321,7 +321,7 @@ export default function AdminNav({ className = "" }: AdminNavProps) {
     // Clear admin session
     localStorage.removeItem("admin_token");
     localStorage.removeItem("user_role");
-    router.push("/admin-login");
+    router.push("/admin");
   };
 
   const toggleCollapse = () => {

@@ -1,73 +1,24 @@
 // ----------------------
 // Enhanced Admin Page Client Component
 // Location: /src/features/admin/components/EnhancedAdminPageClient.tsx
-// Purpose: Main admin dashboard with tab navigation and comprehensive admin tools
-// Parent: Admin page component
+// Purpose: Main admin dashboard content with unified navigation system
+// Parent: Admin dashboard page with SectionPills navigation
 // Children: AdminKpis, SystemStatusWidget, various admin panels
+// Note: Removed internal tab navigation - now uses SectionPills from single-source config
 // ----------------------
 
 "use client";
 
-import { useState } from "react";
-import { BarChart3, Users, FileText, DollarSign, TestTube } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { TestTube, BarChart3, Users } from "lucide-react";
 import AdminKpis from "./AdminKpis";
 import SystemStatusWidget from "@src/features/status/SystemStatusWidget";
 
 // ----------------------
-// Tab Configuration
-// Purpose: Define available admin dashboard tabs
+// Admin Section Content Renderer
+// Purpose: Display content based on current admin section from URL
+// Note: Uses single-source navigation - no internal tab management
 // ----------------------
-type AdminTab = "dashboard" | "users" | "content" | "finance";
-
-interface TabConfig {
-  id: AdminTab;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-const ADMIN_TABS: TabConfig[] = [
-  { id: "dashboard", label: "Dashboard", icon: BarChart3 },
-  { id: "users", label: "Users", icon: Users },
-  { id: "content", label: "Content", icon: FileText },
-  { id: "finance", label: "Finance", icon: DollarSign },
-];
-
-// ----------------------
-// Tab Navigation Component
-// Purpose: Pill-style tab navigation with active state
-// ----------------------
-interface TabNavigationProps {
-  activeTab: AdminTab;
-  onTabChange: (tab: AdminTab) => void;
-}
-
-function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
-  return (
-    <div className="flex space-x-1 rounded-full border border-white/10 bg-white/5 p-1">
-      {ADMIN_TABS.map((tab) => {
-        const Icon = tab.icon;
-        const isActive = activeTab === tab.id;
-        
-        return (
-          <button
-            key={tab.id}
-            onClick={() => onTabChange(tab.id)}
-            className={`
-              flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all
-              ${isActive 
-                ? "bg-amber-500/20 text-amber-400 shadow-sm" 
-                : "text-white/70 hover:text-white hover:bg-white/5"
-              }
-            `}
-          >
-            <Icon className="h-4 w-4" />
-            {tab.label}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
 // ----------------------
 // Dashboard Tab Content
@@ -278,32 +229,30 @@ function FinanceTab() {
 
 // ----------------------
 // Main Enhanced Admin Page Client Component
-// Purpose: Complete admin dashboard with tab navigation
+// Purpose: Complete admin dashboard content using URL-based navigation
+// Note: Navigation handled by SectionPills from single-source config
 // ----------------------
 export default function EnhancedAdminPageClient() {
   // ----------------------
-  // State Management
-  // Purpose: Track active tab and handle tab switching
+  // URL-based Navigation
+  // Purpose: Determine current admin section from URL path
+  // Note: No internal state - uses unified navigation system
   // ----------------------
-  const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
-
+  const path = usePathname();
+  
   // ----------------------
-  // Tab Content Renderer
-  // Purpose: Render content based on active tab
+  // Content Renderer
+  // Purpose: Display content based on current URL section
+  // Note: Default to dashboard content for /admin/dashboard
   // ----------------------
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "dashboard":
-        return <DashboardTab />;
-      case "users":
-        return <UsersTab />;
-      case "content":
-        return <ContentTab />;
-      case "finance":
-        return <FinanceTab />;
-      default:
-        return <DashboardTab />;
-    }
+  const renderContent = () => {
+    // Check if we're on a specific admin section
+    if (path.includes("/admin/users")) return <UsersTab />;
+    if (path.includes("/admin/content")) return <ContentTab />;
+    if (path.includes("/admin/finance")) return <FinanceTab />;
+    
+    // Default to dashboard content
+    return <DashboardTab />;
   };
 
   return (
@@ -311,37 +260,27 @@ export default function EnhancedAdminPageClient() {
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* ----------------------
         // Header Section
-        // Purpose: Page title, subtitle, and test button
+        // Purpose: Page title, subtitle, and admin badge
+        // Note: Removed test button - testing moved to dedicated section
         // ---------------------- */}
         <header className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-white">Admin</h1>
-            <p className="text-sm text-muted-foreground">Operate and moderate your platform.</p>
+            <h1 className="text-2xl font-semibold text-white">Admin Dashboard</h1>
+            <p className="text-sm text-muted-foreground">Platform management and operations</p>
           </div>
           
-          <div className="flex items-center gap-4">
-            <div className="rounded-full bg-amber-500/20 px-3 py-1 text-xs font-medium text-amber-400">
-              Super Admin
-            </div>
-            <button className="flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/20">
-              <TestTube className="h-4 w-4" />
-              Test
-            </button>
+          <div className="rounded-full bg-amber-500/20 px-3 py-1 text-xs font-medium text-amber-400">
+            Super Admin
           </div>
         </header>
 
         {/* ----------------------
-        // Tab Navigation
-        // Purpose: Switch between different admin sections
-        // ---------------------- */}
-        <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
-
-        {/* ----------------------
-        // Tab Content
-        // Purpose: Display content based on selected tab
+        // Main Content
+        // Purpose: Display content based on current URL section
+        // Note: Navigation handled by SectionPills component above
         // ---------------------- */}
         <div className="min-h-[600px]">
-          {renderTabContent()}
+          {renderContent()}
         </div>
       </div>
     </div>

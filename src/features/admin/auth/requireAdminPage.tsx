@@ -51,14 +51,28 @@ class AdminAuthService {
   // Purpose: Verify if user is authenticated admin
   // ----------------------
   async checkAdminAuth(): Promise<AdminUser | null> {
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Simulate API call delay and ensure localStorage is ready
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // Ensure we're in browser environment
+    if (typeof window === 'undefined') {
+      console.log("Auth check - Not in browser environment");
+      return null;
+    }
 
     // Mock authentication check
     const token = localStorage.getItem("admin_token");
     const userRole = localStorage.getItem("user_role");
+    
+    console.log("=== AUTH CHECK DEBUG ===");
+    console.log("Auth check - token:", token);
+    console.log("Auth check - userRole:", userRole);
+    console.log("Auth check - condition 1 (token exists):", !!token);
+    console.log("Auth check - condition 2 (role valid):", userRole === "admin" || userRole === "super_admin" || userRole === "moderator");
+    console.log("Auth check - both conditions:", !!(token && (userRole === "admin" || userRole === "super_admin" || userRole === "moderator")));
 
     if (token && (userRole === "admin" || userRole === "super_admin" || userRole === "moderator")) {
+      console.log("Auth check - SUCCESS: User authenticated");
       this.currentUser = {
         id: "admin_001",
         email: "admin@fanzit.com",
@@ -69,6 +83,7 @@ class AdminAuthService {
       return this.currentUser;
     }
 
+    console.log("Auth check - FAILED: User not authenticated");
     return null;
   }
 
@@ -119,7 +134,7 @@ function AdminUnauthorized() {
   const router = useRouter();
 
   const handleLoginRedirect = () => {
-    router.push("/admin-login");
+    router.push("/admin");
   };
 
   const handleHomeRedirect = () => {
@@ -209,25 +224,39 @@ function AdminAuthError() {
 }
 
 // ----------------------
-// Admin Authentication Hook
-// Purpose: Custom hook for admin authentication state
-// ----------------------
-export function useAdminAuth() {
-  const [authState, setAuthState] = useState<AuthState>("loading");
-  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
-  const authService = AdminAuthService.getInstance();
-
+  // Admin Authentication Hook
+  // Purpose: Custom hook for admin authentication state
+  // ----------------------
+  export function useAdminAuth() {
+    const [authState, setAuthState] = useState<AuthState>("loading");
+    const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
+    const authService = AdminAuthService.getInstance();
+  
   useEffect(() => {
     const checkAuth = async () => {
       try {
         setAuthState("loading");
+        
+        // Add delay to ensure localStorage is ready after redirect
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         const user = await authService.checkAdminAuth();
         
         if (user) {
           setAdminUser(user);
           setAuthState("authenticated");
         } else {
-          setAuthState("unauthorized");
+          // Double-check after a longer delay in case of timing issues
+          console.log("Initial auth check failed, retrying...");
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          const retryUser = await authService.checkAdminAuth();
+          
+          if (retryUser) {
+            setAdminUser(retryUser);
+            setAuthState("authenticated");
+          } else {
+            setAuthState("unauthorized");
+          }
         }
       } catch (error) {
         logger.error("Admin auth error", "requireAdminPage", error);
@@ -235,18 +264,21 @@ export function useAdminAuth() {
       }
     };
 
-    checkAuth();
+    // Add a small delay before checking auth to ensure page is fully loaded
+    const timeoutId = setTimeout(checkAuth, 100);
+    
+    return () => clearTimeout(timeoutId);
   }, [authService]);
-
-  return {
-    authState,
-    adminUser,
-    isLoading: authState === "loading",
-    isAuthenticated: authState === "authenticated",
-    isUnauthorized: authState === "unauthorized",
-    isError: authState === "error"
-  };
-}
+  
+    return {
+      authState,
+      adminUser,
+      isLoading: authState === "loading",
+      isAuthenticated: authState === "authenticated",
+      isUnauthorized: authState === "unauthorized",
+      isError: authState === "error"
+    };
+  }
 
 // ----------------------
 // Require Admin Page HOC
