@@ -1,11 +1,11 @@
 "use client";
 
-import { AdminPillNavigationComponent } from "@src/components/admin/AdminPillNavigation";
+import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
+import { PostsDetailView } from "@src/components/admin/PostsDetailView";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs";
 import { 
   FileText, 
   Plus, 
@@ -31,6 +31,7 @@ import {
   Flag,
   Shield
 } from "lucide-react";
+import { useState, useEffect } from "react";
 
 // ----------------------
 // Posts Management Page
@@ -376,113 +377,141 @@ class PostCardComponent {
 }
 
 export default function PostsPage() {
+  const [selectedPostId, setSelectedPostId] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+
   const postsService = new PostsManagementService();
   const posts = postsService.getPosts();
   const stats = postsService.getPostsStats();
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Posts Management</h1>
-          <p className="text-muted-foreground">Manage and moderate user posts</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <Filter className="h-4 w-4 mr-2" />
-            Filters
-          </Button>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            New Post
-          </Button>
-        </div>
-      </div>
+  // Set default selected post
+  useEffect(() => {
+    if (posts.length > 0 && !selectedPostId) {
+      setSelectedPostId(posts[0].id);
+    }
+  }, [posts, selectedPostId]);
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalPosts}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.publishedPosts} published, {stats.pendingPosts} pending
-            </p>
-          </CardContent>
-        </Card>
+  // Filter posts based on search and filters
+  const filteredPosts = posts.filter(post => {
+    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         post.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         post.author.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesStatus = statusFilter === "all" || post.status === statusFilter;
+    const matchesType = typeFilter === "all" || post.type === typeFilter;
+    
+    return matchesSearch && matchesStatus && matchesType;
+  });
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Flagged Posts</CardTitle>
-            <Flag className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.flaggedPosts}</div>
-            <p className="text-xs text-muted-foreground">
-              Require review
-            </p>
-          </CardContent>
-        </Card>
+  const handlePostSelect = (postId: string) => {
+    setSelectedPostId(postId);
+  };
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Views</CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalViews.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              Across all posts
-            </p>
-          </CardContent>
-        </Card>
+  const handleView = () => {
+    console.log('View post');
+    // Navigate to post view
+  };
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${stats.totalEarnings.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
-              From premium posts
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+  const handleEdit = () => {
+    console.log('Edit post');
+    // Navigate to post editor
+  };
 
-      {/* Search and Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search posts, authors, or content..."
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+  const handleDelete = () => {
+    console.log('Delete post');
+    // Delete post
+  };
 
-      {/* Posts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts.map((post) => {
-          const postCard = new PostCardComponent(post);
-          return <div key={post.id}>{postCard.render()}</div>;
-        })}
-      </div>
+  const handleMore = () => {
+    console.log('More options');
+    // Show more options menu
+  };
+
+  const handleApprove = () => {
+    console.log('Approve post');
+    // Approve pending post
+  };
+
+  const handleFlag = () => {
+    console.log('Flag post');
+    // Flag post for review
+  };
+
+  const handleArchive = () => {
+    console.log('Archive post');
+    // Archive post
+  };
+
+  const handleNewPost = () => {
+    console.log('Create new post');
+    // Navigate to new post editor
+  };
+
+  const handleFilter = () => {
+    console.log('Filter posts');
+    // Show filter options
+  };
+
+  const statsCards = (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <MetricCard
+        title="Total Posts"
+        value={stats.totalPosts}
+        growth={12.5}
+        icon={FileText}
+        format="number"
+      />
+      <MetricCard
+        title="Flagged Posts"
+        value={stats.flaggedPosts}
+        growth={-5.2}
+        icon={Flag}
+        format="number"
+      />
+      <MetricCard
+        title="Total Views"
+        value={stats.totalViews}
+        growth={8.2}
+        icon={Eye}
+        format="number"
+      />
+      <MetricCard
+        title="Total Earnings"
+        value={stats.totalEarnings}
+        growth={15.3}
+        icon={TrendingUp}
+        format="currency"
+      />
     </div>
+  );
+
+  return (
+    <AdminPageTemplate
+      title="Posts Management"
+      description="Comprehensive post management and moderation"
+      icon={<FileText className="h-6 w-6" />}
+      showSearch={true}
+      showFilters={true}
+      showRefresh={true}
+      showExport={true}
+      stats={statsCards}
+    >
+      <PostsDetailView
+        posts={filteredPosts}
+        selectedPostId={selectedPostId}
+        onPostSelect={handlePostSelect}
+        onView={handleView}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onMore={handleMore}
+        onApprove={handleApprove}
+        onFlag={handleFlag}
+        onArchive={handleArchive}
+        onNewPost={handleNewPost}
+        onFilter={handleFilter}
+      />
+    </AdminPageTemplate>
   );
 }

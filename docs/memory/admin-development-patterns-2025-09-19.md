@@ -71,9 +71,40 @@ import { MetricCard } from "@src/components/admin/AdminPageTemplate";
 />
 ```
 
-### 3. SelectionCard (Modern Dropdown)
+### 3. RequestSelectionCard (Generic Reusable Dropdown)
+**Location:** `src/components/admin/RequestSelectionCard.tsx`
+**Purpose:** Dynamic reusable selection card for any admin page
+
+```tsx
+import { RequestSelectionCard, PostSelectionCard, VerificationSelectionCard, MemberSelectionCard } from "@src/components/admin/RequestSelectionCard";
+
+// Generic RequestSelectionCard
+<RequestSelectionCard
+  title="Select Request"
+  description="Choose a request to review"
+  value={selectedId}
+  onValueChange={setSelectedId}
+  options={[
+    { 
+      id: "1", 
+      title: "Request Title", 
+      subtitle: "Additional info", 
+      status: "active",
+      icon: User 
+    }
+  ]}
+  placeholder="Select a request"
+/>
+
+// Pre-configured variants
+<PostSelectionCard value={postId} onValueChange={setPostId} posts={posts} />
+<VerificationSelectionCard value={verificationId} onValueChange={setVerificationId} verifications={verifications} />
+<MemberSelectionCard value={memberId} onValueChange={setMemberId} members={members} />
+```
+
+### 4. SelectionCard (Legacy - Use RequestSelectionCard instead)
 **Location:** `src/components/admin/SelectionCard.tsx`
-**Purpose:** Reusable dropdown selection with proper background
+**Purpose:** Legacy dropdown selection (being phased out)
 
 ```tsx
 import { SelectionCard, MetricSelectionCard, PostSelectionCard } from "@src/components/admin/SelectionCard";
@@ -95,7 +126,7 @@ import { SelectionCard, MetricSelectionCard, PostSelectionCard } from "@src/comp
 <PostSelectionCard value={postId} onValueChange={setPostId} posts={posts} />
 ```
 
-### 4. MetricSelectionCard (Dashboard Standard)
+### 5. MetricSelectionCard (Dashboard Standard)
 **Location:** `src/components/admin/SelectionCard.tsx`
 **Purpose:** Pre-configured metric selection dropdown for admin dashboard
 
@@ -114,7 +145,7 @@ import { MetricSelectionCard } from "@src/components/admin/SelectionCard";
 - Matches verification page styling
 - Includes proper background and borders
 
-### 5. AdminCard
+### 6. AdminCard
 **Location:** `src/components/admin/AdminPageTemplate.tsx` (exported)
 **Purpose:** Standardized card with CSS variables
 
