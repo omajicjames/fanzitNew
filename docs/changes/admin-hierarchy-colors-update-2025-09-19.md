@@ -17,7 +17,7 @@ Create a clear visual hierarchy with:
 **Added new hierarchy colors**:
 ```css
 /* Admin-specific surface hierarchy */
---admin-card-bg: rgb(184, 66, 66);       /* main canvas card (red) */
+--admin-card-bg: rgb(35, 35, 35);       /* main canvas card (red) */
 --admin-panel-bg: #1a1a1a;      /* side panel (slightly lighter) */
 ```
 
