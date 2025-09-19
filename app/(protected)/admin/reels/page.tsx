@@ -1,11 +1,12 @@
 "use client";
 
-import { AdminPillNavigationComponent } from "@src/components/admin/AdminPillNavigation";
+import { useState, useEffect } from "react";
+import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@src/components/ui/select";
 import { 
   PlaySquare, 
   Plus, 
@@ -33,7 +34,23 @@ import {
   Play,
   Pause,
   Volume2,
-  VolumeX
+  VolumeX,
+  DollarSign,
+  Star,
+  Crown,
+  FileImage,
+  MapPin,
+  Activity,
+  Zap,
+  Target,
+  Award,
+  Settings,
+  Ban,
+  Check,
+  X,
+  RotateCcw,
+  BadgeCheck,
+  ExternalLink
 } from "lucide-react";
 
 // ----------------------
@@ -273,23 +290,34 @@ class ReelsManagementService {
   }
 }
 
-class ReelCardComponent {
-  private reel: Reel;
-
-  constructor(reel: Reel) {
-    this.reel = reel;
-  }
-
-  private getStatusBadge() {
+// ----------------------
+// Professional Reel Card Component
+// Purpose: Displays reel information in a structured, professional layout
+// Note: Similar to verification card with reel-specific data
+// ----------------------
+function ProfessionalReelCard({
+  reel,
+  onView,
+  onEdit,
+  onMore,
+  className = ""
+}: {
+  reel: Reel;
+  onView?: () => void;
+  onEdit?: () => void;
+  onMore?: () => void;
+  className?: string;
+}) {
+  const getStatusBadge = () => {
     const statusConfig = {
-      published: { variant: "default" as const, icon: CheckCircle, text: "Published" },
-      pending: { variant: "secondary" as const, icon: Clock, text: "Pending" },
-      flagged: { variant: "destructive" as const, icon: Flag, text: "Flagged" },
-      removed: { variant: "destructive" as const, icon: AlertTriangle, text: "Removed" },
-      draft: { variant: "outline" as const, icon: Edit, text: "Draft" }
+      published: { variant: "default" as const, icon: CheckCircle, text: "Published", color: "text-green-600" },
+      pending: { variant: "secondary" as const, icon: Clock, text: "Pending", color: "text-yellow-600" },
+      flagged: { variant: "destructive" as const, icon: Flag, text: "Flagged", color: "text-red-600" },
+      removed: { variant: "destructive" as const, icon: AlertTriangle, text: "Removed", color: "text-red-600" },
+      draft: { variant: "outline" as const, icon: Edit, text: "Draft", color: "text-gray-600" }
     };
 
-    const config = statusConfig[this.reel.status];
+    const config = statusConfig[reel.status];
     const Icon = config.icon;
 
     return (
@@ -298,288 +326,593 @@ class ReelCardComponent {
         {config.text}
       </Badge>
     );
-  }
+  };
 
-  private formatDuration(seconds: number): string {
+  const formatDuration = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  }
+  };
 
-  public render() {
-    return (
-      <Card className="group hover:shadow-lg transition-all duration-200">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="space-y-1 flex-1">
-              <CardTitle className="text-lg line-clamp-2">{this.reel.title}</CardTitle>
-              <CardDescription className="line-clamp-2">{this.reel.description}</CardDescription>
+  return (
+    <Card className={`bg-admin-card border-line-soft hover:shadow-lg transition-all duration-200 ${className}`}>
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-full bg-surface-elev2 flex items-center justify-center border border-line-soft">
+              <PlaySquare className="h-6 w-6 text-text-muted" />
             </div>
-            <div className="flex flex-col gap-1 ml-2">
-              {this.reel.featured && (
-                <Badge variant="outline" className="text-yellow-600 border-yellow-600">
-                  Featured
-                </Badge>
-              )}
-              {this.reel.trending && (
-                <Badge variant="outline" className="text-red-600 border-red-600">
-                  Trending
-                </Badge>
-              )}
-              {this.getStatusBadge()}
+            <div>
+              <CardTitle className="text-lg text-text flex items-center gap-2">
+                {reel.title}
+                {reel.featured && (
+                  <Crown className="h-4 w-4 text-yellow-600" />
+                )}
+                {reel.trending && (
+                  <TrendingUp className="h-4 w-4 text-red-600" />
+                )}
+              </CardTitle>
+              <CardDescription className="text-text-muted">{reel.description}</CardDescription>
             </div>
           </div>
-        </CardHeader>
-        
-        <CardContent className="space-y-4">
-          {/* Video Thumbnail */}
-          <div className="aspect-video bg-muted rounded-lg flex items-center justify-center relative overflow-hidden">
-            <div className="text-center">
-              <PlaySquare className="h-12 w-12 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground mt-2">Video Reel</p>
-            </div>
-            <div className="absolute top-2 left-2 flex gap-1">
-              <Badge variant="secondary" className="text-xs">
-                {this.formatDuration(this.reel.duration)}
+          <div className="flex flex-col gap-1">
+            {getStatusBadge()}
+            {reel.isPremium && (
+              <Badge variant="outline" className="text-xs text-yellow-600 border-yellow-600">
+                Premium
               </Badge>
-              {this.reel.isExplicit && (
-                <Badge variant="destructive" className="text-xs">18+</Badge>
-              )}
-            </div>
-            <div className="absolute top-2 right-2 flex gap-1">
-              {this.reel.hasAudio ? (
-                <Volume2 className="h-4 w-4 text-white" />
-              ) : (
-                <VolumeX className="h-4 w-4 text-white" />
-              )}
-            </div>
-            <div className="absolute bottom-2 left-2 right-2">
-              <div className="flex items-center justify-between text-white text-sm">
-                <span className="flex items-center gap-1">
-                  <Play className="h-3 w-3" />
-                  {this.reel.views.toLocaleString()} views
-                </span>
-                <span className="flex items-center gap-1">
-                  <Heart className="h-3 w-3" />
-                  {this.reel.likes}
-                </span>
-              </div>
+            )}
+          </div>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="space-y-6">
+        {/* Video Thumbnail */}
+        <div className="aspect-video bg-surface-elev2 rounded-lg flex items-center justify-center relative overflow-hidden border border-line-soft">
+          <div className="text-center">
+            <PlaySquare className="h-12 w-12 text-text-muted" />
+            <p className="text-sm text-text-muted mt-2">Video Reel</p>
+          </div>
+          <div className="absolute top-2 left-2 flex gap-1">
+            <Badge variant="secondary" className="text-xs bg-surface-elev1 text-text">
+              {formatDuration(reel.duration)}
+            </Badge>
+            {reel.isExplicit && (
+              <Badge variant="destructive" className="text-xs">18+</Badge>
+            )}
+          </div>
+          <div className="absolute top-2 right-2 flex gap-1">
+            {reel.hasAudio ? (
+              <Volume2 className="h-4 w-4 text-text" />
+            ) : (
+              <VolumeX className="h-4 w-4 text-text-muted" />
+            )}
+          </div>
+          <div className="absolute bottom-2 left-2 right-2">
+            <div className="flex items-center justify-between text-text text-sm">
+              <span className="flex items-center gap-1">
+                <Play className="h-3 w-3" />
+                {reel.views.toLocaleString()} views
+              </span>
+              <span className="flex items-center gap-1">
+                <Heart className="h-3 w-3" />
+                {reel.likes}
+              </span>
             </div>
           </div>
+        </div>
 
-          {/* Author Info */}
+        {/* Key Metrics Grid */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <Eye className="h-4 w-4" />
+              <span className="text-xs font-medium">Views</span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              {reel.views.toLocaleString()}
+            </div>
+          </div>
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <Heart className="h-4 w-4" />
+              <span className="text-xs font-medium">Likes</span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              {reel.likes}
+            </div>
+          </div>
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <DollarSign className="h-4 w-4" />
+              <span className="text-xs font-medium">Earnings</span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              ${reel.earnings.toFixed(2)}
+            </div>
+          </div>
+        </div>
+
+        {/* Author Information */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <User className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Author Information</span>
+          </div>
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-              <User className="h-4 w-4" />
+            <div className="h-10 w-10 rounded-full bg-surface-elev1 flex items-center justify-center border border-line-soft">
+              <User className="h-5 w-5 text-text-muted" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium">{this.reel.author.name}</p>
-              <p className="text-xs text-muted-foreground">{this.reel.author.username}</p>
+              <p className="text-sm font-medium text-text">{reel.author.name}</p>
+              <p className="text-xs text-text-muted">{reel.author.username}</p>
             </div>
-            <div className="text-sm text-muted-foreground">
-              {new Date(this.reel.createdAt).toLocaleDateString()}
+            <div className="text-sm text-text-muted">
+              {new Date(reel.createdAt).toLocaleDateString()}
             </div>
           </div>
+        </div>
 
-          {/* Category and Tags */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">Category:</span>
-              <Badge variant="outline" className="text-xs">
-                {this.reel.category}
+        {/* Content Information */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <Video className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Content Information</span>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <span className="text-sm text-text-muted">Category:</span>
+              <Badge variant="outline" className="ml-2 text-xs">
+                {reel.category}
               </Badge>
             </div>
-            <div className="flex flex-wrap gap-1">
-              {this.reel.tags.map((tag) => (
-                <Badge key={tag} variant="outline" className="text-xs">
-                  #{tag}
-                </Badge>
-              ))}
+            <div>
+              <span className="text-sm text-text-muted">Duration:</span>
+              <span className="ml-2 text-sm text-text">{formatDuration(reel.duration)}</span>
             </div>
-          </div>
-
-          {/* Audio Info */}
-          {this.reel.hasAudio && this.reel.audioTitle && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <div className="flex items-center gap-2 text-blue-800">
-                <Volume2 className="h-4 w-4" />
-                <span className="text-sm font-medium">Audio Track</span>
-              </div>
-              <p className="text-sm text-blue-700">{this.reel.audioTitle}</p>
-              {this.reel.audioArtist && (
-                <p className="text-xs text-blue-600">by {this.reel.audioArtist}</p>
-              )}
-            </div>
-          )}
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <Eye className="h-4 w-4 text-muted-foreground" />
-              <span>{this.reel.views.toLocaleString()} views</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Heart className="h-4 w-4 text-muted-foreground" />
-              <span>{this.reel.likes} likes</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MessageCircle className="h-4 w-4 text-muted-foreground" />
-              <span>{this.reel.comments} comments</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-              <span>${this.reel.earnings.toFixed(2)}</span>
-            </div>
-          </div>
-
-          {/* Flags and Reports */}
-          {this.reel.reportCount > 0 && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-              <div className="flex items-center gap-2 text-red-800 mb-2">
-                <Flag className="h-4 w-4" />
-                <span className="text-sm font-medium">{this.reel.reportCount} Reports</span>
-              </div>
-              <div className="flex flex-wrap gap-1">
-                {this.reel.flags.map((flag) => (
-                  <Badge key={flag} variant="destructive" className="text-xs">
-                    {flag.replace('_', ' ')}
+            <div className="col-span-2">
+              <span className="text-sm text-text-muted">Tags:</span>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {reel.tags.map((tag) => (
+                  <Badge key={tag} variant="outline" className="text-xs">
+                    #{tag}
                   </Badge>
                 ))}
               </div>
-              {this.reel.moderationNotes && (
-                <p className="text-xs text-red-700 mt-2">{this.reel.moderationNotes}</p>
-              )}
             </div>
-          )}
-
-          {/* Actions */}
-          <div className="flex gap-2 pt-2">
-            <Button variant="outline" size="sm" className="flex-1">
-              <Eye className="h-4 w-4 mr-2" />
-              View
-            </Button>
-            <Button variant="outline" size="sm" className="flex-1">
-              <Edit className="h-4 w-4 mr-2" />
-              Edit
-            </Button>
-            <Button variant="outline" size="sm">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
           </div>
-        </CardContent>
-      </Card>
-    );
-  }
+        </div>
+
+        {/* Audio Information */}
+        {reel.hasAudio && reel.audioTitle && (
+          <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Volume2 className="h-5 w-5 text-blue-400" />
+              <span className="font-medium text-blue-300">Audio Track</span>
+            </div>
+            <p className="text-sm text-blue-200">{reel.audioTitle}</p>
+            {reel.audioArtist && (
+              <p className="text-xs text-blue-300">by {reel.audioArtist}</p>
+            )}
+          </div>
+        )}
+
+        {/* Engagement Stats */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+            <div className="flex items-center gap-2 mb-2">
+              <MessageCircle className="h-4 w-4 text-text-muted" />
+              <span className="text-sm font-medium text-text">Comments</span>
+            </div>
+            <div className="text-lg font-bold text-text">{reel.comments}</div>
+          </div>
+          <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+            <div className="flex items-center gap-2 mb-2">
+              <Share2 className="h-4 w-4 text-text-muted" />
+              <span className="text-sm font-medium text-text">Shares</span>
+            </div>
+            <div className="text-lg font-bold text-text">{reel.shares}</div>
+          </div>
+        </div>
+
+        {/* Flags and Reports */}
+        {reel.reportCount > 0 && (
+          <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Flag className="h-5 w-5 text-red-400" />
+              <span className="font-medium text-red-300">{reel.reportCount} Reports</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {reel.flags.map((flag) => (
+                <Badge key={flag} variant="destructive" className="text-xs">
+                  {flag.replace('_', ' ')}
+                </Badge>
+              ))}
+            </div>
+            {reel.moderationNotes && (
+              <p className="text-sm text-red-200 mt-2">{reel.moderationNotes}</p>
+            )}
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex gap-3 pt-2 border-t border-line-soft">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onView}
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            View
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onEdit}
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Edit
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onMore}
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
 }
 
-export default function ReelsPage() {
-  const reelsService = new ReelsManagementService();
-  const reels = reelsService.getReels();
-  const stats = reelsService.getReelStats();
+// ----------------------
+// Reels Detail View Component
+// Purpose: Single card view with filtering and quick stats
+// Note: Similar to verification page with reel-specific data
+// ----------------------
+function ReelsDetailView({
+  reels,
+  selectedReelId,
+  onReelSelect,
+  onView,
+  onEdit,
+  onMore,
+  className = ""
+}: {
+  reels: Reel[];
+  selectedReelId?: string;
+  onReelSelect?: (reelId: string) => void;
+  onView?: (reelId: string) => void;
+  onEdit?: (reelId: string) => void;
+  onMore?: (reelId: string) => void;
+  className?: string;
+}) {
+  const selectedReel = reels.find(r => r.id === selectedReelId) || reels[0];
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      published: { variant: "default" as const, color: "text-green-600", bgColor: "bg-green-100" },
+      pending: { variant: "secondary" as const, color: "text-yellow-600", bgColor: "bg-yellow-100" },
+      flagged: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" },
+      removed: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" },
+      draft: { variant: "outline" as const, color: "text-gray-600", bgColor: "bg-gray-100" }
+    };
+    return statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+  };
+
+  const statusInfo = getStatusBadge(selectedReel?.status || 'pending');
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Reels Management</h1>
-          <p className="text-muted-foreground">Manage short-form video content and reels</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <Filter className="h-4 w-4 mr-2" />
-            Filters
-          </Button>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            New Reel
-          </Button>
-        </div>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Reels</CardTitle>
-            <PlaySquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalReels}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.publishedReels} published, {stats.pendingReels} pending
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Views</CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalViews.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              Across all reels
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${stats.totalEarnings.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
-              From premium reels
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Trending</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.trendingReels}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.featuredReels} featured
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Search and Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search reels, authors, or content..."
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-            </Button>
+    <div className={`space-y-6 ${className}`}>
+      {/* Filter Section */}
+      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <label className="text-sm font-medium text-text-muted mb-2 block">Select Reel</label>
+            <Select value={selectedReelId || reels[0]?.id} onValueChange={onReelSelect}>
+              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
+                <SelectValue placeholder="Choose a reel..." />
+              </SelectTrigger>
+              <SelectContent className="bg-surface-elev2 border-line-soft">
+                {reels.map((reel) => (
+                  <SelectItem 
+                    key={reel.id} 
+                    value={reel.id}
+                    className="text-text hover:bg-surface-elev1"
+                  >
+                    <div className="flex items-center gap-2">
+                      <PlaySquare className="h-4 w-4" />
+                      <span>{reel.title}</span>
+                      <Badge 
+                        variant={reel.status === 'published' ? 'default' : 'secondary'}
+                        className="text-xs"
+                      >
+                        {reel.status}
+                      </Badge>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Reels Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {reels.map((reel) => {
-          const reelCard = new ReelCardComponent(reel);
-          return <div key={reel.id}>{reelCard.render()}</div>;
-        })}
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Reel Card */}
+        <div className="lg:col-span-2">
+          {selectedReel ? (
+            <ProfessionalReelCard
+              reel={selectedReel}
+              onView={() => onView?.(selectedReel.id)}
+              onEdit={() => onEdit?.(selectedReel.id)}
+              onMore={() => onMore?.(selectedReel.id)}
+            />
+          ) : (
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-8 text-center">
+              <PlaySquare className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <p className="text-gray-400">No reel selected</p>
+            </div>
+          )}
+        </div>
+
+        {/* Right: Quick Stats */}
+        <div className="space-y-4">
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Stats</CardTitle>
+              <CardDescription className="text-text-muted">Key information at a glance</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Status */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Status</span>
+                </div>
+                <div className={`px-2 py-1 rounded text-xs font-semibold ${statusInfo.bgColor} ${statusInfo.color}`}>
+                  {selectedReel?.status || 'N/A'}
+                </div>
+              </div>
+
+              {/* Category */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Video className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Category</span>
+                </div>
+                <Badge variant="outline" className="text-xs">
+                  {selectedReel?.category || 'N/A'}
+                </Badge>
+              </div>
+
+              {/* Duration */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Duration</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedReel ? `${Math.floor(selectedReel.duration / 60)}:${(selectedReel.duration % 60).toString().padStart(2, '0')}` : 'N/A'}
+                </span>
+              </div>
+
+              {/* Views */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Eye className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Views</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedReel?.views?.toLocaleString() || 0}
+                </span>
+              </div>
+
+              {/* Likes */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Heart className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Likes</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedReel?.likes || 0}
+                </span>
+              </div>
+
+              {/* Earnings */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Earnings</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  ${selectedReel?.earnings?.toFixed(2) || '0.00'}
+                </span>
+              </div>
+
+              {/* Created Date */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Created</span>
+                </div>
+                <span className="text-sm text-text-muted">
+                  {selectedReel?.createdAt ? new Date(selectedReel.createdAt).toLocaleDateString() : 'N/A'}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Additional Actions */}
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onView?.(selectedReel?.id || '')}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                View Reel
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onEdit?.(selectedReel?.id || '')}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Reel
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
+}
+
+// ----------------------
+// Reels Page Client Component
+// Purpose: Manages state and interactions for the reels page
+// ----------------------
+function ReelsPageClient() {
+  const [selectedReelId, setSelectedReelId] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  const reelsService = new ReelsManagementService();
+  const allReels = reelsService.getReels();
+  const stats = reelsService.getReelStats();
+
+  // Filter reels based on search and status
+  const filteredReels = allReels.filter(reel => {
+    const matchesSearch = reel.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         reel.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         reel.author.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         reel.author.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         reel.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || reel.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  // Set default selected reel
+  useEffect(() => {
+    if (filteredReels.length > 0 && !selectedReelId) {
+      setSelectedReelId(filteredReels[0].id);
+    }
+  }, [filteredReels, selectedReelId]);
+
+  const handleReelSelect = (reelId: string) => {
+    setSelectedReelId(reelId);
+  };
+
+  const handleView = (reelId: string) => {
+    console.log('View reel:', reelId);
+  };
+
+  const handleEdit = (reelId: string) => {
+    console.log('Edit reel:', reelId);
+  };
+
+  const handleMore = (reelId: string) => {
+    console.log('More actions for reel:', reelId);
+  };
+
+  const handleRefresh = () => {
+    console.log('Refresh reels');
+  };
+
+  const handleExport = () => {
+    console.log('Export reels');
+  };
+
+  const statsCards = (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <MetricCard
+        title="Total Reels"
+        value={stats.totalReels}
+        growth={8}
+        icon={PlaySquare}
+        format="number"
+      />
+      <MetricCard
+        title="Total Views"
+        value={stats.totalViews}
+        growth={15}
+        icon={Eye}
+        format="number"
+      />
+      <MetricCard
+        title="Total Earnings"
+        value={stats.totalEarnings}
+        growth={12}
+        icon={DollarSign}
+        format="currency"
+      />
+      <MetricCard
+        title="Trending"
+        value={stats.trendingReels}
+        growth={5}
+        icon={TrendingUp}
+        format="number"
+      />
+    </div>
+  );
+
+  const filters = (
+    <div className="flex items-center gap-2">
+      <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
+          <SelectValue placeholder="Status" />
+        </SelectTrigger>
+        <SelectContent className="bg-surface-elev2 border-line-soft">
+          <SelectItem value="all" className="text-text hover:bg-surface-elev1">All Status</SelectItem>
+          <SelectItem value="published" className="text-text hover:bg-surface-elev1">Published</SelectItem>
+          <SelectItem value="pending" className="text-text hover:bg-surface-elev1">Pending</SelectItem>
+          <SelectItem value="flagged" className="text-text hover:bg-surface-elev1">Flagged</SelectItem>
+          <SelectItem value="removed" className="text-text hover:bg-surface-elev1">Removed</SelectItem>
+          <SelectItem value="draft" className="text-text hover:bg-surface-elev1">Draft</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
+  return (
+    <AdminPageTemplate
+      title="Reels Management"
+      description="Manage short-form video content and reels"
+      icon={<PlaySquare className="h-6 w-6" />}
+      searchPlaceholder="Search reels, authors, or content..."
+      searchValue={searchTerm}
+      onSearchChange={setSearchTerm}
+      showSearch={true}
+      showFilters={true}
+      showRefresh={true}
+      showExport={true}
+      onRefresh={handleRefresh}
+      onExport={handleExport}
+      filters={filters}
+      stats={statsCards}
+    >
+      <ReelsDetailView
+        reels={filteredReels}
+        selectedReelId={selectedReelId}
+        onReelSelect={handleReelSelect}
+        onView={handleView}
+        onEdit={handleEdit}
+        onMore={handleMore}
+      />
+    </AdminPageTemplate>
+  );
+}
+
+export default function ReelsPage() {
+  return <ReelsPageClient />;
 }
