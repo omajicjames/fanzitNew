@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
 import { Textarea } from "@src/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@src/components/ui/select";
 import { 
   Bell, 
   Plus, 
@@ -21,44 +22,95 @@ import {
   Calendar,
   Users,
   Target,
-  MoreHorizontal
+  MoreHorizontal,
+  Mail,
+  Send,
+  MessageSquare,
+  Smartphone,
+  Star,
+  Crown,
+  FileImage,
+  MapPin,
+  Activity,
+  Zap,
+  Award,
+  Phone,
+  Globe,
+  Heart,
+  Share2,
+  ThumbsUp,
+  ThumbsDown,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  ExternalLink,
+  BadgeCheck,
+  UserCheck,
+  UserX,
+  Building,
+  CreditCard,
+  RotateCcw,
+  BarChart3,
+  Settings,
+  Ban,
+  CheckSquare,
+  XSquare,
+  Reply,
+  User,
+  TrendingUp,
+  DollarSign,
+  FileText
 } from "lucide-react";
 import AnnouncementModal from "@src/features/right-rail/AnnouncementModal";
 
 // ----------------------
-// Admin Announcements Management Page
-// Location: /app/(protected)/admin/announcements/page.tsx
-// Purpose: Comprehensive announcement management for admin users
-// Features: Create, edit, delete, and manage announcements
-// Note: Mobile-first design with object-oriented structure
+// Communications Management Page
+// Location: /app/(protected)/admin/communications/(tabs)/announcements/page.tsx
+// Purpose: Comprehensive communications management for admin users
+// Features: Manage announcements, emails, messages, and notifications
+// Note: Combined all communication types into one unified interface
 // ----------------------
 
-interface AnnouncementData {
+interface CommunicationData {
   id: string;
   title: string;
   description: string;
-  link: string;
-  type: 'info' | 'warning' | 'success' | 'promo';
+  content: string;
+  link?: string;
+  type: 'announcement' | 'email' | 'message' | 'notification';
+  subtype: 'info' | 'warning' | 'success' | 'promo' | 'campaign' | 'conversation' | 'push' | 'alert';
+  status: 'draft' | 'scheduled' | 'sent' | 'delivered' | 'failed' | 'active' | 'inactive';
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
   views: number;
   clicks: number;
+  opens?: number;
+  replies?: number;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   targetAudience: 'all' | 'creators' | 'subscribers' | 'specific';
   scheduledFor?: string;
   expiresAt?: string;
+  recipientCount?: number;
+  deliveryRate?: number;
+  openRate?: number;
+  replyRate?: number;
 }
 
-class AnnouncementService {
-  private announcements: AnnouncementData[] = [
+class CommunicationsService {
+  private communications: CommunicationData[] = [
+    // Announcements
     {
       id: '1',
       title: 'Premium Trial Available',
       description: 'Try premium features free for 30 days. Unlock advanced analytics and tools.',
+      content: 'Get access to premium features including advanced analytics, priority support, and exclusive tools. No credit card required for the first 30 days.',
       link: '/premium/trial',
-      type: 'promo',
+      type: 'announcement',
+      subtype: 'promo',
+      status: 'active',
       isActive: true,
       createdAt: new Date('2025-01-25T10:00:00Z'),
       updatedAt: new Date('2025-01-25T10:00:00Z'),
@@ -73,8 +125,11 @@ class AnnouncementService {
       id: '2',
       title: 'Platform Maintenance Scheduled',
       description: 'We will be performing scheduled maintenance on January 30th from 2-4 AM EST.',
+      content: 'Scheduled maintenance will include server updates, security patches, and performance improvements. Some features may be temporarily unavailable.',
       link: '/maintenance',
-      type: 'warning',
+      type: 'announcement',
+      subtype: 'warning',
+      status: 'active',
       isActive: true,
       createdAt: new Date('2025-01-26T09:00:00Z'),
       updatedAt: new Date('2025-01-26T09:00:00Z'),
@@ -85,433 +140,911 @@ class AnnouncementService {
       targetAudience: 'all',
       scheduledFor: '2025-01-30T02:00:00Z'
     },
+    // Email Campaigns
     {
       id: '3',
-      title: 'New Creator Features',
-      description: 'Check out our latest creator tools and analytics dashboard.',
-      link: '/creator/features',
-      type: 'info',
-      isActive: false,
+      title: 'Welcome New Creators',
+      description: 'Email campaign for new creator onboarding',
+      content: 'Welcome to our platform! This email contains important information about getting started as a creator.',
+      type: 'email',
+      subtype: 'campaign',
+      status: 'sent',
+      isActive: true,
       createdAt: new Date('2025-01-24T14:00:00Z'),
       updatedAt: new Date('2025-01-24T14:00:00Z'),
       createdBy: 'admin',
-      views: 5672,
-      clicks: 445,
+      views: 0,
+      clicks: 0,
+      opens: 1247,
+      priority: 'medium',
+      targetAudience: 'creators',
+      recipientCount: 1247,
+      deliveryRate: 100,
+      openRate: 68
+    },
+    {
+      id: '4',
+      title: 'Platform Updates Newsletter',
+      description: 'Monthly newsletter with platform updates and new features',
+      content: 'This month we\'ve added several new features including improved analytics and enhanced creator tools.',
+      type: 'email',
+      subtype: 'campaign',
+      status: 'scheduled',
+      isActive: true,
+      createdAt: new Date('2025-01-23T16:00:00Z'),
+      updatedAt: new Date('2025-01-23T16:00:00Z'),
+      createdBy: 'admin',
+      views: 0,
+      clicks: 0,
       priority: 'low',
-      targetAudience: 'creators'
+      targetAudience: 'all',
+      recipientCount: 15420,
+      scheduledFor: '2025-01-30T09:00:00Z'
+    },
+    // Messages
+    {
+      id: '5',
+      title: 'Creator Support Inquiry',
+      description: 'User inquiry about payout processing',
+      content: 'Hey, when will my payout be processed? I submitted it 3 days ago and haven\'t heard anything.',
+      type: 'message',
+      subtype: 'conversation',
+      status: 'active',
+      isActive: true,
+      createdAt: new Date('2025-01-27T11:30:00Z'),
+      updatedAt: new Date('2025-01-27T11:30:00Z'),
+      createdBy: 'creator123',
+      views: 0,
+      clicks: 0,
+      replies: 0,
+      priority: 'medium',
+      targetAudience: 'specific'
+    },
+    {
+      id: '6',
+      title: 'Premium Content Access Issue',
+      description: 'User reporting trouble accessing premium content',
+      content: 'I\'m having trouble accessing premium content that I\'ve paid for. The content shows as locked even though I have an active subscription.',
+      type: 'message',
+      subtype: 'conversation',
+      status: 'active',
+      isActive: true,
+      createdAt: new Date('2025-01-27T09:15:00Z'),
+      updatedAt: new Date('2025-01-27T09:15:00Z'),
+      createdBy: 'fan456',
+      views: 0,
+      clicks: 0,
+      replies: 1,
+      priority: 'high',
+      targetAudience: 'specific'
+    },
+    // Notifications
+    {
+      id: '7',
+      title: 'New Creator Alert',
+      description: 'Push notification about new creator joining',
+      content: 'A new creator has joined the platform! Check out their profile and content.',
+      type: 'notification',
+      subtype: 'push',
+      status: 'delivered',
+      isActive: true,
+      createdAt: new Date('2025-01-26T15:45:00Z'),
+      updatedAt: new Date('2025-01-26T15:45:00Z'),
+      createdBy: 'admin',
+      views: 0,
+      clicks: 0,
+      priority: 'low',
+      targetAudience: 'all',
+      recipientCount: 5247,
+      deliveryRate: 94,
+      openRate: 23
+    },
+    {
+      id: '8',
+      title: 'Payment Processed',
+      description: 'Push notification for successful payment processing',
+      content: 'Your payment has been successfully processed. You can now access premium features.',
+      type: 'notification',
+      subtype: 'push',
+      status: 'scheduled',
+      isActive: true,
+      createdAt: new Date('2025-01-27T08:00:00Z'),
+      updatedAt: new Date('2025-01-27T08:00:00Z'),
+      createdBy: 'admin',
+      views: 0,
+      clicks: 0,
+      priority: 'medium',
+      targetAudience: 'subscribers',
+      recipientCount: 1247,
+      scheduledFor: '2025-01-27T14:00:00Z'
     }
   ];
 
-  public getAllAnnouncements(): AnnouncementData[] {
-    return this.announcements;
+  public getAllCommunications(): CommunicationData[] {
+    return this.communications;
   }
 
-  public getActiveAnnouncements(): AnnouncementData[] {
-    return this.announcements.filter(a => a.isActive);
+  public getCommunicationsByType(type: string): CommunicationData[] {
+    return this.communications.filter(c => c.type === type);
   }
 
-  public getAnnouncementsByType(type: string): AnnouncementData[] {
-    return this.announcements.filter(a => a.type === type);
+  public getActiveCommunications(): CommunicationData[] {
+    return this.communications.filter(c => c.isActive);
   }
 
-  public getAnnouncementsByPriority(priority: string): AnnouncementData[] {
-    return this.announcements.filter(a => a.priority === priority);
+  public getCommunicationsByStatus(status: string): CommunicationData[] {
+    return this.communications.filter(c => c.status === status);
   }
 
-  public createAnnouncement(announcement: Omit<AnnouncementData, 'id' | 'createdAt' | 'updatedAt' | 'views' | 'clicks'>): AnnouncementData {
-    const newAnnouncement: AnnouncementData = {
-      ...announcement,
+  public getCommunicationsByPriority(priority: string): CommunicationData[] {
+    return this.communications.filter(c => c.priority === priority);
+  }
+
+  public createCommunication(communication: Omit<CommunicationData, 'id' | 'createdAt' | 'updatedAt' | 'views' | 'clicks'>): CommunicationData {
+    const newCommunication: CommunicationData = {
+      ...communication,
       id: Date.now().toString(),
       createdAt: new Date(),
       updatedAt: new Date(),
       views: 0,
       clicks: 0
     };
-    this.announcements.push(newAnnouncement);
-    return newAnnouncement;
+    this.communications.push(newCommunication);
+    return newCommunication;
   }
 
-  public updateAnnouncement(id: string, updates: Partial<AnnouncementData>): AnnouncementData | null {
-    const index = this.announcements.findIndex(a => a.id === id);
+  public updateCommunication(id: string, updates: Partial<CommunicationData>): CommunicationData | null {
+    const index = this.communications.findIndex(c => c.id === id);
     if (index !== -1) {
-      this.announcements[index] = {
-        ...this.announcements[index],
+      this.communications[index] = {
+        ...this.communications[index],
         ...updates,
         updatedAt: new Date()
       };
-      return this.announcements[index];
+      return this.communications[index];
     }
     return null;
   }
 
-  public deleteAnnouncement(id: string): boolean {
-    const index = this.announcements.findIndex(a => a.id === id);
+  public deleteCommunication(id: string): boolean {
+    const index = this.communications.findIndex(c => c.id === id);
     if (index !== -1) {
-      this.announcements.splice(index, 1);
+      this.communications.splice(index, 1);
       return true;
     }
     return false;
   }
+
+  public getStats() {
+    const total = this.communications.length;
+    const active = this.communications.filter(c => c.isActive).length;
+    const totalViews = this.communications.reduce((sum, c) => sum + c.views, 0);
+    const totalClicks = this.communications.reduce((sum, c) => sum + c.clicks, 0);
+    const totalOpens = this.communications.reduce((sum, c) => sum + (c.opens || 0), 0);
+    const totalReplies = this.communications.reduce((sum, c) => sum + (c.replies || 0), 0);
+
+    return {
+      total,
+      active,
+      totalViews,
+      totalClicks,
+      totalOpens,
+      totalReplies
+    };
+  }
 }
 
-class AnnouncementCardComponent {
-  private announcement: AnnouncementData;
-
-  constructor(announcement: AnnouncementData) {
-    this.announcement = announcement;
-  }
-
-  private getTypeBadge() {
-    const typeConfig = {
-      info: { variant: "default" as const, icon: Bell, text: "Info" },
-      warning: { variant: "destructive" as const, icon: AlertTriangle, text: "Warning" },
-      success: { variant: "default" as const, icon: CheckCircle, text: "Success" },
-      promo: { variant: "default" as const, icon: Target, text: "Promotion" }
+// ----------------------
+// Professional Communication Card Component
+// Purpose: Displays communication information in a structured, professional layout
+// Note: Similar to verification card with communication-specific data
+// ----------------------
+function ProfessionalCommunicationCard({
+  communication,
+  onView,
+  onEdit,
+  onDelete,
+  onMore,
+  className = ""
+}: {
+  communication: CommunicationData;
+  onView?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  onMore?: () => void;
+  className?: string;
+}) {
+  const getTypeIcon = () => {
+    const typeIcons = {
+      announcement: Bell,
+      email: Mail,
+      message: MessageSquare,
+      notification: Smartphone
     };
-    const config = typeConfig[this.announcement.type] || typeConfig.info;
+    const Icon = typeIcons[communication.type];
+    return <Icon className="h-4 w-4" />;
+  };
+
+  const getSubtypeBadge = () => {
+    const subtypeConfig = {
+      info: { variant: "default" as const, icon: Bell, text: "Info", color: "text-blue-600" },
+      warning: { variant: "destructive" as const, icon: AlertTriangle, text: "Warning", color: "text-yellow-600" },
+      success: { variant: "default" as const, icon: CheckCircle, text: "Success", color: "text-green-600" },
+      promo: { variant: "default" as const, icon: Target, text: "Promotion", color: "text-purple-600" },
+      campaign: { variant: "secondary" as const, icon: Send, text: "Campaign", color: "text-blue-600" },
+      conversation: { variant: "outline" as const, icon: MessageSquare, text: "Conversation", color: "text-gray-600" },
+      push: { variant: "default" as const, icon: Smartphone, text: "Push", color: "text-orange-600" },
+      alert: { variant: "destructive" as const, icon: AlertTriangle, text: "Alert", color: "text-red-600" }
+    };
+
+    const config = subtypeConfig[communication.subtype] || subtypeConfig.info;
     const Icon = config.icon;
+
     return (
       <Badge variant={config.variant} className="flex items-center gap-1">
         <Icon className="h-3 w-3" />
         {config.text}
       </Badge>
     );
-  }
+  };
 
-  private getPriorityBadge() {
-    const priorityConfig = {
-      low: { variant: "secondary" as const, text: "Low" },
-      medium: { variant: "default" as const, text: "Medium" },
-      high: { variant: "default" as const, text: "High" },
-      urgent: { variant: "destructive" as const, text: "Urgent" }
+  const getStatusBadge = () => {
+    const statusConfig = {
+      draft: { variant: "secondary" as const, icon: Edit, text: "Draft", color: "text-gray-600" },
+      scheduled: { variant: "secondary" as const, icon: Clock, text: "Scheduled", color: "text-yellow-600" },
+      sent: { variant: "default" as const, icon: Send, text: "Sent", color: "text-blue-600" },
+      delivered: { variant: "default" as const, icon: CheckCircle, text: "Delivered", color: "text-green-600" },
+      failed: { variant: "destructive" as const, icon: AlertTriangle, text: "Failed", color: "text-red-600" },
+      active: { variant: "default" as const, icon: CheckCircle, text: "Active", color: "text-green-600" },
+      inactive: { variant: "secondary" as const, icon: Clock, text: "Inactive", color: "text-gray-600" }
     };
-    const config = priorityConfig[this.announcement.priority] || priorityConfig.medium;
+
+    const config = statusConfig[communication.status] || statusConfig.draft;
+    const Icon = config.icon;
+
     return (
-      <Badge variant={config.variant}>
+      <Badge variant={config.variant} className="flex items-center gap-1">
+        <Icon className="h-3 w-3" />
         {config.text}
       </Badge>
     );
-  }
+  };
 
-  private getStatusBadge() {
+  const getPriorityBadge = () => {
+    const priorityConfig = {
+      low: { variant: "outline" as const, text: "Low", color: "text-gray-600" },
+      medium: { variant: "secondary" as const, text: "Medium", color: "text-yellow-600" },
+      high: { variant: "default" as const, text: "High", color: "text-orange-600" },
+      urgent: { variant: "destructive" as const, text: "Urgent", color: "text-red-600" }
+    };
+
+    const config = priorityConfig[communication.priority] || priorityConfig.medium;
     return (
-      <Badge variant={this.announcement.isActive ? "default" : "secondary"}>
-        {this.announcement.isActive ? "Active" : "Inactive"}
+      <Badge variant={config.variant} className="text-xs">
+        {config.text}
       </Badge>
     );
-  }
+  };
 
-  public render() {
     return (
-      <Card className="hover:shadow-lg transition-shadow">
+    <Card className={`bg-admin-card border-line-soft hover:shadow-lg transition-all duration-200 ${className}`}>
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
-            <div className="space-y-2">
-              <CardTitle className="text-lg line-clamp-2">{this.announcement.title}</CardTitle>
-              <CardDescription className="line-clamp-2">{this.announcement.description}</CardDescription>
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-lg bg-surface-elev2 flex items-center justify-center border border-line-soft">
+              {getTypeIcon()}
             </div>
-            <div className="flex items-center gap-2">
-              {this.getTypeBadge()}
-              {this.getPriorityBadge()}
+            <div>
+              <CardTitle className="text-lg text-text flex items-center gap-2">
+                {communication.title}
+                {getSubtypeBadge()}
+              </CardTitle>
+              <CardDescription className="text-text-muted">{communication.description}</CardDescription>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            {getStatusBadge()}
+            {getPriorityBadge()}
             </div>
           </div>
         </CardHeader>
-        <CardContent className="pt-0">
-          <div className="space-y-4">
-            {/* Stats Row */}
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1">
-                  <Eye className="h-4 w-4" />
-                  {this.announcement.views.toLocaleString()} views
+      
+      <CardContent className="space-y-6">
+        {/* Communication Overview */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            {getTypeIcon()}
+            <span className="font-medium text-text">Communication Overview</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Target className="h-4 w-4" />
-                  {this.announcement.clicks.toLocaleString()} clicks
-                </div>
-              </div>
-              {this.getStatusBadge()}
-            </div>
-
-            {/* Link and Audience */}
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground">Link:</span>
-                <code className="px-2 py-1 bg-muted rounded text-xs">{this.announcement.link}</code>
-              </div>
-              <div className="flex items-center gap-1">
-                <Users className="h-4 w-4" />
-                <span className="capitalize">{this.announcement.targetAudience}</span>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <span className="text-sm text-text-muted">Type:</span>
+              <div className="mt-1 flex items-center gap-2">
+                {getTypeIcon()}
+                <span className="text-sm text-text capitalize">{communication.type}</span>
               </div>
             </div>
-
-            {/* Dates */}
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                Created: {this.announcement.createdAt.toLocaleDateString()}
+            <div>
+              <span className="text-sm text-text-muted">Status:</span>
+              <div className="mt-1">
+                {getStatusBadge()}
               </div>
-              {this.announcement.scheduledFor && (
-                <div className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  Scheduled: {new Date(this.announcement.scheduledFor).toLocaleDateString()}
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Priority:</span>
+              <div className="mt-1">
+                {getPriorityBadge()}
+              </div>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Audience:</span>
+              <div className="mt-1">
+                <Badge variant="outline" className="text-xs">
+                  {communication.targetAudience}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Key Metrics Grid */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <Eye className="h-4 w-4" />
+              <span className="text-xs font-medium">Views</span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              {communication.views.toLocaleString()}
+            </div>
+          </div>
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <Target className="h-4 w-4" />
+              <span className="text-xs font-medium">Clicks</span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              {communication.clicks.toLocaleString()}
+            </div>
+          </div>
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              {communication.type === 'email' ? <Mail className="h-4 w-4" /> :
+               communication.type === 'message' ? <MessageSquare className="h-4 w-4" /> :
+               communication.type === 'notification' ? <Smartphone className="h-4 w-4" /> :
+               <Bell className="h-4 w-4" />}
+              <span className="text-xs font-medium">
+                {communication.type === 'email' ? 'Opens' :
+                 communication.type === 'message' ? 'Replies' :
+                 communication.type === 'notification' ? 'Delivered' : 'Active'}
+              </span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              {communication.type === 'email' ? (communication.opens || 0).toLocaleString() :
+               communication.type === 'message' ? (communication.replies || 0).toLocaleString() :
+               communication.type === 'notification' ? (communication.deliveryRate || 0) + '%' :
+               communication.isActive ? 'Yes' : 'No'}
+            </div>
+          </div>
+        </div>
+
+        {/* Creator Information */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <User className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Creator Information</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-surface-elev1 flex items-center justify-center border border-line-soft">
+              <User className="h-5 w-5 text-text-muted" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-text">{communication.createdBy}</p>
+              <p className="text-xs text-text-muted">Created by</p>
+            </div>
+            <div className="text-sm text-text-muted">
+              {communication.createdAt.toLocaleDateString()}
+            </div>
+          </div>
+        </div>
+
+        {/* Content Preview */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <FileText className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Content Preview</span>
+          </div>
+          <p className="text-sm text-text-muted line-clamp-3">{communication.content}</p>
+          {communication.link && (
+            <div className="mt-2 flex items-center gap-2">
+              <span className="text-sm text-text-muted">Link:</span>
+              <code className="px-2 py-1 bg-surface-elev1 rounded text-xs text-text">{communication.link}</code>
+            </div>
+          )}
+        </div>
+
+        {/* Performance Metrics */}
+        {(communication.recipientCount || communication.deliveryRate || communication.openRate) && (
+          <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <BarChart3 className="h-5 w-5 text-blue-400" />
+              <span className="font-medium text-blue-300">Performance Metrics</span>
+            </div>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              {communication.recipientCount && (
+                <div className="flex items-center justify-between">
+                  <span className="text-blue-200">Recipients:</span>
+                  <span className="text-blue-300 font-semibold">{communication.recipientCount.toLocaleString()}</span>
+                </div>
+              )}
+              {communication.deliveryRate && (
+                <div className="flex items-center justify-between">
+                  <span className="text-blue-200">Delivery Rate:</span>
+                  <span className="text-blue-300 font-semibold">{communication.deliveryRate}%</span>
+                </div>
+              )}
+              {communication.openRate && (
+                <div className="flex items-center justify-between">
+                  <span className="text-blue-200">Open Rate:</span>
+                  <span className="text-blue-300 font-semibold">{communication.openRate}%</span>
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Scheduling Information */}
+        {(communication.scheduledFor || communication.expiresAt) && (
+          <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Calendar className="h-5 w-5 text-yellow-400" />
+              <span className="font-medium text-yellow-300">Scheduling Information</span>
+            </div>
+            <div className="space-y-2 text-sm">
+              {communication.scheduledFor && (
+                <div className="flex items-center justify-between">
+                  <span className="text-yellow-200">Scheduled For:</span>
+                  <span className="text-yellow-300">{new Date(communication.scheduledFor).toLocaleString()}</span>
+                </div>
+              )}
+              {communication.expiresAt && (
+                <div className="flex items-center justify-between">
+                  <span className="text-yellow-200">Expires At:</span>
+                  <span className="text-yellow-300">{new Date(communication.expiresAt).toLocaleString()}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-between pt-2 border-t">
-              <div className="flex items-center gap-2">
-                <Button size="sm" variant="outline">
-                  <Eye className="h-4 w-4 mr-1" />
+        <div className="flex gap-3 pt-2 border-t border-line-soft">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onView}
+          >
+            <Eye className="h-4 w-4 mr-2" />
                   View
                 </Button>
-                <Button size="sm" variant="outline">
-                  <Edit className="h-4 w-4 mr-1" />
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onEdit}
+          >
+            <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
-                <Button size="sm" variant="outline" className="text-red-500 hover:text-red-600">
-                  <Trash2 className="h-4 w-4 mr-1" />
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onDelete}
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
                   Delete
                 </Button>
-              </div>
-              <Button size="sm" variant="ghost">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onMore}
+          >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
-            </div>
           </div>
         </CardContent>
       </Card>
     );
-  }
 }
 
-export default function AdminAnnouncementsPage() {
-  const announcementService = new AnnouncementService();
-  const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
-  const [filteredAnnouncements, setFilteredAnnouncements] = useState<AnnouncementData[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterType, setFilterType] = useState("all");
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [modalState, setModalState] = useState<{
-    isOpen: boolean;
-    mode: 'create' | 'edit';
-    announcement: AnnouncementData | null;
-  }>({
-    isOpen: false,
-    mode: 'create',
-    announcement: null
-  });
+// ----------------------
+// Communications Detail View Component
+// Purpose: Single card view with filtering and quick stats
+// Note: Similar to verification page with communication-specific data
+// ----------------------
+function CommunicationsDetailView({
+  communications,
+  selectedCommunicationId,
+  onCommunicationSelect,
+  onView,
+  onEdit,
+  onDelete,
+  onMore,
+  className = ""
+}: {
+  communications: CommunicationData[];
+  selectedCommunicationId?: string;
+  onCommunicationSelect?: (communicationId: string) => void;
+  onView?: (communicationId: string) => void;
+  onEdit?: (communicationId: string) => void;
+  onDelete?: (communicationId: string) => void;
+  onMore?: (communicationId: string) => void;
+  className?: string;
+}) {
+  const selectedCommunication = communications.find(c => c.id === selectedCommunicationId) || communications[0];
 
-  useEffect(() => {
-    const allAnnouncements = announcementService.getAllAnnouncements();
-    setAnnouncements(allAnnouncements);
-    setFilteredAnnouncements(allAnnouncements);
-  }, []);
-
-  useEffect(() => {
-    let filtered = announcements;
-
-    if (searchTerm) {
-      filtered = filtered.filter(a => 
-        a.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        a.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (filterType !== "all") {
-      filtered = filtered.filter(a => a.type === filterType);
-    }
-
-    if (filterStatus !== "all") {
-      filtered = filtered.filter(a => 
-        filterStatus === "active" ? a.isActive : !a.isActive
-      );
-    }
-
-    setFilteredAnnouncements(filtered);
-  }, [announcements, searchTerm, filterType, filterStatus]);
-
-  const handleCreateAnnouncement = () => {
-    setModalState({
-      isOpen: true,
-      mode: 'create',
-      announcement: null
-    });
+  const getTypeIcon = (type: string) => {
+    const typeIcons = {
+      announcement: Bell,
+      email: Mail,
+      message: MessageSquare,
+      notification: Smartphone
+    };
+    const Icon = typeIcons[type as keyof typeof typeIcons];
+    return Icon;
   };
 
-  const handleEditAnnouncement = (announcement: AnnouncementData) => {
-    setModalState({
-      isOpen: true,
-      mode: 'edit',
-      announcement
-    });
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      draft: { variant: "secondary" as const, color: "text-gray-600", bgColor: "bg-gray-100" },
+      scheduled: { variant: "secondary" as const, color: "text-yellow-600", bgColor: "bg-yellow-100" },
+      sent: { variant: "default" as const, color: "text-blue-600", bgColor: "bg-blue-100" },
+      delivered: { variant: "default" as const, color: "text-green-600", bgColor: "bg-green-100" },
+      failed: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" },
+      active: { variant: "default" as const, color: "text-green-600", bgColor: "bg-green-100" },
+      inactive: { variant: "secondary" as const, color: "text-gray-600", bgColor: "bg-gray-100" }
+    };
+    return statusConfig[status as keyof typeof statusConfig] || statusConfig.draft;
   };
 
-  const handleDeleteAnnouncement = (id: string) => {
-    if (confirm('Are you sure you want to delete this announcement?')) {
-      announcementService.deleteAnnouncement(id);
-      const updatedAnnouncements = announcementService.getAllAnnouncements();
-      setAnnouncements(updatedAnnouncements);
-    }
-  };
-
-  const handleModalClose = () => {
-    setModalState(prev => ({ ...prev, isOpen: false }));
-  };
-
-  const handleModalSave = (data: any) => {
-    if (modalState.mode === 'create') {
-      announcementService.createAnnouncement(data);
-    } else if (modalState.announcement) {
-      announcementService.updateAnnouncement(modalState.announcement.id, data);
-    }
-    
-    const updatedAnnouncements = announcementService.getAllAnnouncements();
-    setAnnouncements(updatedAnnouncements);
-    setModalState(prev => ({ ...prev, isOpen: false }));
-  };
-
-  const activeAnnouncements = announcements.filter(a => a.isActive).length;
-  const totalViews = announcements.reduce((sum, a) => sum + a.views, 0);
-  const totalClicks = announcements.reduce((sum, a) => sum + a.clicks, 0);
+  const statusInfo = getStatusBadge(selectedCommunication?.status || 'draft');
 
   return (
-    <div className="p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-white">Announcements</h1>
-            <p className="text-neutral-400">Manage platform announcements and notifications</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button onClick={handleCreateAnnouncement} className="bg-blue-600 hover:bg-blue-700">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Announcement
-            </Button>
-            <Badge className="bg-orange-500 text-white">Super Admin</Badge>
-          </div>
-        </div>
-      </div>
-
-      {/* Key Performance Indicators */}
-      <div className="mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Active Announcements</p>
-                  <p className="text-2xl font-bold">{activeAnnouncements}</p>
-                </div>
-                <Bell className="h-8 w-8 text-blue-500" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Views</p>
-                  <p className="text-2xl font-bold">{totalViews.toLocaleString()}</p>
-                </div>
-                <Eye className="h-8 w-8 text-green-500" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Clicks</p>
-                  <p className="text-2xl font-bold">{totalClicks.toLocaleString()}</p>
-                </div>
-                <Target className="h-8 w-8 text-purple-500" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="mb-6">
-        <div className="flex flex-col sm:flex-row gap-4">
+    <div className={`space-y-6 ${className}`}>
+      {/* Filter Section */}
+      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
+        <div className="flex items-center gap-4">
           <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search announcements..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="px-3 py-2 bg-background border border-border rounded-md text-sm"
-            >
-              <option value="all">All Types</option>
-              <option value="info">Info</option>
-              <option value="warning">Warning</option>
-              <option value="success">Success</option>
-              <option value="promo">Promotion</option>
-            </select>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-3 py-2 bg-background border border-border rounded-md text-sm"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
+            <label className="text-sm font-medium text-text-muted mb-2 block">Select Communication</label>
+            <Select value={selectedCommunicationId || communications[0]?.id} onValueChange={onCommunicationSelect}>
+              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
+                <SelectValue placeholder="Choose a communication..." />
+              </SelectTrigger>
+              <SelectContent className="bg-surface-elev2 border-line-soft">
+                {communications.map((communication) => {
+                  const Icon = getTypeIcon(communication.type);
+                  return (
+                    <SelectItem 
+                      key={communication.id} 
+                      value={communication.id}
+                      className="text-text hover:bg-surface-elev1"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Icon className="h-4 w-4" />
+                        <span>{communication.title}</span>
+                        <Badge 
+                          variant={communication.status === 'active' || communication.status === 'delivered' ? 'default' : 'secondary'}
+                          className="text-xs"
+                        >
+                          {communication.status}
+                        </Badge>
+                      </div>
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
 
-      {/* Announcements Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filteredAnnouncements.map((announcement) => {
-          const announcementCard = new AnnouncementCardComponent(announcement);
-          return (
-            <div key={announcement.id}>
-              {announcementCard.render()}
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Communication Card */}
+        <div className="lg:col-span-2">
+          {selectedCommunication ? (
+            <ProfessionalCommunicationCard
+              communication={selectedCommunication}
+              onView={() => onView?.(selectedCommunication.id)}
+              onEdit={() => onEdit?.(selectedCommunication.id)}
+              onDelete={() => onDelete?.(selectedCommunication.id)}
+              onMore={() => onMore?.(selectedCommunication.id)}
+            />
+          ) : (
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-8 text-center">
+              <Bell className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <p className="text-gray-400">No communication selected</p>
             </div>
-          );
-        })}
+          )}
+        </div>
+
+        {/* Right: Quick Stats */}
+        <div className="space-y-4">
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Stats</CardTitle>
+              <CardDescription className="text-text-muted">Key information at a glance</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Type */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  {selectedCommunication && (() => {
+                    const Icon = getTypeIcon(selectedCommunication.type);
+                    return <Icon className="h-4 w-4 text-text-muted" />;
+                  })()}
+                  <span className="text-sm font-medium text-text">Type</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedCommunication?.type?.toUpperCase() || 'N/A'}
+                </span>
+              </div>
+
+              {/* Status */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Status</span>
+                </div>
+                <div className={`px-2 py-1 rounded text-xs font-semibold ${statusInfo.bgColor} ${statusInfo.color}`}>
+                  {selectedCommunication?.status || 'N/A'}
+                </div>
+              </div>
+
+              {/* Views */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Eye className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Views</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedCommunication?.views?.toLocaleString() || 0}
+                </span>
+              </div>
+
+              {/* Clicks */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Target className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Clicks</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedCommunication?.clicks?.toLocaleString() || 0}
+                </span>
+              </div>
+
+              {/* Priority */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Priority</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedCommunication?.priority?.toUpperCase() || 'N/A'}
+                </span>
+              </div>
+
+              {/* Audience */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Audience</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedCommunication?.targetAudience?.toUpperCase() || 'N/A'}
+                </span>
+              </div>
+
+              {/* Created Date */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Created</span>
+                </div>
+                <span className="text-sm text-text-muted">
+                  {selectedCommunication?.createdAt ? new Date(selectedCommunication.createdAt).toLocaleDateString() : 'N/A'}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Additional Actions */}
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onView?.(selectedCommunication?.id || '')}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                View Communication
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onEdit?.(selectedCommunication?.id || '')}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Communication
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
+    </div>
+  );
+}
 
-      {filteredAnnouncements.length === 0 && (
-        <Card>
-          <CardContent className="p-12 text-center">
-            <Bell className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">No announcements found</h3>
-            <p className="text-muted-foreground mb-4">
-              {searchTerm || filterType !== "all" || filterStatus !== "all" 
-                ? "Try adjusting your filters to see more results."
-                : "Create your first announcement to get started."
-              }
-            </p>
-            <Button onClick={handleCreateAnnouncement}>
-              <Plus className="h-4 w-4 mr-2" />
-              Create Announcement
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+// ----------------------
+// Communications Page Client Component
+// Purpose: Manages state and interactions for the communications page
+// ----------------------
+function CommunicationsPageClient() {
+  const [selectedCommunicationId, setSelectedCommunicationId] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
 
-      {/* Announcement Modal */}
-      <AnnouncementModal
-        isOpen={modalState.isOpen}
-        onClose={handleModalClose}
-        onSave={handleModalSave}
-        announcement={modalState.announcement}
-        mode={modalState.mode}
+  const communicationsService = new CommunicationsService();
+  const allCommunications = communicationsService.getAllCommunications();
+  const stats = communicationsService.getStats();
+
+  // Filter communications based on search, type, and status
+  const filteredCommunications = allCommunications.filter(communication => {
+    const matchesSearch = communication.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         communication.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         communication.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         communication.createdBy.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === 'all' || communication.type === typeFilter;
+    const matchesStatus = statusFilter === 'all' || communication.status === statusFilter;
+    return matchesSearch && matchesType && matchesStatus;
+  });
+
+  // Set default selected communication
+  useEffect(() => {
+    if (filteredCommunications.length > 0 && !selectedCommunicationId) {
+      setSelectedCommunicationId(filteredCommunications[0].id);
+    }
+  }, [filteredCommunications, selectedCommunicationId]);
+
+  const handleCommunicationSelect = (communicationId: string) => {
+    setSelectedCommunicationId(communicationId);
+  };
+
+  const handleView = (communicationId: string) => {
+    console.log('View communication:', communicationId);
+  };
+
+  const handleEdit = (communicationId: string) => {
+    console.log('Edit communication:', communicationId);
+  };
+
+  const handleDelete = (communicationId: string) => {
+    console.log('Delete communication:', communicationId);
+  };
+
+  const handleMore = (communicationId: string) => {
+    console.log('More actions for communication:', communicationId);
+  };
+
+  const handleRefresh = () => {
+    console.log('Refresh communications');
+  };
+
+  const handleExport = () => {
+    console.log('Export communications');
+  };
+
+  const statsCards = (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <MetricCard
+        title="Total Communications"
+        value={stats.total}
+        growth={12.5}
+        icon={Bell}
+        format="number"
+      />
+      <MetricCard
+        title="Active Communications"
+        value={stats.active}
+        growth={8.2}
+        icon={CheckCircle}
+        format="number"
+      />
+      <MetricCard
+        title="Total Views"
+        value={stats.totalViews}
+        growth={15.3}
+        icon={Eye}
+        format="number"
+      />
+      <MetricCard
+        title="Total Clicks"
+        value={stats.totalClicks}
+        growth={22.1}
+        icon={Target}
+        format="number"
       />
     </div>
   );
+
+  const filters = (
+    <div className="flex items-center gap-2">
+      <Select value={typeFilter} onValueChange={setTypeFilter}>
+        <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
+          <SelectValue placeholder="Type" />
+        </SelectTrigger>
+        <SelectContent className="bg-surface-elev2 border-line-soft">
+          <SelectItem value="all" className="text-text hover:bg-surface-elev1">All Types</SelectItem>
+          <SelectItem value="announcement" className="text-text hover:bg-surface-elev1">Announcements</SelectItem>
+          <SelectItem value="email" className="text-text hover:bg-surface-elev1">Email</SelectItem>
+          <SelectItem value="message" className="text-text hover:bg-surface-elev1">Messages</SelectItem>
+          <SelectItem value="notification" className="text-text hover:bg-surface-elev1">Notifications</SelectItem>
+        </SelectContent>
+      </Select>
+      <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
+          <SelectValue placeholder="Status" />
+        </SelectTrigger>
+        <SelectContent className="bg-surface-elev2 border-line-soft">
+          <SelectItem value="all" className="text-text hover:bg-surface-elev1">All Status</SelectItem>
+          <SelectItem value="active" className="text-text hover:bg-surface-elev1">Active</SelectItem>
+          <SelectItem value="draft" className="text-text hover:bg-surface-elev1">Draft</SelectItem>
+          <SelectItem value="scheduled" className="text-text hover:bg-surface-elev1">Scheduled</SelectItem>
+          <SelectItem value="sent" className="text-text hover:bg-surface-elev1">Sent</SelectItem>
+          <SelectItem value="delivered" className="text-text hover:bg-surface-elev1">Delivered</SelectItem>
+          <SelectItem value="failed" className="text-text hover:bg-surface-elev1">Failed</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
+  return (
+    <AdminPageTemplate
+      title="Communications Management"
+      description="Manage announcements, emails, messages, and notifications"
+      icon={<Bell className="h-6 w-6" />}
+      searchPlaceholder="Search communications by title, content, or creator..."
+      searchValue={searchTerm}
+      onSearchChange={setSearchTerm}
+      showSearch={true}
+      showFilters={true}
+      showRefresh={true}
+      showExport={true}
+      onRefresh={handleRefresh}
+      onExport={handleExport}
+      filters={filters}
+      stats={statsCards}
+    >
+      <CommunicationsDetailView
+        communications={filteredCommunications}
+        selectedCommunicationId={selectedCommunicationId}
+        onCommunicationSelect={handleCommunicationSelect}
+        onView={handleView}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onMore={handleMore}
+      />
+    </AdminPageTemplate>
+  );
+}
+
+export default function AdminCommunicationsPage() {
+  return <CommunicationsPageClient />;
 }

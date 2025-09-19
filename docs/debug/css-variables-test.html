@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Variables Test</title>
+    <style>
+        /* Test CSS variables */
+        .admin-dashboard {
+            --admin-card-bg: #1c1e30;
+            --admin-panel-bg: #1a1a1a;
+            --admin-text-primary: #ffffff;
+            --admin-text-secondary: #a0a0a0;
+            --admin-border-soft: #3a3d42;
+        }
+        
+        .test-card {
+            background-color: var(--admin-card-bg);
+            color: var(--admin-text-primary);
+            border: 1px solid var(--admin-border-soft);
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+        }
+        
+        .test-text {
+            color: var(--admin-text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-dashboard">
+        <h1>CSS Variables Test</h1>
+        <div class="test-card">
+            <h2>Test Card</h2>
+            <p class="test-text">This should use admin CSS variables</p>
+            <p>Card BG: var(--admin-card-bg) = #1c1e30</p>
+            <p>Text Primary: var(--admin-text-primary) = #ffffff</p>
+            <p>Text Secondary: var(--admin-text-secondary) = #a0a0a0</p>
+            <p>Border Soft: var(--admin-border-soft) = #3a3d42</p>
+        </div>
+    </div>
+    
+    <script>
+        // Test CSS variables in console
+        const root = document.querySelector('.admin-dashboard');
+        const computedStyle = getComputedStyle(root);
+        
+        console.log('=== CSS Variables Test ===');
+        console.log('--admin-card-bg:', computedStyle.getPropertyValue('--admin-card-bg'));
+        console.log('--admin-text-primary:', computedStyle.getPropertyValue('--admin-text-primary'));
+        console.log('--admin-text-secondary:', computedStyle.getPropertyValue('--admin-text-secondary'));
+        console.log('--admin-border-soft:', computedStyle.getPropertyValue('--admin-border-soft'));
+    </script>
+</body>
+</html>

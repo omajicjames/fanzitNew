@@ -250,10 +250,10 @@ function VerificationPageClient() {
               Filter by Status
             </label>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="bg-surface-elev1 border-line-soft text-text">
+              <SelectTrigger className="bg-surface-elev1 border border-line-soft text-text">
                 <SelectValue placeholder="All statuses" />
               </SelectTrigger>
-              <SelectContent className="bg-surface-elev1 border-line-soft">
+              <SelectContent className="bg-surface-elev1 border border-line-soft">
                 <SelectItem value="all" className="text-text">All Statuses</SelectItem>
                 <SelectItem value="submitted" className="text-text">Submitted</SelectItem>
                 <SelectItem value="pending" className="text-text">Pending</SelectItem>

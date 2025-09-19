@@ -30,36 +30,80 @@ export type NavItem = {
 export type PillItem = { label: string; href: string };
 
 // ----------------------
+// Admin Navigation Section Types
+// Purpose: Define the 4 main navigation sections
+// ----------------------
+export type AdminNavSection = "dashboard" | "users" | "content" | "system";
+
+export type AdminNavGroup = {
+  section: AdminNavSection;
+  title: string;
+  icon: LucideIcon;
+  items: NavItem[];
+};
+
+// ----------------------
 // Single Source Admin Navigation Configuration
-// Purpose: Unified admin sidebar navigation eliminating duplication
+// Purpose: Unified admin sidebar navigation with 4 logical sections
 // Location: Admin sidebar configuration
 // ----------------------
-export const ADMIN_SIDEBAR: readonly NavItem[] = [
-  { label: "Dashboard", href: "/admin", scope: "admin", icon: Gauge },
-  { label: "Analytics", href: "/admin/analytics", scope: "admin", icon: BarChart3 },
-  { label: "User Management", href: "/admin/users", scope: "admin", icon: Users },
-  { label: "Verification", href: "/admin/verification", scope: "admin", icon: BadgeCheck },
-  { label: "Members", href: "/admin/members", scope: "admin", icon: Users },
-  { label: "Content Management", href: "/admin/content", scope: "admin", icon: FileText },
-  { label: "Financial Management", href: "/admin/finance", scope: "admin", icon: DollarSign },
-  { label: "Products", href: "/admin/products", scope: "admin", icon: Package },
-  { label: "Sales", href: "/admin/sales", scope: "admin", icon: ReceiptText },
-  { label: "Shop", href: "/admin/shop", scope: "admin", icon: ShoppingBag },
-  { label: "Shop Categories", href: "/admin/shop-categories", scope: "admin", icon: Tags },
-  { label: "Gifts", href: "/admin/gifts", scope: "admin", icon: Gift },
-  { label: "Blog Management", href: "/admin/blog", scope: "admin", icon: PenTool },
-  { label: "Posts Management", href: "/admin/posts", scope: "admin", icon: FileText },
-  { label: "Comments Management", href: "/admin/comments", scope: "admin", icon: MessageCircle },
-  { label: "Replies Management", href: "/admin/replies", scope: "admin", icon: Reply },
-  { label: "Reels Management", href: "/admin/reels", scope: "admin", icon: PlaySquare },
-  { label: "Content Moderation", href: "/admin/moderation", scope: "admin", icon: Shield },
-  { label: "Communications", href: "/admin/communications", scope: "admin", icon: MessagesSquare },
-  { label: "Announcements", href: "/admin/communications/announcements", scope: "admin", icon: Bell },
-  { label: "System Management", href: "/admin/system", scope: "admin", icon: Shield },
-  { label: "Security & Privacy", href: "/admin/security", scope: "admin", icon: Lock },
-  { label: "Integrations", href: "/admin/integrations", scope: "admin", icon: Webhook },
-  { label: "Events & Scheduling", href: "/admin/events", scope: "admin", icon: Calendar },
+export const ADMIN_NAV_GROUPS: readonly AdminNavGroup[] = [
+  {
+    section: "dashboard",
+    title: "Dashboard & Analytics",
+    icon: Gauge,
+    items: [
+      { label: "Dashboard", href: "/admin", scope: "admin", icon: Gauge },
+      { label: "Analytics", href: "/admin/analytics", scope: "admin", icon: BarChart3 },
+      { label: "Financial Management", href: "/admin/finance", scope: "admin", icon: DollarSign },
+    ]
+  },
+  {
+    section: "users",
+    title: "User Management",
+    icon: Users,
+    items: [
+      { label: "User Management", href: "/admin/users", scope: "admin", icon: Users },
+      { label: "Verification", href: "/admin/verification", scope: "admin", icon: BadgeCheck },
+      { label: "Members", href: "/admin/members", scope: "admin", icon: Users },
+    ]
+  },
+  {
+    section: "content",
+    title: "Content & Commerce",
+    icon: FileText,
+    items: [
+      { label: "Content Management", href: "/admin/content", scope: "admin", icon: FileText },
+      { label: "Blog Management", href: "/admin/blog", scope: "admin", icon: PenTool },
+      { label: "Posts Management", href: "/admin/posts", scope: "admin", icon: FileText },
+      { label: "Comments Management", href: "/admin/comments", scope: "admin", icon: MessageCircle },
+      { label: "Replies Management", href: "/admin/replies", scope: "admin", icon: Reply },
+      { label: "Reels Management", href: "/admin/reels", scope: "admin", icon: PlaySquare },
+      { label: "Products", href: "/admin/products", scope: "admin", icon: Package },
+      { label: "Sales", href: "/admin/sales", scope: "admin", icon: ReceiptText },
+      { label: "Shop", href: "/admin/shop", scope: "admin", icon: ShoppingBag },
+      { label: "Shop Categories", href: "/admin/shop-categories", scope: "admin", icon: Tags },
+      { label: "Gifts", href: "/admin/gifts", scope: "admin", icon: Gift },
+    ]
+  },
+  {
+    section: "system",
+    title: "System & Operations",
+    icon: Shield,
+    items: [
+      { label: "Content Moderation", href: "/admin/moderation", scope: "admin", icon: Shield },
+      { label: "Communications", href: "/admin/communications", scope: "admin", icon: MessagesSquare },
+      { label: "Announcements", href: "/admin/communications/announcements", scope: "admin", icon: Bell },
+      { label: "System Management", href: "/admin/system", scope: "admin", icon: Shield },
+      { label: "Security & Privacy", href: "/admin/security", scope: "admin", icon: Lock },
+      { label: "Integrations", href: "/admin/integrations", scope: "admin", icon: Webhook },
+      { label: "Events & Scheduling", href: "/admin/events", scope: "admin", icon: Calendar },
+    ]
+  }
 ] as const;
+
+// Legacy flat array for backward compatibility
+export const ADMIN_SIDEBAR: readonly NavItem[] = ADMIN_NAV_GROUPS.flatMap(group => group.items);
 
 // ----------------------
 // Admin Section Pill Navigation

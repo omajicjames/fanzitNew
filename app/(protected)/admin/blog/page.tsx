@@ -1,11 +1,10 @@
 "use client";
 
-import { AdminPillNavigationComponent } from "@src/components/admin/AdminPillNavigation";
+import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
+import { BlogDetailView } from "@src/components/admin/BlogDetailView";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
-import { Input } from "@src/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs";
 import { 
   PenTool, 
   Plus, 
@@ -25,8 +24,14 @@ import {
   FileText,
   Heart,
   MessageCircle,
-  Share2
+  Share2,
+  BookOpen,
+  Target,
+  Zap,
+  Star,
+  ImageIcon
 } from "lucide-react";
+import { useState, useEffect } from "react";
 
 // ----------------------
 // Blog Management Page
@@ -102,7 +107,7 @@ class BlogManagementService {
         featured: true,
         seoTitle: "Content Creation Guide - Complete Tutorial",
         seoDescription: "Master content creation with our comprehensive guide",
-        featuredImage: "/placeholder.jpg",
+        // featuredImage: "/placeholder.jpg", // Removed to show modern placeholder
         publishedAt: "2024-01-25T10:00:00Z",
         createdAt: "2024-01-20T08:00:00Z",
         updatedAt: "2024-01-25T10:00:00Z",
@@ -226,16 +231,16 @@ class BlogPostCardComponent {
 
   public render() {
     return (
-      <Card className="group hover:shadow-lg transition-all duration-200">
+      <Card className="group hover:shadow-lg transition-all duration-200 bg-[var(--admin-card-bg)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)]">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="space-y-1 flex-1">
-              <CardTitle className="text-lg line-clamp-2">{this.post.title}</CardTitle>
-              <CardDescription className="line-clamp-2">{this.post.excerpt}</CardDescription>
+              <CardTitle className="text-lg line-clamp-2 text-[var(--admin-text-primary)]">{this.post.title}</CardTitle>
+              <CardDescription className="line-clamp-2 text-[var(--admin-text-secondary)]">{this.post.excerpt}</CardDescription>
             </div>
             <div className="flex flex-col gap-1 ml-2">
               {this.post.featured && (
-                <Badge variant="outline" className="text-yellow-600 border-yellow-600">
+                <Badge variant="outline" className="text-yellow-500 border-yellow-500/30 bg-yellow-900/20">
                   Featured
                 </Badge>
               )}
@@ -246,25 +251,41 @@ class BlogPostCardComponent {
         
         <CardContent className="space-y-4">
           {/* Featured Image */}
-          <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-            <FileText className="h-12 w-12 text-muted-foreground" />
+          <div className="aspect-video bg-[var(--admin-surface)] rounded-lg flex items-center justify-center border border-[var(--admin-border-soft)] relative overflow-hidden">
+            {this.post.featuredImage ? (
+              <img 
+                src={this.post.featuredImage} 
+                alt={this.post.title}
+                className="w-full h-full object-cover rounded-lg"
+              />
+            ) : (
+              <div className="flex flex-col items-center gap-3 text-[var(--admin-text-primary)]-muted">
+                <div className="p-4 bg-[var(--admin-card-bg)] rounded-full border border-[var(--admin-border-soft)]">
+                  <ImageIcon className="h-8 w-8 text-[var(--brand)]" />
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-medium text-[var(--admin-text-primary)]">No Featured Image</p>
+                  <p className="text-xs text-[var(--admin-text-primary)]-muted">Add an image to enhance this post</p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Author and Date */}
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+            <div className="h-8 w-8 rounded-full bg-[var(--admin-surface)] flex items-center justify-center border border-[var(--admin-border-soft)]">
               <User className="h-4 w-4" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium">{this.post.author.name}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm font-medium text-[var(--admin-text-primary)]">{this.post.author.name}</p>
+              <p className="text-xs text-[var(--admin-text-secondary)]">
                 {this.post.publishedAt 
                   ? new Date(this.post.publishedAt).toLocaleDateString()
                   : new Date(this.post.createdAt).toLocaleDateString()
                 }
               </p>
             </div>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-[var(--admin-text-secondary)]">
               {this.post.readingTime} min read
             </div>
           </div>
@@ -272,14 +293,14 @@ class BlogPostCardComponent {
           {/* Category and Tags */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">Category:</span>
-              <Badge variant="outline" className="text-xs">
+              <span className="text-sm font-medium text-[var(--admin-text-primary)]">Category:</span>
+              <Badge variant="outline" className="text-xs bg-[var(--admin-card-bg)] border border-[var(--admin-border-soft)] text-[var(--admin-text-secondary)]">
                 {this.post.category}
               </Badge>
             </div>
             <div className="flex flex-wrap gap-1">
               {this.post.tags.map((tag) => (
-                <Badge key={tag} variant="outline" className="text-xs">
+                <Badge key={tag} variant="outline" className="text-xs bg-[var(--admin-card-bg)] border border-[var(--admin-border-soft)] text-[var(--admin-text-secondary)]">
                   #{tag}
                 </Badge>
               ))}
@@ -289,34 +310,34 @@ class BlogPostCardComponent {
           {/* Stats */}
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="flex items-center gap-2">
-              <Eye className="h-4 w-4 text-muted-foreground" />
-              <span>{this.post.views} views</span>
+              <Eye className="h-4 w-4 text-[var(--admin-text-secondary)]" />
+              <span className="text-[var(--admin-text-primary)]">{this.post.views} views</span>
             </div>
             <div className="flex items-center gap-2">
-              <Heart className="h-4 w-4 text-muted-foreground" />
-              <span>{this.post.likes} likes</span>
+              <Heart className="h-4 w-4 text-[var(--admin-text-secondary)]" />
+              <span className="text-[var(--admin-text-primary)]">{this.post.likes} likes</span>
             </div>
             <div className="flex items-center gap-2">
-              <MessageCircle className="h-4 w-4 text-muted-foreground" />
-              <span>{this.post.comments} comments</span>
+              <MessageCircle className="h-4 w-4 text-[var(--admin-text-secondary)]" />
+              <span className="text-[var(--admin-text-primary)]">{this.post.comments} comments</span>
             </div>
             <div className="flex items-center gap-2">
-              <Share2 className="h-4 w-4 text-muted-foreground" />
-              <span>{this.post.shares} shares</span>
+              <Share2 className="h-4 w-4 text-[var(--admin-text-secondary)]" />
+              <span className="text-[var(--admin-text-primary)]">{this.post.shares} shares</span>
             </div>
           </div>
 
           {/* Actions */}
-          <div className="flex gap-2 pt-2">
-            <Button variant="outline" size="sm" className="flex-1">
+          <div className="flex gap-2 pt-2 border-t border-[var(--admin-border-soft)]">
+            <Button variant="outline" size="sm" className="flex-1 bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]">
               <Eye className="h-4 w-4 mr-2" />
               View
             </Button>
-            <Button variant="outline" size="sm" className="flex-1">
+            <Button variant="outline" size="sm" className="flex-1 bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]">
               <Edit className="h-4 w-4 mr-2" />
               Edit
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </div>
@@ -327,114 +348,135 @@ class BlogPostCardComponent {
 }
 
 export default function BlogPage() {
+  const [selectedPostId, setSelectedPostId] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+
   const blogService = new BlogManagementService();
   const posts = blogService.getPosts();
   const categories = blogService.getCategories();
   const stats = blogService.getBlogStats();
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Blog Management</h1>
-          <p className="text-muted-foreground">Manage blog posts, categories, and content</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <Filter className="h-4 w-4 mr-2" />
-            Categories
-          </Button>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            New Post
-          </Button>
-        </div>
-      </div>
+  // Set default selected post
+  useEffect(() => {
+    if (posts.length > 0 && !selectedPostId) {
+      setSelectedPostId(posts[0].id);
+    }
+  }, [posts, selectedPostId]);
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
-            <PenTool className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalPosts}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.publishedPosts} published, {stats.draftPosts} drafts
-            </p>
-          </CardContent>
-        </Card>
+  // Filter posts based on search and filters
+  const filteredPosts = posts.filter(post => {
+    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesStatus = statusFilter === "all" || post.status === statusFilter;
+    const matchesCategory = categoryFilter === "all" || post.category === categoryFilter;
+    
+    return matchesSearch && matchesStatus && matchesCategory;
+  });
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Views</CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalViews.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              Across all posts
-            </p>
-          </CardContent>
-        </Card>
+  const handlePostSelect = (postId: string) => {
+    setSelectedPostId(postId);
+  };
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Engagement</CardTitle>
-            <Heart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalLikes + stats.totalComments}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.totalLikes} likes, {stats.totalComments} comments
-            </p>
-          </CardContent>
-        </Card>
+  const handleView = () => {
+    console.log('View blog post');
+    // Navigate to blog post view
+  };
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Reading Time</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.averageReadingTime.toFixed(1)}m</div>
-            <p className="text-xs text-muted-foreground">
-              Per post
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+  const handleEdit = () => {
+    console.log('Edit blog post');
+    // Navigate to blog post editor
+  };
 
-      {/* Search and Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search blog posts..."
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+  const handleDelete = () => {
+    console.log('Delete blog post');
+    // Delete blog post
+  };
 
-      {/* Blog Posts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts.map((post) => {
-          const postCard = new BlogPostCardComponent(post);
-          return <div key={post.id}>{postCard.render()}</div>;
-        })}
-      </div>
+  const handleMore = () => {
+    console.log('More options');
+    // Show more options menu
+  };
+
+  const handleFeature = () => {
+    console.log('Feature blog post');
+    // Toggle featured status
+  };
+
+  const handlePublish = () => {
+    console.log('Publish blog post');
+    // Publish blog post
+  };
+
+  const handleNewPost = () => {
+    console.log('Create new blog post');
+    // Navigate to new post editor
+  };
+
+  const handleFilter = () => {
+    console.log('Filter blog posts');
+    // Show filter options
+  };
+
+  const statsCards = (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <MetricCard
+        title="Total Posts"
+        value={stats.totalPosts}
+        growth={12.5}
+        icon={PenTool}
+        format="number"
+      />
+      <MetricCard
+        title="Total Views"
+        value={stats.totalViews}
+        growth={8.2}
+        icon={Eye}
+        format="number"
+      />
+      <MetricCard
+        title="Total Engagement"
+        value={stats.totalLikes + stats.totalComments}
+        growth={15.3}
+        icon={Heart}
+        format="number"
+      />
+      <MetricCard
+        title="Avg Reading Time"
+        value={stats.averageReadingTime}
+        growth={5.7}
+        icon={Clock}
+        format="number"
+      />
     </div>
+  );
+
+  return (
+    <AdminPageTemplate
+      title="Blog Management"
+      description="Comprehensive blog management for content creators"
+      icon={<PenTool className="h-6 w-6" />}
+      showSearch={true}
+      showFilters={true}
+      showRefresh={true}
+      showExport={true}
+      stats={statsCards}
+    >
+      <BlogDetailView
+        posts={filteredPosts}
+        selectedPostId={selectedPostId}
+        onPostSelect={handlePostSelect}
+        onView={handleView}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onMore={handleMore}
+        onFeature={handleFeature}
+        onPublish={handlePublish}
+        onNewPost={handleNewPost}
+        onFilter={handleFilter}
+      />
+    </AdminPageTemplate>
   );
 }

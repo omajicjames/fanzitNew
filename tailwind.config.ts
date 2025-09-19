@@ -49,6 +49,7 @@ export default {
         brand: {
           DEFAULT: "hsl(var(--brand))",
           foreground: "hsl(var(--brand-foreground))",
+          contrast: 'hsl(var(--brand-contrast))',
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar))",
@@ -84,10 +85,6 @@ export default {
         line: {
           soft: 'hsl(var(--line-soft))',
           strong: 'hsl(var(--line-strong))',
-        },
-        brand: {
-          DEFAULT: 'hsl(var(--brand))',
-          contrast: 'hsl(var(--brand-contrast))',
         },
         gold: 'hsl(var(--accent-gold))',
         success: 'hsl(var(--success))',

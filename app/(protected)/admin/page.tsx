@@ -4,24 +4,26 @@
 // Purpose: Main admin dashboard with requireAdminPage authentication
 // Protection: Wrapped with requireAdminPage HOC for admin-only access
 // Layout: AdminLayout with dual-row navigation
-// Children: EnhancedAdminPageClient component for dashboard content
+// Children: AdminDashboardDetailView component for single-card layout
 // Note: This is the main admin dashboard after successful login
 // ----------------------
 
 "use client";
 
 import requireAdminPage from '@src/features/admin/auth/requireAdminPage';
-import EnhancedAdminPageClient from '@src/features/admin/components/EnhancedAdminPageClient';
 import { AdminPageTemplate } from '@src/components/admin/AdminPageTemplate';
-import { BarChart3, TrendingUp, Users, DollarSign } from 'lucide-react';
-import { useEffect } from 'react';
+import { AdminDashboardDetailView } from '@src/components/admin/AdminDashboardDetailView';
+import { BarChart3, TrendingUp, Users, DollarSign, Activity, Eye, MessageSquare, Heart, Target, CheckCircle, Calendar, Zap, Clock, AlertTriangle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 // ----------------------
 // Admin Dashboard Component
-// Purpose: Renders the main admin dashboard with authentication
-// Note: Uses EnhancedAdminPageClient for dashboard content and widgets
+// Purpose: Renders the main admin dashboard with single-card layout
+// Note: Uses AdminDashboardDetailView for comprehensive dashboard display
 // ----------------------
 function AdminDashboardPage() {
+  const [selectedMetricId, setSelectedMetricId] = useState("overview");
+
   // Debug: Check localStorage on page load
   useEffect(() => {
     console.log('=== Admin Dashboard Page Loaded ===');
@@ -30,78 +32,65 @@ function AdminDashboardPage() {
     console.log('localStorage admin_session:', localStorage.getItem('admin_session'));
   }, []);
 
-  const stats = (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Total Revenue</p>
-            <p className="text-2xl font-bold text-white">$124,567</p>
-            <div className="flex items-center gap-1 text-sm text-green-500">
-              <TrendingUp className="h-4 w-4" />
-              +12.5% from last month
-            </div>
-          </div>
-          <DollarSign className="h-8 w-8 text-neutral-400" />
-        </div>
-      </div>
+  // Mock dashboard metrics data
+  const dashboardMetrics = {
+    totalRevenue: 124567,
+    activeUsers: 12847,
+    contentViews: 45678,
+    conversionRate: 3.2,
+    totalPosts: 45678,
+    verifiedCreators: 1234,
+    monthlyRevenue: 89432,
+    engagementRate: 12.5,
+    newUsers: 2341,
+    contentModeration: 23,
+    systemHealth: 98,
+    responseTime: 145
+  };
 
-      <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Active Users</p>
-            <p className="text-2xl font-bold text-white">12,847</p>
-            <div className="flex items-center gap-1 text-sm text-green-500">
-              <TrendingUp className="h-4 w-4" />
-              +8.2% from last month
-            </div>
-          </div>
-          <Users className="h-8 w-8 text-neutral-400" />
-        </div>
-      </div>
+  const handleMetricSelect = (metricId: string) => {
+    setSelectedMetricId(metricId);
+  };
 
-      <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Content Views</p>
-            <p className="text-2xl font-bold text-white">45,678</p>
-            <div className="flex items-center gap-1 text-sm text-green-500">
-              <TrendingUp className="h-4 w-4" />
-              +15.3% from last month
-            </div>
-          </div>
-          <BarChart3 className="h-8 w-8 text-neutral-400" />
-        </div>
-      </div>
+  const handleViewDetails = () => {
+    console.log('View detailed analytics');
+    // Navigate to detailed analytics page
+  };
 
-      <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Conversion Rate</p>
-            <p className="text-2xl font-bold text-white">3.2%</p>
-            <div className="flex items-center gap-1 text-sm text-red-500">
-              <TrendingUp className="h-4 w-4 rotate-180" />
-              -0.5% from last month
-            </div>
-          </div>
-          <BarChart3 className="h-8 w-8 text-neutral-400" />
-        </div>
-      </div>
-    </div>
-  );
+  const handleExport = () => {
+    console.log('Export dashboard data');
+    // Export dashboard data
+  };
+
+  const handleRefresh = () => {
+    console.log('Refresh dashboard data');
+    // Refresh dashboard data
+  };
+
+  const handleMore = () => {
+    console.log('More options');
+    // Show more options menu
+  };
 
   return (
     <AdminPageTemplate
       title="Admin Dashboard"
-      description="Overview of platform performance and key metrics"
+      description="Comprehensive platform overview with key performance indicators"
       icon={<BarChart3 className="h-6 w-6" />}
       showSearch={false}
       showFilters={false}
       showRefresh={true}
       showExport={true}
-      stats={stats}
     >
-      <EnhancedAdminPageClient />
+      <AdminDashboardDetailView
+        metrics={dashboardMetrics}
+        selectedMetricId={selectedMetricId}
+        onMetricSelect={handleMetricSelect}
+        onViewDetails={handleViewDetails}
+        onExport={handleExport}
+        onRefresh={handleRefresh}
+        onMore={handleMore}
+      />
     </AdminPageTemplate>
   );
 }

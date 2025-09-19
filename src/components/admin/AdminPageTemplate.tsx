@@ -64,7 +64,7 @@ function AdminHeader({
         {/* Title Section */}
         <div className="flex items-center gap-3">
           {icon && (
-            <div className="p-2 bg-[var(--admin-card-bg)] rounded-lg border border-neutral-700">
+            <div className="p-2 bg-[var(--admin-card-bg)] rounded-lg border border-[var(--admin-border-soft)]">
               {icon}
             </div>
           )}
@@ -190,7 +190,7 @@ export function AdminPageTemplate({
   className = ""
 }: AdminPageTemplateProps) {
   return (
-    <div className="admin-page bg-surface-canvas text-text min-h-screen">
+    <div className="admin-page bg-surface-canvas text-[var(--admin-text-primary)] min-h-screen">
       <AdminHeader
         title={title}
         description={description}
@@ -253,19 +253,19 @@ export function AdminCard({
   };
 
   return (
-    <Card className={`bg-admin-card border-line-soft hover:shadow-lg transition-shadow duration-200 ${className}`}>
+    <Card className={`bg-[var(--admin-card-bg)] border border-[var(--admin-border-soft)] hover:shadow-lg transition-shadow duration-200 ${className}`}>
       {(title || description) && (
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {icon && (
-                <div className="p-2 bg-surface-elev2 rounded-lg border border-line-soft">
+                <div className="p-2 bg-[var(--admin-surface)] rounded-lg border border-[var(--admin-border-soft)]">
                   {icon}
                 </div>
               )}
               <div>
-                {title && <CardTitle className="text-lg text-text">{title}</CardTitle>}
-                {description && <CardDescription className="text-text-muted">{description}</CardDescription>}
+                {title && <CardTitle className="text-lg text-[var(--admin-text-primary)]">{title}</CardTitle>}
+                {description && <CardDescription className="text-[var(--admin-text-secondary)]">{description}</CardDescription>}
               </div>
             </div>
             {headerActions && (
@@ -276,7 +276,7 @@ export function AdminCard({
           </div>
         </CardHeader>
       )}
-      <CardContent className={`text-text ${getVariantStyles()}`}>
+      <CardContent className={`text-[var(--admin-text-primary)] ${getVariantStyles()}`}>
         {children}
       </CardContent>
     </Card>
@@ -433,30 +433,30 @@ export function UserCard({
                 <CheckCircle className="h-4 w-4 text-green-500" />
               )}
             </div>
-            <p className="text-sm text-[var(--admin-text-secondary)]">{user.email}</p>
+            <p className="text-sm text-[var(--admin-text-primary)]-muted">{user.email}</p>
           </div>
         </div>
 
         {user.role === 'creator' && (
           <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-3 bg-[var(--admin-surface)]/50 rounded-lg">
+            <div className="text-center p-3 bg-[var(--admin-card-bg)]/50 rounded-lg">
               <div className="flex items-center justify-center gap-1 text-green-500">
                 <DollarSign className="h-4 w-4" />
                 <span className="font-semibold">${user.earnings.toLocaleString()}</span>
               </div>
-              <p className="text-xs text-[var(--admin-text-secondary)]">Earnings</p>
+              <p className="text-xs text-[var(--admin-text-primary)]-muted">Earnings</p>
             </div>
-            <div className="text-center p-3 bg-[var(--admin-surface)]/50 rounded-lg">
+            <div className="text-center p-3 bg-[var(--admin-card-bg)]/50 rounded-lg">
               <div className="flex items-center justify-center gap-1 text-blue-500">
                 <Users className="h-4 w-4" />
                 <span className="font-semibold">{user.subscribers.toLocaleString()}</span>
               </div>
-              <p className="text-xs text-[var(--admin-text-secondary)]">Subscribers</p>
+              <p className="text-xs text-[var(--admin-text-primary)]-muted">Subscribers</p>
             </div>
           </div>
         )}
         
-        <div className="flex items-center justify-between text-sm text-[var(--admin-text-secondary)]">
+        <div className="flex items-center justify-between text-sm text-[var(--admin-text-primary)]-muted">
           <span>Joined: {new Date(user.joinDate).toLocaleDateString()}</span>
           <span>Last active: {user.lastActive}</span>
         </div>
@@ -465,7 +465,7 @@ export function UserCard({
           <Button 
             variant="outline" 
             size="sm" 
-            className="flex-1 bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-neutral-600"
+            className="flex-1 bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]"
             onClick={onView}
           >
             <Eye className="h-4 w-4 mr-1" />
@@ -474,7 +474,7 @@ export function UserCard({
           <Button 
             variant="outline" 
             size="sm" 
-            className="flex-1 bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-neutral-600"
+            className="flex-1 bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]"
             onClick={onEdit}
           >
             <Edit className="h-4 w-4 mr-1" />
@@ -483,7 +483,7 @@ export function UserCard({
           <Button 
             variant="outline" 
             size="sm" 
-            className="bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-neutral-600"
+            className="bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]"
             onClick={onMore}
           >
             <MoreHorizontal className="h-4 w-4" />
@@ -610,16 +610,16 @@ export function VerificationCard({
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-4">
             <div>
-              <p className="text-lg font-semibold text-text">{request.user.name}</p>
-              <p className="text-sm text-text-muted">{request.user.profession}</p>
-              <p className="text-sm text-text-muted">{request.user.country}, {request.user.city}</p>
-              <p className="text-xs text-text-subtle">Submitted: {new Date(request.submittedAt).toLocaleDateString()}</p>
+              <p className="text-lg font-semibold text-[var(--admin-text-primary)]">{request.user.name}</p>
+              <p className="text-sm text-[var(--admin-text-primary)]-muted">{request.user.profession}</p>
+              <p className="text-sm text-[var(--admin-text-primary)]-muted">{request.user.country}, {request.user.city}</p>
+              <p className="text-xs text-[var(--admin-text-primary)]-subtle">Submitted: {new Date(request.submittedAt).toLocaleDateString()}</p>
             </div>
           </div>
           <div className="text-right">
             <div className="flex items-center gap-2 mb-1">
-              <Shield className="h-4 w-4 text-text-muted" />
-              <span className="text-sm font-medium text-text">Verification Level</span>
+              <Shield className="h-4 w-4 text-[var(--admin-text-primary)]-muted" />
+              <span className="text-sm font-medium text-[var(--admin-text-primary)]">Verification Level</span>
             </div>
             <Badge variant="outline" className="text-xs">
               {request.verificationLevel.toUpperCase()}
@@ -629,8 +629,8 @@ export function VerificationCard({
 
         {/* Key Metrics Grid */}
         <div className="grid grid-cols-3 gap-4">
-          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
-            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+          <div className="bg-[var(--admin-surface)] rounded-lg p-4 text-center border border-[var(--admin-border-soft)]">
+            <div className="flex items-center justify-center gap-1 text-[var(--admin-text-primary)]-muted mb-1">
               <AlertTriangle className="h-4 w-4" />
               <span className="text-xs font-medium">Risk Score</span>
             </div>
@@ -641,75 +641,75 @@ export function VerificationCard({
               {riskLevel.level}
             </div>
           </div>
-          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
-            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+          <div className="bg-[var(--admin-surface)] rounded-lg p-4 text-center border border-[var(--admin-border-soft)]">
+            <div className="flex items-center justify-center gap-1 text-[var(--admin-text-primary)]-muted mb-1">
               <FileImage className="h-4 w-4" />
               <span className="text-xs font-medium">Documents</span>
             </div>
-            <div className="text-lg font-bold text-text">
+            <div className="text-lg font-bold text-[var(--admin-text-primary)]">
               {request.supportingDocuments.length}
             </div>
-            <div className="text-xs text-text-subtle">
+            <div className="text-xs text-[var(--admin-text-primary)]-subtle">
               Supporting
             </div>
           </div>
-          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
-            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+          <div className="bg-[var(--admin-surface)] rounded-lg p-4 text-center border border-[var(--admin-border-soft)]">
+            <div className="flex items-center justify-center gap-1 text-[var(--admin-text-primary)]-muted mb-1">
               <Flag className="h-4 w-4" />
               <span className="text-xs font-medium">Flags</span>
             </div>
-            <div className="text-lg font-bold text-text">
+            <div className="text-lg font-bold text-[var(--admin-text-primary)]">
               {request.flags.length}
             </div>
-            <div className="text-xs text-text-subtle">
+            <div className="text-xs text-[var(--admin-text-primary)]-subtle">
               Issues
             </div>
           </div>
         </div>
 
         {/* Document Information */}
-        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+        <div className="bg-[var(--admin-surface)] rounded-lg p-4 border border-[var(--admin-border-soft)]">
           <div className="flex items-center gap-2 mb-3">
-            <FileText className="h-5 w-5 text-text-muted" />
-            <span className="font-medium text-text">Document Information</span>
+            <FileText className="h-5 w-5 text-[var(--admin-text-primary)]-muted" />
+            <span className="font-medium text-[var(--admin-text-primary)]">Document Information</span>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <span className="text-sm text-text-muted">Type:</span>
+              <span className="text-sm text-[var(--admin-text-primary)]-muted">Type:</span>
               <Badge variant="outline" className="ml-2 text-xs">
                 {request.documentType.replace('_', ' ').toUpperCase()}
               </Badge>
             </div>
             <div>
-              <span className="text-sm text-text-muted">Number:</span>
-              <span className="ml-2 text-sm font-mono text-text">{request.documentNumber}</span>
+              <span className="text-sm text-[var(--admin-text-primary)]-muted">Number:</span>
+              <span className="ml-2 text-sm font-mono text-[var(--admin-text-primary)]">{request.documentNumber}</span>
             </div>
             {request.expiryDate && (
               <div className="col-span-2">
-                <span className="text-sm text-text-muted">Expires:</span>
-                <span className="ml-2 text-sm text-text">{new Date(request.expiryDate).toLocaleDateString()}</span>
+                <span className="text-sm text-[var(--admin-text-primary)]-muted">Expires:</span>
+                <span className="ml-2 text-sm text-[var(--admin-text-primary)]">{new Date(request.expiryDate).toLocaleDateString()}</span>
               </div>
             )}
           </div>
         </div>
 
         {/* Address Information */}
-        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+        <div className="bg-[var(--admin-surface)] rounded-lg p-4 border border-[var(--admin-border-soft)]">
           <div className="flex items-center gap-2 mb-3">
-            <MapPin className="h-5 w-5 text-text-muted" />
-            <span className="font-medium text-text">Address</span>
+            <MapPin className="h-5 w-5 text-[var(--admin-text-primary)]-muted" />
+            <span className="font-medium text-[var(--admin-text-primary)]">Address</span>
           </div>
-          <p className="text-sm text-text">
+          <p className="text-sm text-[var(--admin-text-primary)]">
             {request.address}, {request.city}, {request.country} {request.postalCode}
           </p>
         </div>
 
         {/* Compliance & Status */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="bg-[var(--admin-surface)] rounded-lg p-4 border border-[var(--admin-border-soft)]">
             <div className="flex items-center gap-2 mb-2">
-              <Shield className="h-4 w-4 text-text-muted" />
-              <span className="text-sm font-medium text-text">Compliance</span>
+              <Shield className="h-4 w-4 text-[var(--admin-text-primary)]-muted" />
+              <span className="text-sm font-medium text-[var(--admin-text-primary)]">Compliance</span>
             </div>
             <Badge 
               variant={request.complianceStatus === 'compliant' ? 'default' : 'destructive'}
@@ -718,10 +718,10 @@ export function VerificationCard({
               {request.complianceStatus.replace('_', ' ').toUpperCase()}
             </Badge>
           </div>
-          <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="bg-[var(--admin-surface)] rounded-lg p-4 border border-[var(--admin-border-soft)]">
             <div className="flex items-center gap-2 mb-2">
-              <CheckCircle className="h-4 w-4 text-text-muted" />
-              <span className="text-sm font-medium text-text">Status</span>
+              <CheckCircle className="h-4 w-4 text-[var(--admin-text-primary)]-muted" />
+              <span className="text-sm font-medium text-[var(--admin-text-primary)]">Status</span>
             </div>
             <Badge 
               variant={request.status === 'approved' ? 'default' : 'secondary'}
@@ -762,10 +762,10 @@ export function VerificationCard({
 
         {/* Supporting Documents */}
         {request.supportingDocuments.length > 0 && (
-          <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="bg-[var(--admin-surface)] rounded-lg p-4 border border-[var(--admin-border-soft)]">
             <div className="flex items-center gap-2 mb-3">
-              <FileImage className="h-5 w-5 text-text-muted" />
-              <span className="font-medium text-text">Supporting Documents</span>
+              <FileImage className="h-5 w-5 text-[var(--admin-text-primary)]-muted" />
+              <span className="font-medium text-[var(--admin-text-primary)]">Supporting Documents</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {request.supportingDocuments.map((doc, index) => (
@@ -780,12 +780,12 @@ export function VerificationCard({
 
         {/* Review Information */}
         {request.reviewedAt && (
-          <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="bg-[var(--admin-surface)] rounded-lg p-4 border border-[var(--admin-border-soft)]">
             <div className="flex items-center gap-2 mb-2">
-              <Clock className="h-4 w-4 text-text-muted" />
-              <span className="font-medium text-text">Review Information</span>
+              <Clock className="h-4 w-4 text-[var(--admin-text-primary)]-muted" />
+              <span className="font-medium text-[var(--admin-text-primary)]">Review Information</span>
             </div>
-            <div className="text-sm text-text-muted">
+            <div className="text-sm text-[var(--admin-text-primary)]-muted">
               <p>Reviewed: {new Date(request.reviewedAt).toLocaleDateString()}</p>
               {request.reviewedBy && (
                 <p>By: {request.reviewedBy}</p>
@@ -795,11 +795,11 @@ export function VerificationCard({
         )}
 
         {/* Action Buttons */}
-        <div className="flex gap-3 pt-2 border-t border-line-soft">
+        <div className="flex gap-3 pt-2 border-t border-[var(--admin-border-soft)]">
           <Button 
             variant="outline" 
             size="sm" 
-            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            className="flex-1 bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]"
             onClick={onReview}
           >
             <Eye className="h-4 w-4 mr-2" />
@@ -808,7 +808,7 @@ export function VerificationCard({
           <Button 
             variant="outline" 
             size="sm" 
-            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            className="flex-1 bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]"
             onClick={onDownload}
           >
             <Download className="h-4 w-4 mr-2" />
@@ -817,7 +817,7 @@ export function VerificationCard({
           <Button 
             variant="outline" 
             size="sm" 
-            className="bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            className="bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]"
             onClick={onMore}
           >
             <MoreHorizontal className="h-4 w-4" />
@@ -900,20 +900,20 @@ export function VerificationDetailView({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Filter Section */}
-      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
+      <div className="bg-[var(--admin-card-bg)] border border-[var(--admin-border-soft)] rounded-lg p-4">
         <div className="flex items-center gap-4">
           <div className="flex-1">
-            <label className="text-sm font-medium text-text-muted mb-2 block">Select Verification Request</label>
+            <label className="text-sm font-medium text-[var(--admin-text-primary)]-muted mb-2 block">Select Verification Request</label>
             <Select value={selectedRequestId || requests[0]?.id} onValueChange={onRequestSelect}>
-              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
+              <SelectTrigger className="bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)]">
                 <SelectValue placeholder="Choose a verification request..." />
               </SelectTrigger>
-              <SelectContent className="bg-surface-elev2 border-line-soft">
+              <SelectContent className="bg-[var(--admin-surface)] border border-[var(--admin-border-soft)]">
                 {requests.map((request) => (
                   <SelectItem 
                     key={request.id} 
                     value={request.id}
-                    className="text-text hover:bg-surface-elev1"
+                    className="text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]"
                   >
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4" />
@@ -954,17 +954,17 @@ export function VerificationDetailView({
 
         {/* Right: Quick Stats */}
         <div className="space-y-4">
-          <Card className="bg-admin-panel border-line-soft">
+          <Card className="bg-admin-panel border border-[var(--admin-border-soft)]">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg text-text">Quick Stats</CardTitle>
-              <CardDescription className="text-text-muted">Key information at a glance</CardDescription>
+              <CardTitle className="text-lg text-[var(--admin-text-primary)]">Quick Stats</CardTitle>
+              <CardDescription className="text-[var(--admin-text-primary)]-muted">Key information at a glance</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Risk Score */}
-              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-[var(--admin-surface)] rounded-lg">
                 <div className="flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm font-medium text-text">Risk Score</span>
+                  <AlertTriangle className="h-4 w-4 text-[var(--admin-text-primary)]-muted" />
+                  <span className="text-sm font-medium text-[var(--admin-text-primary)]">Risk Score</span>
                 </div>
                 <div className={`px-2 py-1 rounded text-xs font-semibold ${riskLevel.bgColor} ${riskLevel.color}`}>
                   {selectedRequest?.riskScore || 0} ({riskLevel.level})
@@ -972,10 +972,10 @@ export function VerificationDetailView({
               </div>
 
               {/* Verification Level */}
-              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-[var(--admin-surface)] rounded-lg">
                 <div className="flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm font-medium text-text">Verification Level</span>
+                  <Shield className="h-4 w-4 text-[var(--admin-text-primary)]-muted" />
+                  <span className="text-sm font-medium text-[var(--admin-text-primary)]">Verification Level</span>
                 </div>
                 <Badge variant="outline" className="text-xs">
                   {selectedRequest?.verificationLevel?.toUpperCase() || 'N/A'}
@@ -983,10 +983,10 @@ export function VerificationDetailView({
               </div>
 
               {/* Status */}
-              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-[var(--admin-surface)] rounded-lg">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm font-medium text-text">Status</span>
+                  <CheckCircle className="h-4 w-4 text-[var(--admin-text-primary)]-muted" />
+                  <span className="text-sm font-medium text-[var(--admin-text-primary)]">Status</span>
                 </div>
                 <Badge 
                   variant={selectedRequest?.status === 'approved' ? 'default' : 'secondary'}
@@ -997,34 +997,34 @@ export function VerificationDetailView({
               </div>
 
               {/* Supporting Documents Count */}
-              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-[var(--admin-surface)] rounded-lg">
                 <div className="flex items-center gap-2">
-                  <FileImage className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm font-medium text-text">Supporting Docs</span>
+                  <FileImage className="h-4 w-4 text-[var(--admin-text-primary)]-muted" />
+                  <span className="text-sm font-medium text-[var(--admin-text-primary)]">Supporting Docs</span>
                 </div>
-                <span className="text-sm font-semibold text-text">
+                <span className="text-sm font-semibold text-[var(--admin-text-primary)]">
                   {selectedRequest?.supportingDocuments?.length || 0}
                 </span>
               </div>
 
               {/* Location */}
-              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-[var(--admin-surface)] rounded-lg">
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm font-medium text-text">Location</span>
+                  <MapPin className="h-4 w-4 text-[var(--admin-text-primary)]-muted" />
+                  <span className="text-sm font-medium text-[var(--admin-text-primary)]">Location</span>
                 </div>
-                <span className="text-sm text-text-muted">
+                <span className="text-sm text-[var(--admin-text-primary)]-muted">
                   {selectedRequest?.user?.city}, {selectedRequest?.user?.country}
                 </span>
               </div>
 
               {/* Submitted Date */}
-              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-[var(--admin-surface)] rounded-lg">
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm font-medium text-text">Submitted</span>
+                  <Calendar className="h-4 w-4 text-[var(--admin-text-primary)]-muted" />
+                  <span className="text-sm font-medium text-[var(--admin-text-primary)]">Submitted</span>
                 </div>
-                <span className="text-sm text-text-muted">
+                <span className="text-sm text-[var(--admin-text-primary)]-muted">
                   {selectedRequest?.submittedAt ? new Date(selectedRequest.submittedAt).toLocaleDateString() : 'N/A'}
                 </span>
               </div>
@@ -1032,14 +1032,14 @@ export function VerificationDetailView({
           </Card>
 
           {/* Additional Actions */}
-          <Card className="bg-admin-panel border-line-soft">
+          <Card className="bg-admin-panel border border-[var(--admin-border-soft)]">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg text-text">Quick Actions</CardTitle>
+              <CardTitle className="text-lg text-[var(--admin-text-primary)]">Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <Button 
                 variant="outline" 
-                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                className="w-full bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]"
                 onClick={() => onReview?.(selectedRequest?.id || '')}
               >
                 <Eye className="h-4 w-4 mr-2" />
@@ -1047,7 +1047,7 @@ export function VerificationDetailView({
               </Button>
               <Button 
                 variant="outline" 
-                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                className="w-full bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]"
                 onClick={() => onDownload?.(selectedRequest?.id || '')}
               >
                 <Download className="h-4 w-4 mr-2" />

@@ -1,11 +1,12 @@
 "use client";
 
-import { AdminPillNavigationComponent } from "@src/components/admin/AdminPillNavigation";
+import { useState, useEffect } from "react";
+import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@src/components/ui/select";
 import { 
   DollarSign, 
   TrendingUp, 
@@ -23,7 +24,39 @@ import {
   Users,
   FileText,
   Calendar,
-  PieChart
+  PieChart,
+  Star,
+  Crown,
+  FileImage,
+  MapPin,
+  Activity,
+  Zap,
+  Target,
+  Award,
+  Phone,
+  Globe,
+  Mail,
+  Heart,
+  Share2,
+  ThumbsUp,
+  ThumbsDown,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  ExternalLink,
+  BadgeCheck,
+  UserCheck,
+  UserX,
+  Building,
+  RotateCcw,
+  BarChart3,
+  Settings,
+  Ban,
+  CheckSquare,
+  XSquare,
+  Reply,
+  User
 } from "lucide-react";
 
 // ----------------------
@@ -170,22 +203,33 @@ class FinancialManagementService {
   }
 }
 
-class TransactionCardComponent {
-  private transaction: FinancialData;
-
-  constructor(transaction: FinancialData) {
-    this.transaction = transaction;
-  }
-
-  private getStatusBadge() {
+// ----------------------
+// Professional Financial Transaction Card Component
+// Purpose: Displays financial transaction information in a structured, professional layout
+// Note: Similar to verification card with financial-specific data
+// ----------------------
+function ProfessionalTransactionCard({
+  transaction,
+  onView,
+  onExport,
+  onMore,
+  className = ""
+}: {
+  transaction: FinancialData;
+  onView?: () => void;
+  onExport?: () => void;
+  onMore?: () => void;
+  className?: string;
+}) {
+  const getStatusBadge = () => {
     const statusConfig = {
-      completed: { variant: 'default' as const, icon: CheckCircle, text: 'Completed' },
-      pending: { variant: 'secondary' as const, icon: Clock, text: 'Pending' },
-      failed: { variant: 'destructive' as const, icon: AlertTriangle, text: 'Failed' },
-      processing: { variant: 'secondary' as const, icon: Clock, text: 'Processing' }
+      completed: { variant: "default" as const, icon: CheckCircle, text: "Completed", color: "text-green-600" },
+      pending: { variant: "secondary" as const, icon: Clock, text: "Pending", color: "text-yellow-600" },
+      failed: { variant: "destructive" as const, icon: AlertTriangle, text: "Failed", color: "text-red-600" },
+      processing: { variant: "secondary" as const, icon: Clock, text: "Processing", color: "text-blue-600" }
     };
 
-    const config = statusConfig[this.transaction.status];
+    const config = statusConfig[transaction.status];
     const Icon = config.icon;
 
     return (
@@ -194,9 +238,9 @@ class TransactionCardComponent {
         {config.text}
       </Badge>
     );
-  }
+  };
 
-  private getTypeIcon() {
+  const getTypeIcon = () => {
     const typeIcons = {
       revenue: DollarSign,
       payout: Banknote,
@@ -205,354 +249,650 @@ class TransactionCardComponent {
       refund: TrendingDown
     };
 
-    const Icon = typeIcons[this.transaction.type];
+    const Icon = typeIcons[transaction.type];
     return <Icon className="h-4 w-4" />;
-  }
+  };
 
-  private getAmountColor() {
-    if (this.transaction.type === 'revenue') return 'text-green-600';
-    if (this.transaction.type === 'payout' || this.transaction.type === 'tax') return 'text-red-600';
-    return 'text-muted-foreground';
-  }
+  const getAmountColor = () => {
+    if (transaction.type === 'revenue') return 'text-green-600';
+    if (transaction.type === 'payout' || transaction.type === 'tax') return 'text-red-600';
+    return 'text-text-muted';
+  };
 
-  public render() {
+  const getTypeBadge = () => {
+    const typeConfig = {
+      revenue: { variant: "default" as const, text: "Revenue", color: "text-green-600" },
+      payout: { variant: "secondary" as const, text: "Payout", color: "text-blue-600" },
+      tax: { variant: "destructive" as const, text: "Tax", color: "text-red-600" },
+      subscription: { variant: "outline" as const, text: "Subscription", color: "text-purple-600" },
+      refund: { variant: "destructive" as const, text: "Refund", color: "text-orange-600" }
+    };
+
+    const config = typeConfig[transaction.type];
     return (
-      <Card className="bg-[var(--admin-card-bg)] border-neutral-700 hover:shadow-lg transition-shadow duration-200">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-[var(--admin-surface)] flex items-center justify-center">
-                {this.getTypeIcon()}
-              </div>
-              <div className="flex-1 min-w-0">
-                <CardTitle className="text-lg flex items-center gap-2 text-[var(--admin-text-primary)]">
-                  {this.transaction.description}
-                </CardTitle>
-                <CardDescription className="text-[var(--admin-text-secondary)]">
-                  {this.transaction.creator} • {this.transaction.transactionId}
-                </CardDescription>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="outline" className="text-xs bg-[var(--admin-surface)] border-neutral-600 text-neutral-300">
-                    {this.transaction.category}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs bg-[var(--admin-surface)] border-neutral-600 text-neutral-300">
-                    {this.transaction.paymentMethod}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className={`text-2xl font-bold ${this.getAmountColor()}`}>
-                ${this.transaction.amount.toLocaleString()}
-              </div>
-              <div className="text-sm text-[var(--admin-text-secondary)]">
-                Net: ${this.transaction.netAmount.toLocaleString()}
-              </div>
-            </div>
-          </div>
-        </CardHeader>
-        
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            {this.getStatusBadge()}
-            <span className="text-sm text-[var(--admin-text-secondary)]">
-              {new Date(this.transaction.date).toLocaleDateString()}
-            </span>
-          </div>
-
-          {this.transaction.fees > 0 && (
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-[var(--admin-text-secondary)]">Platform Fee:</span>
-              <span className="text-red-500">-${this.transaction.fees.toLocaleString()}</span>
-            </div>
-          )}
-          
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1 bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
-              <Eye className="h-4 w-4 mr-1" />
-              View
-            </Button>
-            <Button variant="outline" size="sm" className="flex-1 bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
-              <Download className="h-4 w-4 mr-1" />
-              Export
-            </Button>
-            <Button variant="outline" size="sm" className="bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <Badge variant={config.variant} className="text-xs">
+        {config.text}
+      </Badge>
     );
-  }
-}
+  };
 
-class RevenueCardComponent {
-  private revenue: RevenueData;
+  const getPaymentMethodIcon = () => {
+    const methodIcons = {
+      stripe: CreditCard,
+      paypal: CreditCard,
+      bank_transfer: Building,
+      crypto: DollarSign
+    };
+    const Icon = methodIcons[transaction.paymentMethod];
+    return <Icon className="h-4 w-4" />;
+  };
 
-  constructor(revenue: RevenueData) {
-    this.revenue = revenue;
-  }
-
-  public render() {
-    return (
-      <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-[var(--admin-text-primary)]">
-            <PieChart className="h-5 w-5 text-green-500" />
-            Revenue - {this.revenue.period}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+  return (
+    <Card className={`bg-admin-card border-line-soft hover:shadow-lg transition-all duration-200 ${className}`}>
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-lg bg-surface-elev2 flex items-center justify-center border border-line-soft">
+              {getTypeIcon()}
+            </div>
+            <div>
+              <CardTitle className="text-lg text-text flex items-center gap-2">
+                {transaction.description}
+                {getTypeBadge()}
+              </CardTitle>
+              <CardDescription className="text-text-muted">
+                {transaction.creator} • {transaction.transactionId}
+              </CardDescription>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className={`text-2xl font-bold ${getAmountColor()}`}>
+              ${transaction.amount.toLocaleString()}
+            </div>
+            <div className="text-sm text-text-muted">
+              Net: ${transaction.netAmount.toLocaleString()}
+            </div>
+          </div>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="space-y-6">
+        {/* Transaction Overview */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            {getTypeIcon()}
+            <span className="font-medium text-text">Transaction Overview</span>
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-[var(--admin-text-secondary)]">Total Revenue</p>
-              <p className="text-2xl font-bold text-[var(--admin-text-primary)]">${this.revenue.totalRevenue.toLocaleString()}</p>
+              <span className="text-sm text-text-muted">Type:</span>
+              <div className="mt-1">
+                {getTypeBadge()}
+              </div>
             </div>
             <div>
-              <p className="text-sm text-[var(--admin-text-secondary)]">Growth</p>
-              <p className={`text-2xl font-bold flex items-center gap-1 ${
-                this.revenue.growth > 0 ? 'text-green-500' : 'text-red-500'
-              }`}>
-                {this.revenue.growth > 0 ? <TrendingUp className="h-5 w-5" /> : <TrendingDown className="h-5 w-5" />}
-                {this.revenue.growth}%
-              </p>
+              <span className="text-sm text-text-muted">Status:</span>
+              <div className="mt-1">
+                {getStatusBadge()}
+              </div>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Category:</span>
+              <div className="mt-1">
+                <Badge variant="outline" className="text-xs">
+                  {transaction.category}
+                </Badge>
+              </div>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Payment Method:</span>
+              <div className="mt-1 flex items-center gap-1">
+                {getPaymentMethodIcon()}
+                <span className="text-sm text-text">{transaction.paymentMethod}</span>
+              </div>
             </div>
           </div>
-          
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm text-[var(--admin-text-secondary)]">Platform Fee (10%)</span>
-              <span className="text-sm font-medium text-[var(--admin-text-primary)]">${this.revenue.platformFee.toLocaleString()}</span>
+        </div>
+
+        {/* Financial Details */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <DollarSign className="h-4 w-4" />
+              <span className="text-xs font-medium">Amount</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-[var(--admin-text-secondary)]">Creator Earnings</span>
-              <span className="text-sm font-medium text-[var(--admin-text-primary)]">${this.revenue.creatorEarnings.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-[var(--admin-text-secondary)]">Subscription Revenue</span>
-              <span className="text-sm font-medium text-[var(--admin-text-primary)]">${this.revenue.subscriptionRevenue.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-[var(--admin-text-secondary)]">Tips Revenue</span>
-              <span className="text-sm font-medium text-[var(--admin-text-primary)]">${this.revenue.tipsRevenue.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-[var(--admin-text-secondary)]">Content Revenue</span>
-              <span className="text-sm font-medium text-[var(--admin-text-primary)]">${this.revenue.contentRevenue.toLocaleString()}</span>
+            <div className={`text-lg font-bold ${getAmountColor()}`}>
+              ${transaction.amount.toLocaleString()}
             </div>
           </div>
-        </CardContent>
-      </Card>
-    );
-  }
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <CreditCard className="h-4 w-4" />
+              <span className="text-xs font-medium">Fees</span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              ${transaction.fees.toLocaleString()}
+            </div>
+          </div>
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <TrendingUp className="h-4 w-4" />
+              <span className="text-xs font-medium">Net</span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              ${transaction.netAmount.toLocaleString()}
+            </div>
+          </div>
+        </div>
+
+        {/* Creator Information */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <User className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Creator Information</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-surface-elev1 flex items-center justify-center border border-line-soft">
+              <User className="h-5 w-5 text-text-muted" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-text">{transaction.creator}</p>
+              <p className="text-xs text-text-muted">ID: {transaction.creatorId}</p>
+            </div>
+            <div className="text-sm text-text-muted">
+              {new Date(transaction.date).toLocaleDateString()}
+            </div>
+          </div>
+        </div>
+
+        {/* Transaction Details */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <FileText className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Transaction Details</span>
+          </div>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="text-text-muted">Transaction ID:</span>
+              <span className="ml-2 text-text font-mono">{transaction.transactionId}</span>
+            </div>
+            <div>
+              <span className="text-text-muted">Currency:</span>
+              <span className="ml-2 text-text">{transaction.currency}</span>
+            </div>
+            <div>
+              <span className="text-text-muted">Date:</span>
+              <span className="ml-2 text-text">{new Date(transaction.date).toLocaleDateString()}</span>
+            </div>
+            <div>
+              <span className="text-text-muted">Status:</span>
+              <span className="ml-2 text-text">{transaction.status}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Fee Breakdown */}
+        {transaction.fees > 0 && (
+          <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <CreditCard className="h-5 w-5 text-red-400" />
+              <span className="font-medium text-red-300">Fee Breakdown</span>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-red-200">Platform Fee:</span>
+                <span className="text-sm font-bold text-red-300">
+                  -${transaction.fees.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-red-200">Net Amount:</span>
+                <span className="text-sm font-bold text-red-300">
+                  ${transaction.netAmount.toLocaleString()}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Revenue Information */}
+        {transaction.type === 'revenue' && (
+          <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp className="h-5 w-5 text-green-400" />
+              <span className="font-medium text-green-300">Revenue Information</span>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-green-200">Gross Revenue:</span>
+                <span className="text-sm font-bold text-green-300">
+                  ${transaction.amount.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-green-200">Platform Fee (10%):</span>
+                <span className="text-sm font-bold text-green-300">
+                  -${transaction.fees.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-green-200">Creator Earnings:</span>
+                <span className="text-sm font-bold text-green-300">
+                  ${transaction.netAmount.toLocaleString()}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex gap-3 pt-2 border-t border-line-soft">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onView}
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            View
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onExport}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onMore}
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ----------------------
+// Financial Detail View Component
+// Purpose: Single card view with filtering and quick stats
+// Note: Similar to verification page with financial-specific data
+// ----------------------
+function FinancialDetailView({
+  transactions,
+  selectedTransactionId,
+  onTransactionSelect,
+  onView,
+  onExport,
+  onMore,
+  className = ""
+}: {
+  transactions: FinancialData[];
+  selectedTransactionId?: string;
+  onTransactionSelect?: (transactionId: string) => void;
+  onView?: (transactionId: string) => void;
+  onExport?: (transactionId: string) => void;
+  onMore?: (transactionId: string) => void;
+  className?: string;
+}) {
+  const selectedTransaction = transactions.find(t => t.id === selectedTransactionId) || transactions[0];
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      completed: { variant: "default" as const, color: "text-green-600", bgColor: "bg-green-100" },
+      pending: { variant: "secondary" as const, color: "text-yellow-600", bgColor: "bg-yellow-100" },
+      failed: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" },
+      processing: { variant: "secondary" as const, color: "text-blue-600", bgColor: "bg-blue-100" }
+    };
+    return statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+  };
+
+  const getTypeIcon = (type: string) => {
+    const typeIcons = {
+      revenue: DollarSign,
+      payout: Banknote,
+      tax: FileText,
+      subscription: Users,
+      refund: TrendingDown
+    };
+    const Icon = typeIcons[type as keyof typeof typeIcons];
+    return Icon;
+  };
+
+  const statusInfo = getStatusBadge(selectedTransaction?.status || 'pending');
+
+  return (
+    <div className={`space-y-6 ${className}`}>
+      {/* Filter Section */}
+      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <label className="text-sm font-medium text-text-muted mb-2 block">Select Transaction</label>
+            <Select value={selectedTransactionId || transactions[0]?.id} onValueChange={onTransactionSelect}>
+              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
+                <SelectValue placeholder="Choose a transaction..." />
+              </SelectTrigger>
+              <SelectContent className="bg-surface-elev2 border-line-soft">
+                {transactions.map((transaction) => {
+                  const Icon = getTypeIcon(transaction.type);
+                  return (
+                    <SelectItem 
+                      key={transaction.id} 
+                      value={transaction.id}
+                      className="text-text hover:bg-surface-elev1"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Icon className="h-4 w-4" />
+                        <span>{transaction.description}</span>
+                        <Badge 
+                          variant={transaction.status === 'completed' ? 'default' : 'secondary'}
+                          className="text-xs"
+                        >
+                          {transaction.status}
+                        </Badge>
+                      </div>
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Transaction Card */}
+        <div className="lg:col-span-2">
+          {selectedTransaction ? (
+            <ProfessionalTransactionCard
+              transaction={selectedTransaction}
+              onView={() => onView?.(selectedTransaction.id)}
+              onExport={() => onExport?.(selectedTransaction.id)}
+              onMore={() => onMore?.(selectedTransaction.id)}
+            />
+          ) : (
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-8 text-center">
+              <DollarSign className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <p className="text-gray-400">No transaction selected</p>
+            </div>
+          )}
+        </div>
+
+        {/* Right: Quick Stats */}
+        <div className="space-y-4">
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Stats</CardTitle>
+              <CardDescription className="text-text-muted">Key information at a glance</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Status */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Status</span>
+                </div>
+                <div className={`px-2 py-1 rounded text-xs font-semibold ${statusInfo.bgColor} ${statusInfo.color}`}>
+                  {selectedTransaction?.status || 'N/A'}
+                </div>
+              </div>
+
+              {/* Type */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  {selectedTransaction && (() => {
+                    const Icon = getTypeIcon(selectedTransaction.type);
+                    return <Icon className="h-4 w-4 text-text-muted" />;
+                  })()}
+                  <span className="text-sm font-medium text-text">Type</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedTransaction?.type?.toUpperCase() || 'N/A'}
+                </span>
+              </div>
+
+              {/* Amount */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Amount</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  ${selectedTransaction?.amount?.toLocaleString() || '0'}
+                </span>
+              </div>
+
+              {/* Net Amount */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Net Amount</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  ${selectedTransaction?.netAmount?.toLocaleString() || '0'}
+                </span>
+              </div>
+
+              {/* Fees */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CreditCard className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Fees</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  ${selectedTransaction?.fees?.toLocaleString() || '0'}
+                </span>
+              </div>
+
+              {/* Currency */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Currency</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedTransaction?.currency || 'N/A'}
+                </span>
+              </div>
+
+              {/* Date */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Date</span>
+                </div>
+                <span className="text-sm text-text-muted">
+                  {selectedTransaction?.date ? new Date(selectedTransaction.date).toLocaleDateString() : 'N/A'}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Additional Actions */}
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onView?.(selectedTransaction?.id || '')}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                View Transaction
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onExport?.(selectedTransaction?.id || '')}
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export Transaction
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ----------------------
+// Financial Page Client Component
+// Purpose: Manages state and interactions for the financial page
+// ----------------------
+function FinancialPageClient() {
+  const [selectedTransactionId, setSelectedTransactionId] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
+
+  const financialService = new FinancialManagementService();
+  const allTransactions = financialService.getAllTransactions();
+  const revenueData = financialService.getRevenueData();
+
+  // Filter transactions based on search, status, and type
+  const filteredTransactions = allTransactions.filter(transaction => {
+    const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         transaction.creator.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         transaction.transactionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         transaction.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || transaction.status === statusFilter;
+    const matchesType = typeFilter === 'all' || transaction.type === typeFilter;
+    return matchesSearch && matchesStatus && matchesType;
+  });
+
+  // Set default selected transaction
+  useEffect(() => {
+    if (filteredTransactions.length > 0 && !selectedTransactionId) {
+      setSelectedTransactionId(filteredTransactions[0].id);
+    }
+  }, [filteredTransactions, selectedTransactionId]);
+
+  const handleTransactionSelect = (transactionId: string) => {
+    setSelectedTransactionId(transactionId);
+  };
+
+  const handleView = (transactionId: string) => {
+    console.log('View transaction:', transactionId);
+  };
+
+  const handleExport = (transactionId: string) => {
+    console.log('Export transaction:', transactionId);
+  };
+
+  const handleMore = (transactionId: string) => {
+    console.log('More actions for transaction:', transactionId);
+  };
+
+  const handleRefresh = () => {
+    console.log('Refresh transactions');
+  };
+
+  const handleExportAll = () => {
+    console.log('Export all transactions');
+  };
+
+  const statsCards = (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <MetricCard
+        title="Total Revenue"
+        value={financialService.getTotalRevenue()}
+        growth={15.3}
+        icon={DollarSign}
+        format="currency"
+      />
+      <MetricCard
+        title="Total Payouts"
+        value={financialService.getTotalPayouts()}
+        growth={8.2}
+        icon={Banknote}
+        format="currency"
+      />
+      <MetricCard
+        title="Platform Fees"
+        value={financialService.getTotalFees()}
+        growth={12.5}
+        icon={CreditCard}
+        format="currency"
+      />
+      <MetricCard
+        title="Pending Transactions"
+        value={financialService.getTransactionsByStatus('pending').length}
+        growth={-5.2}
+        icon={Clock}
+        format="number"
+      />
+    </div>
+  );
+
+  const filters = (
+    <div className="flex items-center gap-2">
+      <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
+          <SelectValue placeholder="Status" />
+        </SelectTrigger>
+        <SelectContent className="bg-surface-elev2 border-line-soft">
+          <SelectItem value="all" className="text-text hover:bg-surface-elev1">All Status</SelectItem>
+          <SelectItem value="completed" className="text-text hover:bg-surface-elev1">Completed</SelectItem>
+          <SelectItem value="pending" className="text-text hover:bg-surface-elev1">Pending</SelectItem>
+          <SelectItem value="failed" className="text-text hover:bg-surface-elev1">Failed</SelectItem>
+          <SelectItem value="processing" className="text-text hover:bg-surface-elev1">Processing</SelectItem>
+        </SelectContent>
+      </Select>
+      <Select value={typeFilter} onValueChange={setTypeFilter}>
+        <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
+          <SelectValue placeholder="Type" />
+        </SelectTrigger>
+        <SelectContent className="bg-surface-elev2 border-line-soft">
+          <SelectItem value="all" className="text-text hover:bg-surface-elev1">All Types</SelectItem>
+          <SelectItem value="revenue" className="text-text hover:bg-surface-elev1">Revenue</SelectItem>
+          <SelectItem value="payout" className="text-text hover:bg-surface-elev1">Payout</SelectItem>
+          <SelectItem value="tax" className="text-text hover:bg-surface-elev1">Tax</SelectItem>
+          <SelectItem value="subscription" className="text-text hover:bg-surface-elev1">Subscription</SelectItem>
+          <SelectItem value="refund" className="text-text hover:bg-surface-elev1">Refund</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
+  return (
+    <AdminPageTemplate
+      title="Financial Management"
+      description="Track revenue, payouts, and financial analytics"
+      icon={<DollarSign className="h-6 w-6" />}
+      searchPlaceholder="Search transactions by creator, ID, or description..."
+      searchValue={searchTerm}
+      onSearchChange={setSearchTerm}
+      showSearch={true}
+      showFilters={true}
+      showRefresh={true}
+      showExport={true}
+      onRefresh={handleRefresh}
+      onExport={handleExportAll}
+      filters={filters}
+      stats={statsCards}
+    >
+      <FinancialDetailView
+        transactions={filteredTransactions}
+        selectedTransactionId={selectedTransactionId}
+        onTransactionSelect={handleTransactionSelect}
+        onView={handleView}
+        onExport={handleExport}
+        onMore={handleMore}
+      />
+    </AdminPageTemplate>
+  );
 }
 
 export default function FinancialManagementPage() {
-  const financialService = new FinancialManagementService();
-  const allTransactions = financialService.getAllTransactions();
-  const revenueTransactions = financialService.getTransactionsByType('revenue');
-  const payoutTransactions = financialService.getTransactionsByType('payout');
-  const pendingTransactions = financialService.getTransactionsByStatus('pending');
-  const revenueData = financialService.getRevenueData();
-
-  return (
-    <div className="p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-[var(--admin-text-primary)]">Financial Management</h1>
-            <p className="text-[var(--admin-text-secondary)]">Track revenue, payouts, and financial analytics</p>
-          </div>
-          <Badge className="bg-orange-500 text-[var(--admin-text-primary)]">Super Admin</Badge>
-        </div>
-      </div>
-
-      {/* Key Performance Indicators */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-[var(--admin-text-primary)] mb-2">Financial Overview</h2>
-        <p className="text-[var(--admin-text-secondary)] mb-6">Revenue, payouts, and financial metrics</p>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Total Revenue</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">${financialService.getTotalRevenue().toLocaleString()}</p>
-                <div className="flex items-center gap-1 text-sm text-green-500">
-                  <TrendingUp className="h-4 w-4" />
-                  +15.3% from last month
-                </div>
-              </div>
-              <DollarSign className="h-8 w-8 text-green-500" />
-            </div>
-          </div>
-          
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Total Payouts</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">${financialService.getTotalPayouts().toLocaleString()}</p>
-                <div className="flex items-center gap-1 text-sm text-blue-500">
-                  <Banknote className="h-4 w-4" />
-                  +8.2% from last month
-                </div>
-              </div>
-              <Banknote className="h-8 w-8 text-blue-500" />
-            </div>
-          </div>
-          
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Platform Fees</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">${financialService.getTotalFees().toLocaleString()}</p>
-                <div className="flex items-center gap-1 text-sm text-orange-500">
-                  <CreditCard className="h-4 w-4" />
-                  +12.5% from last month
-                </div>
-              </div>
-              <CreditCard className="h-8 w-8 text-orange-500" />
-            </div>
-          </div>
-          
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Pending</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{pendingTransactions.length}</p>
-                <div className="flex items-center gap-1 text-sm text-yellow-500">
-                  <Clock className="h-4 w-4" />
-                  Transactions
-                </div>
-              </div>
-              <Clock className="h-8 w-8 text-yellow-500" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Financial Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
-          <CardHeader>
-            <CardTitle className="text-[var(--admin-text-primary)] flex items-center gap-2">
-              <PieChart className="h-5 w-5 text-green-500" />
-              Revenue Breakdown
-            </CardTitle>
-            <CardDescription className="text-[var(--admin-text-secondary)]">Revenue distribution by category</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
-              <div className="text-center">
-                <PieChart className="h-12 w-12 text-[var(--admin-text-secondary)] mx-auto mb-2" />
-                <p className="text-[var(--admin-text-secondary)]">Revenue breakdown chart</p>
-                <p className="text-sm text-neutral-500">Pie chart showing revenue sources</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
-          <CardHeader>
-            <CardTitle className="text-[var(--admin-text-primary)] flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-blue-500" />
-              Financial Trends
-            </CardTitle>
-            <CardDescription className="text-[var(--admin-text-secondary)]">Revenue and payout trends over time</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
-              <div className="text-center">
-                <TrendingUp className="h-12 w-12 text-[var(--admin-text-secondary)] mx-auto mb-2" />
-                <p className="text-[var(--admin-text-secondary)]">Financial trends chart</p>
-                <p className="text-sm text-neutral-500">Line chart showing financial trends</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--admin-text-secondary)]" />
-          <Input 
-            placeholder="Search transactions by creator or ID..."
-            className="pl-10 bg-[var(--admin-card-bg)] border-neutral-700 text-[var(--admin-text-primary)]"
-          />
-        </div>
-        <Button variant="outline" className="flex items-center gap-2 bg-[var(--admin-card-bg)] border-neutral-700 text-[var(--admin-text-primary)] hover:bg-[var(--admin-surface)]">
-          <Filter className="h-4 w-4" />
-          Filters
-        </Button>
-      </div>
-
-      {/* Revenue Overview Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {revenueData.map((revenue) => {
-          const revenueCard = new RevenueCardComponent(revenue);
-          return <div key={revenue.period}>{revenueCard.render()}</div>;
-        })}
-      </div>
-
-      {/* Transaction Tabs */}
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5 bg-[var(--admin-card-bg)] border-neutral-700">
-          <TabsTrigger value="all" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">All Transactions</TabsTrigger>
-          <TabsTrigger value="revenue" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Revenue</TabsTrigger>
-          <TabsTrigger value="payouts" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Payouts</TabsTrigger>
-          <TabsTrigger value="pending" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Pending</TabsTrigger>
-          <TabsTrigger value="taxes" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Taxes</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="all" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {allTransactions.map((transaction) => {
-              const transactionCard = new TransactionCardComponent(transaction);
-              return <div key={transaction.id}>{transactionCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="revenue" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {revenueTransactions.map((transaction) => {
-              const transactionCard = new TransactionCardComponent(transaction);
-              return <div key={transaction.id}>{transactionCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="payouts" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {payoutTransactions.map((transaction) => {
-              const transactionCard = new TransactionCardComponent(transaction);
-              return <div key={transaction.id}>{transactionCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="pending" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {pendingTransactions.map((transaction) => {
-              const transactionCard = new TransactionCardComponent(transaction);
-              return <div key={transaction.id}>{transactionCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="taxes" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {allTransactions
-              .filter(t => t.type === 'tax')
-              .map((transaction) => {
-                const transactionCard = new TransactionCardComponent(transaction);
-                return <div key={transaction.id}>{transactionCard.render()}</div>;
-              })}
-          </div>
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
+  return <FinancialPageClient />;
 }

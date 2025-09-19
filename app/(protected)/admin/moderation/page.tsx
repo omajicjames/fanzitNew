@@ -1,12 +1,12 @@
 "use client";
 
-import { AdminPageTemplate, AdminCard } from "@src/components/admin/AdminPageTemplate";
-import { AdminPillNavigationComponent } from "@src/components/admin/AdminPillNavigation";
+import { useState, useEffect } from "react";
+import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@src/components/ui/select";
 import { 
   Shield, 
   Search, 
@@ -29,7 +29,35 @@ import {
   CheckSquare,
   XSquare,
   MessageCircle,
-  Reply
+  Reply,
+  DollarSign,
+  Star,
+  Crown,
+  FileImage,
+  MapPin,
+  Activity,
+  Zap,
+  Target,
+  Award,
+  Calendar,
+  Phone,
+  Globe,
+  Mail,
+  Heart,
+  Share2,
+  ThumbsUp,
+  ThumbsDown,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  ExternalLink,
+  BadgeCheck,
+  UserCheck,
+  UserX,
+  Building,
+  CreditCard,
+  RotateCcw
 } from "lucide-react";
 
 // ----------------------
@@ -221,22 +249,35 @@ class ModerationService {
   }
 }
 
-class ModerationItemCardComponent {
-  private item: ModerationItem;
-
-  constructor(item: ModerationItem) {
-    this.item = item;
-  }
-
-  private getStatusBadge() {
+// ----------------------
+// Professional Moderation Card Component
+// Purpose: Displays moderation item information in a structured, professional layout
+// Note: Similar to verification card with moderation-specific data
+// ----------------------
+function ProfessionalModerationCard({
+  item,
+  onReview,
+  onApprove,
+  onReject,
+  onMore,
+  className = ""
+}: {
+  item: ModerationItem;
+  onReview?: () => void;
+  onApprove?: () => void;
+  onReject?: () => void;
+  onMore?: () => void;
+  className?: string;
+}) {
+  const getStatusBadge = () => {
     const statusConfig = {
-      pending: { variant: "secondary" as const, icon: Clock, text: "Pending" },
-      approved: { variant: "default" as const, icon: CheckCircle, text: "Approved" },
-      rejected: { variant: "destructive" as const, icon: XCircle, text: "Rejected" },
-      escalated: { variant: "destructive" as const, icon: AlertTriangle, text: "Escalated" }
+      pending: { variant: "secondary" as const, icon: Clock, text: "Pending", color: "text-yellow-600" },
+      approved: { variant: "default" as const, icon: CheckCircle, text: "Approved", color: "text-green-600" },
+      rejected: { variant: "destructive" as const, icon: XCircle, text: "Rejected", color: "text-red-600" },
+      escalated: { variant: "destructive" as const, icon: AlertTriangle, text: "Escalated", color: "text-red-600" }
     };
 
-    const config = statusConfig[this.item.status];
+    const config = statusConfig[item.status];
     const Icon = config.icon;
 
     return (
@@ -245,9 +286,9 @@ class ModerationItemCardComponent {
         {config.text}
       </Badge>
     );
-  }
+  };
 
-  private getPriorityBadge() {
+  const getPriorityBadge = () => {
     const priorityConfig = {
       low: { variant: "outline" as const, color: "text-gray-600", text: "Low" },
       medium: { variant: "secondary" as const, color: "text-yellow-600", text: "Medium" },
@@ -255,16 +296,16 @@ class ModerationItemCardComponent {
       urgent: { variant: "destructive" as const, color: "text-red-600", text: "Urgent" }
     };
 
-    const config = priorityConfig[this.item.priority];
+    const config = priorityConfig[item.priority];
 
     return (
       <Badge variant={config.variant} className={`${config.color} border-current`}>
         {config.text}
       </Badge>
     );
-  }
+  };
 
-  private getTypeIcon() {
+  const getTypeIcon = () => {
     const icons = {
       image: Image,
       video: Video,
@@ -273,184 +314,611 @@ class ModerationItemCardComponent {
       comment: MessageCircle,
       reply: Reply
     };
-    const Icon = icons[this.item.type];
+    const Icon = icons[item.type];
     return <Icon className="h-4 w-4" />;
-  }
+  };
 
-  public render() {
+  const getCategoryBadge = () => {
+    const categoryConfig = {
+      inappropriate: { variant: "destructive" as const, text: "Inappropriate" },
+      spam: { variant: "secondary" as const, text: "Spam" },
+      harassment: { variant: "destructive" as const, text: "Harassment" },
+      copyright: { variant: "outline" as const, text: "Copyright" },
+      violence: { variant: "destructive" as const, text: "Violence" },
+      nudity: { variant: "destructive" as const, text: "Nudity" },
+      other: { variant: "outline" as const, text: "Other" }
+    };
+
+    const config = categoryConfig[item.category];
+
     return (
-      <AdminCard
-        title={this.item.content}
-        description={`${this.item.type.toUpperCase()} by ${this.item.author.name}`}
-        icon={this.getTypeIcon()}
-        headerActions={
-          <div className="flex gap-2">
-            {this.getPriorityBadge()}
-            {this.getStatusBadge()}
+      <Badge variant={config.variant} className="text-xs">
+        {config.text}
+      </Badge>
+    );
+  };
+
+  return (
+    <Card className={`bg-admin-card border-line-soft hover:shadow-lg transition-all duration-200 ${className}`}>
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-full bg-surface-elev2 flex items-center justify-center border border-line-soft">
+              {getTypeIcon()}
+            </div>
+            <div>
+              <CardTitle className="text-lg text-text flex items-center gap-2">
+                {item.type.toUpperCase()} Content
+                {item.autoFlagged && (
+                  <Shield className="h-4 w-4 text-blue-600" />
+                )}
+              </CardTitle>
+              <CardDescription className="text-text-muted">by {item.author.name}</CardDescription>
+            </div>
           </div>
-        }
-        className="group hover:shadow-lg transition-all duration-200"
-      >
-        
-        <CardContent className="space-y-4">
-          {/* Author Info */}
+          <div className="flex flex-col gap-1">
+            {getPriorityBadge()}
+            {getStatusBadge()}
+          </div>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="space-y-6">
+        {/* Content Preview */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            {getTypeIcon()}
+            <span className="font-medium text-text">Content Preview</span>
+          </div>
+          <p className="text-sm text-text-muted line-clamp-3">{item.content}</p>
+          {item.media && (
+            <div className="aspect-video bg-surface-elev1 rounded-lg flex items-center justify-center mt-3 border border-line-soft">
+              <div className="text-center">
+                {getTypeIcon()}
+                <p className="text-sm text-text-muted mt-2">
+                  {item.media.type.toUpperCase()}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Key Metrics Grid */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <Flag className="h-4 w-4" />
+              <span className="text-xs font-medium">Reports</span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              {item.reportCount}
+            </div>
+          </div>
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <Shield className="h-4 w-4" />
+              <span className="text-xs font-medium">AI Confidence</span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              {item.aiConfidence ? `${Math.round(item.aiConfidence * 100)}%` : 'N/A'}
+            </div>
+          </div>
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <Clock className="h-4 w-4" />
+              <span className="text-xs font-medium">Age</span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              {Math.floor((Date.now() - new Date(item.createdAt).getTime()) / (1000 * 60 * 60 * 24))}d
+            </div>
+          </div>
+        </div>
+
+        {/* Author Information */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <User className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Author Information</span>
+          </div>
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-              <User className="h-4 w-4" />
+            <div className="h-10 w-10 rounded-full bg-surface-elev1 flex items-center justify-center border border-line-soft">
+              <User className="h-5 w-5 text-text-muted" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium">{this.item.author.name}</p>
-              <p className="text-xs text-muted-foreground">{this.item.author.username}</p>
+              <p className="text-sm font-medium text-text">{item.author.name}</p>
+              <p className="text-xs text-text-muted">{item.author.username}</p>
             </div>
-            <div className="text-sm text-muted-foreground">
-              {new Date(this.item.createdAt).toLocaleDateString()}
+            <div className="text-sm text-text-muted">
+              {new Date(item.createdAt).toLocaleDateString()}
             </div>
           </div>
+        </div>
 
-          {/* Media Preview */}
-          {this.item.media && (
-            <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                {this.getTypeIcon()}
-                <p className="text-sm text-muted-foreground mt-2">
-                  {this.item.media.type.toUpperCase()}
-                </p>
+        {/* Moderation Details */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <Shield className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Moderation Details</span>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <span className="text-sm text-text-muted">Category:</span>
+              <div className="mt-1">
+                {getCategoryBadge()}
               </div>
             </div>
-          )}
+            <div>
+              <span className="text-sm text-text-muted">Priority:</span>
+              <div className="mt-1">
+                {getPriorityBadge()}
+              </div>
+            </div>
+            <div className="col-span-2">
+              <span className="text-sm text-text-muted">Flags:</span>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {item.flags.map((flag) => (
+                  <Badge key={flag} variant="destructive" className="text-xs">
+                    {flag.replace('_', ' ')}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
 
-          {/* Flags */}
+        {/* Reports Section */}
+        <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Flag className="h-5 w-5 text-red-400" />
+            <span className="font-medium text-red-300">{item.reportCount} Reports</span>
+          </div>
           <div className="space-y-2">
-            <p className="text-xs font-medium text-muted-foreground">Flags:</p>
-            <div className="flex flex-wrap gap-1">
-              {this.item.flags.map((flag) => (
-                <Badge key={flag} variant="destructive" className="text-xs">
-                  {flag.replace('_', ' ')}
-                </Badge>
-              ))}
-            </div>
+            {item.reportedBy.slice(0, 3).map((reporter, index) => (
+              <div key={index} className="flex items-center justify-between p-2 bg-red-900/30 rounded">
+                <span className="text-sm text-red-200">{reporter.name}</span>
+                <span className="text-xs text-red-300">{reporter.reason}</span>
+              </div>
+            ))}
+            {item.reportedBy.length > 3 && (
+              <p className="text-xs text-red-400 text-center">
+                +{item.reportedBy.length - 3} more reports
+              </p>
+            )}
           </div>
+        </div>
 
-          {/* Reports */}
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-red-800 mb-2">
-              <Flag className="h-4 w-4" />
-              <span className="text-sm font-medium">{this.item.reportCount} Reports</span>
+        {/* AI Analysis */}
+        {item.aiConfidence && (
+          <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Shield className="h-5 w-5 text-blue-400" />
+              <span className="font-medium text-blue-300">AI Analysis</span>
             </div>
-            <div className="space-y-1">
-              {this.item.reportedBy.slice(0, 2).map((reporter, index) => (
-                <p key={index} className="text-xs text-red-700">
-                  {reporter.name}: {reporter.reason}
-                </p>
-              ))}
-              {this.item.reportedBy.length > 2 && (
-                <p className="text-xs text-red-600">
-                  +{this.item.reportedBy.length - 2} more reports
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* AI Confidence */}
-          {this.item.aiConfidence && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-blue-800">AI Confidence</span>
-                <span className="text-sm font-bold text-blue-600">
-                  {Math.round(this.item.aiConfidence * 100)}%
+                <span className="text-sm text-blue-200">Confidence Level</span>
+                <span className="text-sm font-bold text-blue-300">
+                  {Math.round(item.aiConfidence * 100)}%
                 </span>
               </div>
-              <div className="w-full bg-blue-200 rounded-full h-2 mt-2">
+              <div className="w-full bg-blue-900/50 rounded-full h-2">
                 <div 
-                  className="bg-blue-600 h-2 rounded-full" 
-                  style={{ width: `${this.item.aiConfidence * 100}%` }}
+                  className="bg-blue-400 h-2 rounded-full" 
+                  style={{ width: `${item.aiConfidence * 100}%` }}
                 ></div>
               </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-blue-300">Auto-flagged:</span>
+                <Badge variant={item.autoFlagged ? "default" : "outline"} className="text-xs">
+                  {item.autoFlagged ? "Yes" : "No"}
+                </Badge>
+              </div>
             </div>
-          )}
-
-          {/* Moderation Notes */}
-          {this.item.moderationNotes && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-              <p className="text-xs font-medium text-yellow-800 mb-1">Moderation Notes:</p>
-              <p className="text-xs text-yellow-700">{this.item.moderationNotes}</p>
-            </div>
-          )}
-
-          {/* Actions */}
-          <div className="flex gap-2 pt-2">
-            <Button variant="outline" size="sm" className="flex-1">
-              <Eye className="h-4 w-4 mr-2" />
-              Review
-            </Button>
-            <Button variant="outline" size="sm" className="flex-1">
-              <CheckCircle className="h-4 w-4 mr-2" />
-              Approve
-            </Button>
-            <Button variant="outline" size="sm" className="flex-1">
-              <XCircle className="h-4 w-4 mr-2" />
-              Reject
-            </Button>
-            <Button variant="outline" size="sm">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
           </div>
-        </CardContent>
-      </AdminCard>
-    );
-  }
+        )}
+
+        {/* Moderation Notes */}
+        {item.moderationNotes && (
+          <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <MessageCircle className="h-5 w-5 text-yellow-400" />
+              <span className="font-medium text-yellow-300">Moderation Notes</span>
+            </div>
+            <p className="text-sm text-yellow-200">{item.moderationNotes}</p>
+          </div>
+        )}
+
+        {/* Review Information */}
+        {item.reviewedAt && item.reviewedBy && (
+          <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle className="h-5 w-5 text-text-muted" />
+              <span className="font-medium text-text">Review Information</span>
+            </div>
+            <div className="text-sm text-text-muted">
+              <p>Reviewed: {new Date(item.reviewedAt).toLocaleDateString()}</p>
+              <p>By: {item.reviewedBy.name}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex gap-3 pt-2 border-t border-line-soft">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onReview}
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            Review
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onApprove}
+          >
+            <CheckCircle className="h-4 w-4 mr-2" />
+            Approve
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onReject}
+          >
+            <XCircle className="h-4 w-4 mr-2" />
+            Reject
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onMore}
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
 }
 
-export default function ModerationPage() {
+// ----------------------
+// Moderation Detail View Component
+// Purpose: Single card view with filtering and quick stats
+// Note: Similar to verification page with moderation-specific data
+// ----------------------
+function ModerationDetailView({
+  items,
+  selectedItemId,
+  onItemSelect,
+  onReview,
+  onApprove,
+  onReject,
+  onMore,
+  className = ""
+}: {
+  items: ModerationItem[];
+  selectedItemId?: string;
+  onItemSelect?: (itemId: string) => void;
+  onReview?: (itemId: string) => void;
+  onApprove?: (itemId: string) => void;
+  onReject?: (itemId: string) => void;
+  onMore?: (itemId: string) => void;
+  className?: string;
+}) {
+  const selectedItem = items.find(i => i.id === selectedItemId) || items[0];
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      pending: { variant: "secondary" as const, color: "text-yellow-600", bgColor: "bg-yellow-100" },
+      approved: { variant: "default" as const, color: "text-green-600", bgColor: "bg-green-100" },
+      rejected: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" },
+      escalated: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" }
+    };
+    return statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+  };
+
+  const getPriorityBadge = (priority: string) => {
+    const priorityConfig = {
+      low: { variant: "outline" as const, color: "text-gray-600", bgColor: "bg-gray-100" },
+      medium: { variant: "secondary" as const, color: "text-yellow-600", bgColor: "bg-yellow-100" },
+      high: { variant: "default" as const, color: "text-orange-600", bgColor: "bg-orange-100" },
+      urgent: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" }
+    };
+    return priorityConfig[priority as keyof typeof priorityConfig] || priorityConfig.low;
+  };
+
+  const statusInfo = getStatusBadge(selectedItem?.status || 'pending');
+  const priorityInfo = getPriorityBadge(selectedItem?.priority || 'low');
+
+  return (
+    <div className={`space-y-6 ${className}`}>
+      {/* Filter Section */}
+      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <label className="text-sm font-medium text-text-muted mb-2 block">Select Item</label>
+            <Select value={selectedItemId || items[0]?.id} onValueChange={onItemSelect}>
+              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
+                <SelectValue placeholder="Choose an item..." />
+              </SelectTrigger>
+              <SelectContent className="bg-surface-elev2 border-line-soft">
+                {items.map((item) => (
+                  <SelectItem 
+                    key={item.id} 
+                    value={item.id}
+                    className="text-text hover:bg-surface-elev1"
+                  >
+                    <div className="flex items-center gap-2">
+                      {item.type === 'image' ? <Image className="h-4 w-4" /> :
+                       item.type === 'video' ? <Video className="h-4 w-4" /> :
+                       item.type === 'text' ? <FileText className="h-4 w-4" /> :
+                       item.type === 'post' ? <FileText className="h-4 w-4" /> :
+                       item.type === 'comment' ? <MessageCircle className="h-4 w-4" /> :
+                       <Reply className="h-4 w-4" />}
+                      <span>{item.type.toUpperCase()}</span>
+                      <Badge 
+                        variant={item.status === 'pending' ? 'secondary' : 'default'}
+                        className="text-xs"
+                      >
+                        {item.status}
+                      </Badge>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Moderation Card */}
+        <div className="lg:col-span-2">
+          {selectedItem ? (
+            <ProfessionalModerationCard
+              item={selectedItem}
+              onReview={() => onReview?.(selectedItem.id)}
+              onApprove={() => onApprove?.(selectedItem.id)}
+              onReject={() => onReject?.(selectedItem.id)}
+              onMore={() => onMore?.(selectedItem.id)}
+            />
+          ) : (
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-8 text-center">
+              <Shield className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <p className="text-gray-400">No item selected</p>
+            </div>
+          )}
+        </div>
+
+        {/* Right: Quick Stats */}
+        <div className="space-y-4">
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Stats</CardTitle>
+              <CardDescription className="text-text-muted">Key information at a glance</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Status */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Status</span>
+                </div>
+                <div className={`px-2 py-1 rounded text-xs font-semibold ${statusInfo.bgColor} ${statusInfo.color}`}>
+                  {selectedItem?.status || 'N/A'}
+                </div>
+              </div>
+
+              {/* Priority */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Priority</span>
+                </div>
+                <div className={`px-2 py-1 rounded text-xs font-semibold ${priorityInfo.bgColor} ${priorityInfo.color}`}>
+                  {selectedItem?.priority || 'N/A'}
+                </div>
+              </div>
+
+              {/* Type */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  {selectedItem?.type === 'image' ? <Image className="h-4 w-4 text-text-muted" /> :
+                   selectedItem?.type === 'video' ? <Video className="h-4 w-4 text-text-muted" /> :
+                   selectedItem?.type === 'text' ? <FileText className="h-4 w-4 text-text-muted" /> :
+                   selectedItem?.type === 'post' ? <FileText className="h-4 w-4 text-text-muted" /> :
+                   selectedItem?.type === 'comment' ? <MessageCircle className="h-4 w-4 text-text-muted" /> :
+                   <Reply className="h-4 w-4 text-text-muted" />}
+                  <span className="text-sm font-medium text-text">Type</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedItem?.type?.toUpperCase() || 'N/A'}
+                </span>
+              </div>
+
+              {/* Reports */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Flag className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Reports</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedItem?.reportCount || 0}
+                </span>
+              </div>
+
+              {/* AI Confidence */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">AI Confidence</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedItem?.aiConfidence ? `${Math.round(selectedItem.aiConfidence * 100)}%` : 'N/A'}
+                </span>
+              </div>
+
+              {/* Created Date */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Created</span>
+                </div>
+                <span className="text-sm text-text-muted">
+                  {selectedItem?.createdAt ? new Date(selectedItem.createdAt).toLocaleDateString() : 'N/A'}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Additional Actions */}
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onReview?.(selectedItem?.id || '')}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                Review Item
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onApprove?.(selectedItem?.id || '')}
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Approve Item
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onReject?.(selectedItem?.id || '')}
+              >
+                <XCircle className="h-4 w-4 mr-2" />
+                Reject Item
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ----------------------
+// Moderation Page Client Component
+// Purpose: Manages state and interactions for the moderation page
+// ----------------------
+function ModerationPageClient() {
+  const [selectedItemId, setSelectedItemId] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+
   const moderationService = new ModerationService();
-  const items = moderationService.getItems();
+  const allItems = moderationService.getItems();
   const stats = moderationService.getModerationStats();
+
+  // Filter items based on search and status
+  const filteredItems = allItems.filter(item => {
+    const matchesSearch = item.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         item.author.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         item.author.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         item.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  // Set default selected item
+  useEffect(() => {
+    if (filteredItems.length > 0 && !selectedItemId) {
+      setSelectedItemId(filteredItems[0].id);
+    }
+  }, [filteredItems, selectedItemId]);
+
+  const handleItemSelect = (itemId: string) => {
+    setSelectedItemId(itemId);
+  };
+
+  const handleReview = (itemId: string) => {
+    console.log('Review item:', itemId);
+  };
+
+  const handleApprove = (itemId: string) => {
+    console.log('Approve item:', itemId);
+  };
+
+  const handleReject = (itemId: string) => {
+    console.log('Reject item:', itemId);
+  };
+
+  const handleMore = (itemId: string) => {
+    console.log('More actions for item:', itemId);
+  };
+
+  const handleRefresh = () => {
+    console.log('Refresh items');
+  };
+
+  const handleExport = () => {
+    console.log('Export items');
+  };
 
   const statsCards = (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Pending Review</p>
-            <p className="text-2xl font-bold text-white">{stats.pendingItems}</p>
-            <p className="text-xs text-neutral-400">{stats.urgentItems} urgent</p>
-          </div>
-          <Clock className="h-8 w-8 text-neutral-400" />
-        </div>
-      </div>
+      <MetricCard
+        title="Pending Review"
+        value={stats.pendingItems}
+        growth={5}
+        icon={Clock}
+        format="number"
+      />
+      <MetricCard
+        title="Approved"
+        value={stats.approvedItems}
+        growth={12}
+        icon={CheckCircle}
+        format="number"
+      />
+      <MetricCard
+        title="Rejected"
+        value={stats.rejectedItems}
+        growth={-3}
+        icon={XCircle}
+        format="number"
+      />
+      <MetricCard
+        title="AI Flagged"
+        value={stats.autoFlaggedItems}
+        growth={8}
+        icon={Shield}
+        format="number"
+      />
+    </div>
+  );
 
-      <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Approved</p>
-            <p className="text-2xl font-bold text-green-500">{stats.approvedItems}</p>
-            <p className="text-xs text-neutral-400">Content approved</p>
-          </div>
-          <CheckCircle className="h-8 w-8 text-neutral-400" />
-        </div>
-      </div>
-
-      <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">Rejected</p>
-            <p className="text-2xl font-bold text-red-500">{stats.rejectedItems}</p>
-            <p className="text-xs text-neutral-400">Content removed</p>
-          </div>
-          <XCircle className="h-8 w-8 text-neutral-400" />
-        </div>
-      </div>
-
-      <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide">AI Flagged</p>
-            <p className="text-2xl font-bold text-white">{stats.autoFlaggedItems}</p>
-            <p className="text-xs text-neutral-400">{Math.round(stats.averageConfidence * 100)}% avg confidence</p>
-          </div>
-          <Shield className="h-8 w-8 text-neutral-400" />
-        </div>
-      </div>
+  const filters = (
+    <div className="flex items-center gap-2">
+      <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
+          <SelectValue placeholder="Status" />
+        </SelectTrigger>
+        <SelectContent className="bg-surface-elev2 border-line-soft">
+          <SelectItem value="all" className="text-text hover:bg-surface-elev1">All Status</SelectItem>
+          <SelectItem value="pending" className="text-text hover:bg-surface-elev1">Pending</SelectItem>
+          <SelectItem value="approved" className="text-text hover:bg-surface-elev1">Approved</SelectItem>
+          <SelectItem value="rejected" className="text-text hover:bg-surface-elev1">Rejected</SelectItem>
+          <SelectItem value="escalated" className="text-text hover:bg-surface-elev1">Escalated</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   );
 
@@ -460,19 +928,30 @@ export default function ModerationPage() {
       description="Review and moderate flagged content"
       icon={<Shield className="h-6 w-6" />}
       searchPlaceholder="Search content, authors, or flags..."
+      searchValue={searchTerm}
+      onSearchChange={setSearchTerm}
       showSearch={true}
       showFilters={true}
       showRefresh={true}
-      showSettings={true}
+      showExport={true}
+      onRefresh={handleRefresh}
+      onExport={handleExport}
+      filters={filters}
       stats={statsCards}
     >
-      {/* Moderation Items */}
-      <div className="space-y-4">
-        {items.map((item) => {
-          const itemCard = new ModerationItemCardComponent(item);
-          return <div key={item.id}>{itemCard.render()}</div>;
-        })}
-      </div>
+      <ModerationDetailView
+        items={filteredItems}
+        selectedItemId={selectedItemId}
+        onItemSelect={handleItemSelect}
+        onReview={handleReview}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        onMore={handleMore}
+      />
     </AdminPageTemplate>
   );
+}
+
+export default function ModerationPage() {
+  return <ModerationPageClient />;
 }
