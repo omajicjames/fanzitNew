@@ -134,8 +134,8 @@ export function ProfessionalPostCard({
       return (
         <div className="aspect-video bg-[var(--admin-surface)] rounded-lg flex items-center justify-center border border-[var(--admin-border-soft)] relative overflow-hidden">
           {media.type === 'image' ? (
-            // Check if it's a placeholder image
-            media.url.includes('placeholder') ? (
+            // Check if it's a placeholder image or empty string
+            media.url.includes('placeholder') || media.url === '' ? (
               <div className="flex flex-col items-center gap-3 text-[var(--admin-text-primary)]-muted">
                 <div className="p-4 bg-[var(--admin-card-bg)] rounded-full border border-[var(--admin-border-soft)]">
                   <ImageIcon className="h-8 w-8 text-[var(--brand)]" />

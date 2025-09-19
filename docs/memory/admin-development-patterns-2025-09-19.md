@@ -107,7 +107,7 @@ import { RequestSelectionCard, PostSelectionCard, VerificationSelectionCard, Mem
 **Purpose:** Legacy dropdown selection (being phased out)
 
 ```tsx
-import { SelectionCard, MetricSelectionCard, PostSelectionCard } from "@src/components/admin/SelectionCard";
+import { SelectionCard, MetricSelectionCard, PostSelectionCard, TransactionSelectionCard } from "@src/components/admin/SelectionCard";
 
 // Basic SelectionCard
 <SelectionCard
@@ -124,6 +124,13 @@ import { SelectionCard, MetricSelectionCard, PostSelectionCard } from "@src/comp
 // Pre-configured variants
 <MetricSelectionCard value={metricId} onValueChange={setMetricId} />
 <PostSelectionCard value={postId} onValueChange={setPostId} posts={posts} />
+<TransactionSelectionCard value={transactionId} onValueChange={setTransactionId} transactions={transactions} />
+<CompactFilterCard 
+  title="Select Item" 
+  value={selectedId} 
+  onValueChange={setSelectedId} 
+  options={items} 
+/>
 ```
 
 ### 5. MetricSelectionCard (Dashboard Standard)
@@ -339,7 +346,7 @@ className="bg-[var(--surface-elev1)] border-[var(--border-line-soft)] text-[var(
 "use client";
 
 import { AdminPageTemplate, MetricCard, AdminCard } from "@src/components/admin/AdminPageTemplate";
-import { SelectionCard, MetricSelectionCard, PostSelectionCard } from "@src/components/admin/SelectionCard";
+import { SelectionCard, MetricSelectionCard, PostSelectionCard, TransactionSelectionCard } from "@src/components/admin/SelectionCard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";

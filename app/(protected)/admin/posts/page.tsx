@@ -2,6 +2,7 @@
 
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
 import { PostsDetailView } from "@src/components/admin/PostsDetailView";
+import { CompactFilterCard } from "@src/components/admin/SelectionCard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -103,7 +104,7 @@ class PostsManagementService {
         isPremium: true,
         price: 9.99,
         media: [
-          { url: "", type: "image", thumbnail: "" }
+          { url: "placeholder", type: "image", thumbnail: "placeholder" }
         ],
         createdAt: "2024-01-25T10:00:00Z",
         publishedAt: "2024-01-25T10:30:00Z",
@@ -134,7 +135,7 @@ class PostsManagementService {
         isPremium: true,
         price: 19.99,
         media: [
-          { url: "", type: "video", thumbnail: "" }
+          { url: "placeholder", type: "video", thumbnail: "placeholder" }
         ],
         createdAt: "2024-01-24T15:20:00Z",
         publishedAt: "2024-01-24T15:45:00Z",
@@ -498,20 +499,36 @@ export default function PostsPage() {
       showExport={true}
       stats={statsCards}
     >
-      <PostsDetailView
-        posts={filteredPosts}
-        selectedPostId={selectedPostId}
-        onPostSelect={handlePostSelect}
-        onView={handleView}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onMore={handleMore}
-        onApprove={handleApprove}
-        onFlag={handleFlag}
-        onArchive={handleArchive}
-        onNewPost={handleNewPost}
-        onFilter={handleFilter}
-      />
+      <div className="space-y-6">
+        {/* Filter Section */}
+        <CompactFilterCard
+          title="Select Post"
+          placeholder="Choose a post..."
+          value={selectedPostId || filteredPosts[0]?.id || ''}
+          onValueChange={handlePostSelect}
+          options={filteredPosts.map(post => ({
+            id: post.id,
+            label: post.title,
+            status: post.status,
+            icon: <FileText className="h-4 w-4" />
+          }))}
+        />
+
+        <PostsDetailView
+          posts={filteredPosts}
+          selectedPostId={selectedPostId}
+          onPostSelect={handlePostSelect}
+          onView={handleView}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onMore={handleMore}
+          onApprove={handleApprove}
+          onFlag={handleFlag}
+          onArchive={handleArchive}
+          onNewPost={handleNewPost}
+          onFilter={handleFilter}
+        />
+      </div>
     </AdminPageTemplate>
   );
 }
