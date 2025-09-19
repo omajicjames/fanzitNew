@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
-import { ContentSelectionCard } from "@src/components/admin/ContentSelectionCard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -540,21 +539,39 @@ function ContentDetailView({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Content Selection */}
-      <ContentSelectionCard
-        title="Select Content"
-        description="Choose content to review and manage"
-        value={selectedContentId || content[0]?.id || ''}
-        onValueChange={onContentSelect || (() => {})}
-        content={content.map(item => ({
-          id: item.id,
-          title: item.title,
-          type: item.type,
-          status: item.status,
-          creator: item.creator,
-          thumbnail: item.thumbnail
-        }))}
-        placeholder="Choose content..."
-      />
+      <Card className="bg-[var(--admin-card-bg)] border border-[var(--admin-border-soft)]">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg text-[var(--admin-text-primary)]">Select Content</CardTitle>
+          <CardDescription className="text-[var(--admin-text-primary)]-muted">Choose content to review and manage</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Select value={selectedContentId || content[0]?.id || ''} onValueChange={onContentSelect || (() => {})}>
+            <SelectTrigger className="bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)]">
+              <SelectValue placeholder="Choose content..." />
+            </SelectTrigger>
+            <SelectContent className="bg-[var(--admin-surface)] border border-[var(--admin-border-soft)]">
+              {content.map((item) => {
+                const Icon = getTypeIcon(item.type);
+                return (
+                  <SelectItem 
+                    key={item.id} 
+                    value={item.id}
+                    className="text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                      <Badge variant={getStatusBadge(item.status).variant} className="ml-auto">
+                        {item.status}
+                      </Badge>
+                    </div>
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

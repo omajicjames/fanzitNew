@@ -128,7 +128,6 @@ import { TransactionSelectionCard } from "@src/components/admin/SelectionCard";
 ## Related Components
 
 - **PostSelectionCard**: For posts management
-- **ContentSelectionCard**: For content management  
 - **MetricSelectionCard**: For dashboard metrics
 - **StatusFilterCard**: For status filtering
 
