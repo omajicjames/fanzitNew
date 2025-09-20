@@ -1,11 +1,12 @@
 "use client";
 
-import { AdminPillNavigationComponent } from "@src/components/admin/AdminPillNavigation";
+import { useState, useEffect } from "react";
+import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@src/components/ui/select";
 import { 
   Calendar, 
   Clock, 
@@ -30,7 +31,21 @@ import {
   Pause,
   Settings,
   DollarSign,
-  FileText
+  FileText,
+  User,
+  Globe,
+  Crown,
+  Building,
+  RotateCcw,
+  Ban,
+  CheckSquare,
+  XSquare,
+  ThumbsUp,
+  Flag,
+  Shield,
+  TrendingUp,
+  BarChart3,
+  Package
 } from "lucide-react";
 
 // ----------------------
@@ -205,23 +220,34 @@ class EventsService {
   }
 }
 
-class EventCardComponent {
-  private event: Event;
-
-  constructor(event: Event) {
-    this.event = event;
-  }
-
-  private getStatusBadge() {
+// ----------------------
+// Professional Event Card Component
+// Purpose: Displays event information in a structured, professional layout
+// Note: Similar to verification card with event-specific data
+// ----------------------
+function ProfessionalEventCard({
+  event,
+  onView,
+  onEdit,
+  onMore,
+  className = ""
+}: {
+  event: Event;
+  onView?: () => void;
+  onEdit?: () => void;
+  onMore?: () => void;
+  className?: string;
+}) {
+  const getStatusBadge = () => {
     const statusConfig = {
-      scheduled: { variant: 'secondary' as const, icon: Clock, text: 'Scheduled' },
-      live: { variant: 'default' as const, icon: Play, text: 'Live' },
-      completed: { variant: 'default' as const, icon: CheckCircle, text: 'Completed' },
-      cancelled: { variant: 'destructive' as const, icon: XCircle, text: 'Cancelled' },
-      postponed: { variant: 'secondary' as const, icon: AlertTriangle, text: 'Postponed' }
+      scheduled: { variant: "secondary" as const, icon: Clock, text: "Scheduled", color: "text-blue-600" },
+      live: { variant: "default" as const, icon: Play, text: "Live", color: "text-red-600" },
+      completed: { variant: "default" as const, icon: CheckCircle, text: "Completed", color: "text-green-600" },
+      cancelled: { variant: "destructive" as const, icon: XCircle, text: "Cancelled", color: "text-red-600" },
+      postponed: { variant: "secondary" as const, icon: AlertTriangle, text: "Postponed", color: "text-orange-600" }
     };
 
-    const config = statusConfig[this.event.status];
+    const config = statusConfig[event.status];
     const Icon = config.icon;
 
     return (
@@ -230,9 +256,9 @@ class EventCardComponent {
         {config.text}
       </Badge>
     );
-  }
+  };
 
-  private getTypeIcon() {
+  const getTypeIcon = () => {
     const typeIcons = {
       live_stream: Video,
       scheduled_content: Calendar,
@@ -241,145 +267,441 @@ class EventCardComponent {
       meeting: Mic
     };
 
-    const Icon = typeIcons[this.event.type];
+    const Icon = typeIcons[event.type];
     return <Icon className="h-4 w-4" />;
-  }
+  };
 
-  private getTypeBadge() {
+  const getTypeBadge = () => {
     const typeConfig = {
-      live_stream: { variant: 'default' as const, text: 'Live Stream' },
-      scheduled_content: { variant: 'secondary' as const, text: 'Scheduled Content' },
-      creator_event: { variant: 'outline' as const, text: 'Creator Event' },
-      platform_event: { variant: 'destructive' as const, text: 'Platform Event' },
-      meeting: { variant: 'secondary' as const, text: 'Meeting' }
+      live_stream: { variant: "default" as const, text: "Live Stream" },
+      scheduled_content: { variant: "secondary" as const, text: "Scheduled Content" },
+      creator_event: { variant: "outline" as const, text: "Creator Event" },
+      platform_event: { variant: "destructive" as const, text: "Platform Event" },
+      meeting: { variant: "secondary" as const, text: "Meeting" }
     };
 
-    const config = typeConfig[this.event.type];
+    const config = typeConfig[event.type];
     return (
       <Badge variant={config.variant} className="text-xs">
         {config.text}
       </Badge>
     );
-  }
+  };
 
-  public render() {
-    return (
-      <Card className="hover:shadow-lg transition-shadow duration-200">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                {this.getTypeIcon()}
-              </div>
-              <div className="flex-1 min-w-0">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  {this.event.title}
-                  {this.event.isPrivate && (
-                    <Badge variant="destructive" className="text-xs">
-                      Private
-                    </Badge>
-                  )}
-                </CardTitle>
-                <CardDescription className="line-clamp-2">
-                  {this.event.description}
-                </CardDescription>
-                <div className="flex items-center gap-2 mt-2">
-                  {this.getTypeBadge()}
-                  <Badge variant="outline" className="text-xs">
-                    {this.event.category}
-                  </Badge>
-                  {this.event.creator && (
-                    <Badge variant="outline" className="text-xs">
-                      {this.event.creator}
-                    </Badge>
-                  )}
-                </div>
-              </div>
+  return (
+    <Card className={`bg-admin-card border-line-soft hover:shadow-lg transition-all duration-200 ${className}`}>
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-lg bg-surface-elev2 flex items-center justify-center border border-line-soft">
+              {getTypeIcon()}
             </div>
-            <div className="flex gap-2">
-              {this.getStatusBadge()}
+            <div>
+              <CardTitle className="text-lg text-text flex items-center gap-2">
+                {event.title}
+                {getTypeBadge()}
+              </CardTitle>
+              <CardDescription className="text-text-muted">
+                {event.description}
+              </CardDescription>
             </div>
           </div>
-        </CardHeader>
-        
-        <CardContent className="space-y-4">
-          {/* Event Details */}
+          <div className="text-right">
+            <div className="text-2xl font-bold text-text">
+              {event.attendees}
+              {event.maxAttendees && `/${event.maxAttendees}`}
+            </div>
+            <div className="text-sm text-text-muted">
+              attendees
+            </div>
+          </div>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="space-y-6">
+        {/* Event Overview */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            {getTypeIcon()}
+            <span className="font-medium text-text">Event Overview</span>
+          </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <div className="flex items-center justify-center gap-1 text-blue-600">
-                <Users className="h-4 w-4" />
-                <span className="font-semibold">
-                  {this.event.attendees}
-                  {this.event.maxAttendees && `/${this.event.maxAttendees}`}
+            <div>
+              <span className="text-sm text-text-muted">Status:</span>
+              <div className="mt-1">
+                {getStatusBadge()}
+              </div>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Type:</span>
+              <div className="mt-1">
+                {getTypeBadge()}
+              </div>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Category:</span>
+              <div className="mt-1">
+                <Badge variant="outline" className="text-xs">
+                  {event.category}
+                </Badge>
+              </div>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Privacy:</span>
+              <div className="mt-1">
+                <Badge variant={event.isPrivate ? "destructive" : "default"} className="text-xs">
+                  {event.isPrivate ? "PRIVATE" : "PUBLIC"}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Event Details */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <Calendar className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Event Details</span>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">Start Time:</span>
+              <span className="text-sm text-text">
+                {new Date(event.startTime).toLocaleString()}
+              </span>
+            </div>
+            {event.endTime && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-text-muted">End Time:</span>
+                <span className="text-sm text-text">
+                  {new Date(event.endTime).toLocaleString()}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">Attendees</p>
+            )}
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">Duration:</span>
+              <span className="text-sm text-text">{event.duration} minutes</span>
             </div>
-            <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <div className="flex items-center justify-center gap-1 text-green-600">
-                <Clock className="h-4 w-4" />
-                <span className="font-semibold">{this.event.duration}m</span>
-              </div>
-              <p className="text-xs text-muted-foreground">Duration</p>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">Platform:</span>
+              <span className="text-sm text-text capitalize">{event.platform}</span>
             </div>
-          </div>
-
-          {/* Time and Location */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span>{new Date(this.event.startTime).toLocaleString()}</span>
-            </div>
-            {this.event.location && (
-              <div className="flex items-center gap-2 text-sm">
-                <MapPin className="h-4 w-4 text-muted-foreground" />
-                <span>{this.event.location}</span>
+            {event.location && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-text-muted">Location:</span>
+                <span className="text-sm text-text">{event.location}</span>
               </div>
             )}
-            <div className="flex items-center gap-2 text-sm">
-              <Video className="h-4 w-4 text-muted-foreground" />
-              <span className="capitalize">{this.event.platform}</span>
+          </div>
+        </div>
+
+        {/* Attendance & Revenue */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <Users className="h-4 w-4" />
+              <span className="text-xs font-medium">Attendees</span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              {event.attendees}
+              {event.maxAttendees && `/${event.maxAttendees}`}
             </div>
           </div>
-
-          {/* Revenue */}
-          {this.event.revenue && this.event.revenue > 0 && (
-            <div className="flex items-center gap-2 text-sm text-green-600">
-              <span className="font-semibold">Revenue: ${this.event.revenue}</span>
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <DollarSign className="h-4 w-4" />
+              <span className="text-xs font-medium">Revenue</span>
             </div>
-          )}
+            <div className="text-lg font-bold text-text">
+              ${event.revenue || 0}
+            </div>
+          </div>
+        </div>
 
-          {/* Tags */}
+        {/* Creator Information */}
+        {event.creator && (
+          <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+            <div className="flex items-center gap-2 mb-3">
+              <User className="h-5 w-5 text-text-muted" />
+              <span className="font-medium text-text">Creator Information</span>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-text-muted">Creator:</span>
+                <span className="text-sm text-text">{event.creator}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-text-muted">Creator ID:</span>
+                <span className="text-sm text-text">{event.creatorId}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tags */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <Package className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Tags</span>
+          </div>
           <div className="flex flex-wrap gap-1">
-            {this.event.tags.slice(0, 3).map((tag) => (
+            {event.tags.map((tag) => (
               <Badge key={tag} variant="secondary" className="text-xs">
                 #{tag}
               </Badge>
             ))}
-            {this.event.tags.length > 3 && (
-              <Badge variant="secondary" className="text-xs">
-                +{this.event.tags.length - 3} more
-              </Badge>
-            )}
           </div>
-          
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1">
-              <Eye className="h-4 w-4 mr-1" />
-              View
-            </Button>
-            <Button variant="outline" size="sm" className="flex-1">
-              <Edit className="h-4 w-4 mr-1" />
-              Edit
-            </Button>
-            <Button variant="outline" size="sm">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-3 pt-2 border-t border-line-soft">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onView}
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            View
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onEdit}
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Edit
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onMore}
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ----------------------
+// Events Detail View Component
+// Purpose: Single card view with filtering and quick stats
+// Note: Similar to verification page with event-specific data
+// ----------------------
+function EventsDetailView({
+  events,
+  selectedEventId,
+  onEventSelect,
+  onView,
+  onEdit,
+  onMore,
+  className = ""
+}: {
+  events: Event[];
+  selectedEventId?: string;
+  onEventSelect?: (eventId: string) => void;
+  onView?: (eventId: string) => void;
+  onEdit?: (eventId: string) => void;
+  onMore?: (eventId: string) => void;
+  className?: string;
+}) {
+  const selectedEvent = events.find(e => e.id === selectedEventId) || events[0];
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      scheduled: { variant: "default" as const, color: "text-blue-600", bgColor: "bg-blue-100" },
+      live: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" },
+      completed: { variant: "default" as const, color: "text-green-600", bgColor: "bg-green-100" },
+      cancelled: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" },
+      postponed: { variant: "secondary" as const, color: "text-orange-600", bgColor: "bg-orange-100" }
+    };
+    return statusConfig[status as keyof typeof statusConfig] || statusConfig.scheduled;
+  };
+
+  const getTypeIcon = () => {
+    return <Calendar className="h-4 w-4" />;
+  };
+
+  const statusInfo = getStatusBadge(selectedEvent?.status || 'scheduled');
+
+  return (
+    <div className={`space-y-6 ${className}`}>
+      {/* Filter Section */}
+      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <label className="text-sm font-medium text-text-muted mb-2 block">Select Event</label>
+            <Select value={selectedEventId || events[0]?.id} onValueChange={onEventSelect}>
+              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
+                <SelectValue placeholder="Choose an event..." />
+              </SelectTrigger>
+              <SelectContent className="bg-surface-elev2 border-line-soft">
+                {events.map((event) => {
+                  const Icon = getTypeIcon();
+                  return (
+                    <SelectItem 
+                      key={event.id} 
+                      value={event.id}
+                      className="text-text hover:bg-surface-elev1"
+                    >
+                      <div className="flex items-center gap-2">
+                        {Icon}
+                        <span>{event.title}</span>
+                        <Badge 
+                          variant={event.status === 'live' ? 'destructive' : 'default'}
+                          className="text-xs"
+                        >
+                          {event.status}
+                        </Badge>
+                      </div>
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
           </div>
-        </CardContent>
-      </Card>
-    );
-  }
+        </div>
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Event Card */}
+        <div className="lg:col-span-2">
+          {selectedEvent ? (
+            <ProfessionalEventCard
+              event={selectedEvent}
+              onView={() => onView?.(selectedEvent.id)}
+              onEdit={() => onEdit?.(selectedEvent.id)}
+              onMore={() => onMore?.(selectedEvent.id)}
+            />
+          ) : (
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-8 text-center">
+              <Calendar className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <p className="text-gray-400">No event selected</p>
+            </div>
+          )}
+        </div>
+
+        {/* Right: Quick Stats */}
+        <div className="space-y-4">
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Stats</CardTitle>
+              <CardDescription className="text-text-muted">Key information at a glance</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Status */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Status</span>
+                </div>
+                <div className={`px-2 py-1 rounded text-xs font-semibold ${statusInfo.bgColor} ${statusInfo.color}`}>
+                  {selectedEvent?.status?.toUpperCase() || 'N/A'}
+                </div>
+              </div>
+
+              {/* Type */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Type</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedEvent?.type?.replace('_', ' ').toUpperCase() || 'N/A'}
+                </span>
+              </div>
+
+              {/* Attendees */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Attendees</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedEvent?.attendees || '0'}
+                  {selectedEvent?.maxAttendees && `/${selectedEvent.maxAttendees}`}
+                </span>
+              </div>
+
+              {/* Duration */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Duration</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedEvent?.duration || '0'} min
+                </span>
+              </div>
+
+              {/* Revenue */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Revenue</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  ${selectedEvent?.revenue || '0'}
+                </span>
+              </div>
+
+              {/* Platform */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Video className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Platform</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedEvent?.platform?.toUpperCase() || 'N/A'}
+                </span>
+              </div>
+
+              {/* Start Time */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Start Time</span>
+                </div>
+                <span className="text-sm text-text-muted">
+                  {selectedEvent?.startTime ? new Date(selectedEvent.startTime).toLocaleString() : 'N/A'}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Additional Actions */}
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onView?.(selectedEvent?.id || '')}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                View Event
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onEdit?.(selectedEvent?.id || '')}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Event
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 class ScheduledContentCardComponent {
@@ -489,219 +811,141 @@ class ScheduledContentCardComponent {
   }
 }
 
-export default function EventsPage() {
+// ----------------------
+// Events Page Client Component
+// Purpose: Manages state and interactions for the events page
+// ----------------------
+function EventsPageClient() {
+  const [selectedEventId, setSelectedEventId] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+
   const eventsService = new EventsService();
   const allEvents = eventsService.getAllEvents();
-  const liveStreams = eventsService.getEventsByType('live_stream');
-  const creatorEvents = eventsService.getEventsByType('creator_event');
-  const platformEvents = eventsService.getEventsByType('platform_event');
-  const scheduledContent = eventsService.getScheduledContent();
-  const upcomingEvents = eventsService.getUpcomingEvents();
   const stats = eventsService.getEventStats();
 
-  return (
-    <div className="p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-[var(--admin-text-primary)]">Events & Scheduling</h1>
-            <p className="text-[var(--admin-text-secondary)]">Manage live events, scheduled content, and platform events</p>
-          </div>
-          <Badge className="bg-orange-500 text-[var(--admin-text-primary)]">Super Admin</Badge>
-        </div>
-      </div>
+  // Filter events based on search and status
+  const filteredEvents = allEvents.filter(event => {
+    const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         event.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         event.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (event.creator && event.creator.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesStatus = statusFilter === 'all' || event.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
-      {/* Key Performance Indicators */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-[var(--admin-text-primary)] mb-2">Events Overview</h2>
-        <p className="text-[var(--admin-text-secondary)] mb-6">Live events, scheduled content, and platform metrics</p>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Total Events</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.total}</p>
-                <div className="flex items-center gap-1 text-sm text-blue-500">
-                  <Calendar className="h-4 w-4" />
-                  +15.3% from last month
-                </div>
-              </div>
-              <Calendar className="h-8 w-8 text-blue-500" />
-            </div>
-          </div>
-          
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Live Now</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.live}</p>
-                <div className="flex items-center gap-1 text-sm text-red-500">
-                  <Play className="h-4 w-4" />
-                  Currently streaming
-                </div>
-              </div>
-              <Play className="h-8 w-8 text-red-500" />
-            </div>
-          </div>
-          
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Scheduled</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.scheduled}</p>
-                <div className="flex items-center gap-1 text-sm text-orange-500">
-                  <Clock className="h-4 w-4" />
-                  Upcoming events
-                </div>
-              </div>
-              <Clock className="h-8 w-8 text-orange-500" />
-            </div>
-          </div>
-          
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Completed</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.completed}</p>
-                <div className="flex items-center gap-1 text-sm text-green-500">
-                  <CheckCircle className="h-4 w-4" />
-                  +8.2% from last month
-                </div>
-              </div>
-              <CheckCircle className="h-8 w-8 text-green-500" />
-            </div>
-          </div>
-        </div>
-      </div>
+  // Set default selected event
+  useEffect(() => {
+    if (filteredEvents.length > 0 && !selectedEventId) {
+      setSelectedEventId(filteredEvents[0].id);
+    }
+  }, [filteredEvents, selectedEventId]);
 
-      {/* Events Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
-          <CardHeader>
-            <CardTitle className="text-[var(--admin-text-primary)] flex items-center gap-2">
-              <Video className="h-5 w-5 text-blue-500" />
-              Live Events Timeline
-            </CardTitle>
-            <CardDescription className="text-[var(--admin-text-secondary)]">Live events and streaming activity over time</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
-              <div className="text-center">
-                <Video className="h-12 w-12 text-[var(--admin-text-secondary)] mx-auto mb-2" />
-                <p className="text-[var(--admin-text-secondary)]">Live events chart</p>
-                <p className="text-sm text-neutral-500">Line chart showing live events over time</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+  const handleEventSelect = (eventId: string) => {
+    setSelectedEventId(eventId);
+  };
 
-        <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
-          <CardHeader>
-            <CardTitle className="text-[var(--admin-text-primary)] flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-green-500" />
-              Event Categories
-            </CardTitle>
-            <CardDescription className="text-[var(--admin-text-secondary)]">Distribution of events by category</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
-              <div className="text-center">
-                <Calendar className="h-12 w-12 text-[var(--admin-text-secondary)] mx-auto mb-2" />
-                <p className="text-[var(--admin-text-secondary)]">Event categories chart</p>
-                <p className="text-sm text-neutral-500">Pie chart showing event distribution</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+  const handleView = (eventId: string) => {
+    console.log('View event:', eventId);
+  };
 
-      {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--admin-text-secondary)]" />
-          <Input 
-            placeholder="Search events and scheduled content..."
-            className="pl-10 bg-[var(--admin-card-bg)] border-neutral-700 text-[var(--admin-text-primary)]"
-          />
-        </div>
-        <Button variant="outline" className="flex items-center gap-2 bg-[var(--admin-card-bg)] border-neutral-700 text-[var(--admin-text-primary)] hover:bg-[var(--admin-surface)]">
-          <Filter className="h-4 w-4" />
-          Filters
-        </Button>
-        <Button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-[var(--admin-text-primary)]">
-          <Plus className="h-4 w-4" />
-          Create Event
-        </Button>
-      </div>
+  const handleEdit = (eventId: string) => {
+    console.log('Edit event:', eventId);
+  };
 
+  const handleMore = (eventId: string) => {
+    console.log('More actions for event:', eventId);
+  };
 
-      {/* Events Tabs */}
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6 bg-[var(--admin-card-bg)] border-neutral-700">
-          <TabsTrigger value="all" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">All Events</TabsTrigger>
-          <TabsTrigger value="live" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Live Streams</TabsTrigger>
-          <TabsTrigger value="creator" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Creator Events</TabsTrigger>
-          <TabsTrigger value="platform" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Platform Events</TabsTrigger>
-          <TabsTrigger value="scheduled" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Scheduled Content</TabsTrigger>
-          <TabsTrigger value="upcoming" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Upcoming</TabsTrigger>
-        </TabsList>
+  const handleRefresh = () => {
+    console.log('Refresh events');
+  };
 
-        <TabsContent value="all" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {allEvents.map((event) => {
-              const eventCard = new EventCardComponent(event);
-              return <div key={event.id}>{eventCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
+  const handleExportAll = () => {
+    console.log('Export all events');
+  };
 
-        <TabsContent value="live" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {liveStreams.map((event) => {
-              const eventCard = new EventCardComponent(event);
-              return <div key={event.id}>{eventCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="creator" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {creatorEvents.map((event) => {
-              const eventCard = new EventCardComponent(event);
-              return <div key={event.id}>{eventCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="platform" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {platformEvents.map((event) => {
-              const eventCard = new EventCardComponent(event);
-              return <div key={event.id}>{eventCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="scheduled" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {scheduledContent.map((content) => {
-              const contentCard = new ScheduledContentCardComponent(content);
-              return <div key={content.id}>{contentCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="upcoming" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {upcomingEvents.map((event) => {
-              const eventCard = new EventCardComponent(event);
-              return <div key={event.id}>{eventCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
-      </Tabs>
+  const statsCards = (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <MetricCard
+        title="Total Events"
+        value={stats.total}
+        growth={15.3}
+        icon={Calendar}
+        format="number"
+      />
+      <MetricCard
+        title="Live Now"
+        value={stats.live}
+        growth={0}
+        icon={Play}
+        format="number"
+      />
+      <MetricCard
+        title="Scheduled"
+        value={stats.scheduled}
+        growth={0}
+        icon={Clock}
+        format="number"
+      />
+      <MetricCard
+        title="Completed"
+        value={stats.completed}
+        growth={8.2}
+        icon={CheckCircle}
+        format="number"
+      />
     </div>
   );
+
+  const filters = (
+    <div className="flex items-center gap-2">
+      <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
+          <SelectValue placeholder="Status" />
+        </SelectTrigger>
+        <SelectContent className="bg-surface-elev2 border-line-soft">
+          <SelectItem value="all" className="text-text hover:bg-surface-elev1">All Status</SelectItem>
+          <SelectItem value="scheduled" className="text-text hover:bg-surface-elev1">Scheduled</SelectItem>
+          <SelectItem value="live" className="text-text hover:bg-surface-elev1">Live</SelectItem>
+          <SelectItem value="completed" className="text-text hover:bg-surface-elev1">Completed</SelectItem>
+          <SelectItem value="cancelled" className="text-text hover:bg-surface-elev1">Cancelled</SelectItem>
+          <SelectItem value="postponed" className="text-text hover:bg-surface-elev1">Postponed</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
+  return (
+    <AdminPageTemplate
+      title="Events & Scheduling Management"
+      description="Manage live events, scheduled content, and platform events"
+      icon={<Calendar className="h-6 w-6" />}
+      searchPlaceholder="Search events, creators, or descriptions..."
+      searchValue={searchTerm}
+      onSearchChange={setSearchTerm}
+      showSearch={true}
+      showFilters={true}
+      showRefresh={true}
+      showExport={true}
+      onRefresh={handleRefresh}
+      onExport={handleExportAll}
+      filters={filters}
+      stats={statsCards}
+    >
+      <EventsDetailView
+        events={filteredEvents}
+        selectedEventId={selectedEventId}
+        onEventSelect={handleEventSelect}
+        onView={handleView}
+        onEdit={handleEdit}
+        onMore={handleMore}
+      />
+    </AdminPageTemplate>
+  );
+}
+
+export default function EventsPage() {
+  return <EventsPageClient />;
 }

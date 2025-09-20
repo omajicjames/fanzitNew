@@ -400,3 +400,40 @@ html {
     --admin-font-size-base: 0.875rem;
   }
 }
+
+/* ----------------------
+   COMPACT FILTER GROUP STYLES
+   Purpose: Group and target CompactFilterCard components
+   ---------------------- */
+
+.compact-filter-group {
+  /* Group spacing - add margin between multiple filter cards */
+  margin-bottom: var(--admin-space-4);
+}
+
+/* Target all compact filter groups in a container */
+.filter-section .compact-filter-group:last-child {
+  margin-bottom: 0;
+}
+
+/* Consistent spacing between multiple filter cards */
+.filter-section .compact-filter-group + .compact-filter-group {
+  margin-top: var(--admin-space-2);
+}
+
+/* Target specific elements within compact filter groups */
+.compact-filter-group .select-trigger {
+  /* Ensure consistent styling for all select triggers in filter groups */
+  transition: all var(--admin-transition-fast);
+}
+
+.compact-filter-group .select-trigger:hover {
+  /* Hover effect for filter group selects */
+  border-color: var(--admin-border-strong);
+}
+
+.compact-filter-group label {
+  /* Consistent label styling in filter groups */
+  font-weight: var(--admin-font-weight-medium);
+  color: var(--admin-text-muted);
+}

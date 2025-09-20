@@ -1,11 +1,12 @@
 "use client";
 
-import { AdminPillNavigationComponent } from "@src/components/admin/AdminPillNavigation";
+import { useState, useEffect } from "react";
+import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@src/components/ui/select";
 import { 
   Lock, 
   Shield, 
@@ -25,7 +26,21 @@ import {
   Unlock,
   FileText,
   Download,
-  RefreshCw
+  RefreshCw,
+  Calendar,
+  User,
+  Globe,
+  Crown,
+  Building,
+  RotateCcw,
+  XSquare,
+  ThumbsUp,
+  Flag,
+  DollarSign,
+  Package,
+  TrendingUp,
+  BarChart3,
+  Users
 } from "lucide-react";
 
 // ----------------------
@@ -206,22 +221,33 @@ class SecurityService {
   }
 }
 
-class SecurityEventCardComponent {
-  private event: SecurityEvent;
-
-  constructor(event: SecurityEvent) {
-    this.event = event;
-  }
-
-  private getSeverityBadge() {
+// ----------------------
+// Professional Security Event Card Component
+// Purpose: Displays security event information in a structured, professional layout
+// Note: Similar to verification card with security-specific data
+// ----------------------
+function ProfessionalSecurityEventCard({
+  event,
+  onView,
+  onEdit,
+  onMore,
+  className = ""
+}: {
+  event: SecurityEvent;
+  onView?: () => void;
+  onEdit?: () => void;
+  onMore?: () => void;
+  className?: string;
+}) {
+  const getSeverityBadge = () => {
     const severityConfig = {
-      low: { variant: 'secondary' as const, icon: CheckCircle, text: 'Low' },
-      medium: { variant: 'default' as const, icon: AlertTriangle, text: 'Medium' },
-      high: { variant: 'destructive' as const, icon: AlertTriangle, text: 'High' },
-      critical: { variant: 'destructive' as const, icon: Ban, text: 'Critical' }
+      low: { variant: "secondary" as const, icon: CheckCircle, text: "Low", color: "text-green-600" },
+      medium: { variant: "default" as const, icon: AlertTriangle, text: "Medium", color: "text-yellow-600" },
+      high: { variant: "destructive" as const, icon: AlertTriangle, text: "High", color: "text-orange-600" },
+      critical: { variant: "destructive" as const, icon: Ban, text: "Critical", color: "text-red-600" }
     };
 
-    const config = severityConfig[this.event.severity];
+    const config = severityConfig[event.severity];
     const Icon = config.icon;
 
     return (
@@ -230,9 +256,9 @@ class SecurityEventCardComponent {
         {config.text}
       </Badge>
     );
-  }
+  };
 
-  private getTypeIcon() {
+  const getTypeIcon = () => {
     const typeIcons = {
       login: Unlock,
       logout: Lock,
@@ -242,98 +268,405 @@ class SecurityEventCardComponent {
       suspicious_activity: AlertTriangle
     };
 
-    const Icon = typeIcons[this.event.type];
+    const Icon = typeIcons[event.type];
     return <Icon className="h-4 w-4" />;
-  }
+  };
 
-  public render() {
+  const getTypeBadge = () => {
     return (
-      <Card className="bg-[var(--admin-card-bg)] border-neutral-700 hover:shadow-lg transition-shadow duration-200">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-[var(--admin-surface)] flex items-center justify-center">
-                {this.getTypeIcon()}
+      <Badge variant="outline" className="text-xs">
+        {event.type.replace('_', ' ').toUpperCase()}
+      </Badge>
+    );
+  };
+
+  return (
+    <Card className={`bg-admin-card border-line-soft hover:shadow-lg transition-all duration-200 ${className}`}>
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-lg bg-surface-elev2 flex items-center justify-center border border-line-soft">
+              {getTypeIcon()}
+            </div>
+            <div>
+              <CardTitle className="text-lg text-text flex items-center gap-2">
+                {event.username}
+                {getTypeBadge()}
+              </CardTitle>
+              <CardDescription className="text-text-muted">
+                {event.description}
+              </CardDescription>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-text">
+              {event.severity.toUpperCase()}
+            </div>
+            <div className="text-sm text-text-muted">
+              severity
+            </div>
+          </div>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="space-y-6">
+        {/* Event Overview */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            {getTypeIcon()}
+            <span className="font-medium text-text">Event Overview</span>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <span className="text-sm text-text-muted">Type:</span>
+              <div className="mt-1">
+                {getTypeBadge()}
               </div>
-              <div className="flex-1 min-w-0">
-                <CardTitle className="text-lg flex items-center gap-2 text-[var(--admin-text-primary)]">
-                  {this.event.username}
-                </CardTitle>
-                <CardDescription className="line-clamp-2 text-[var(--admin-text-secondary)]">
-                  {this.event.description}
-                </CardDescription>
-                <div className="flex items-center gap-2 mt-2">
-                  <Badge variant="outline" className="text-xs bg-[var(--admin-surface)] border-neutral-600 text-neutral-300">
-                    {this.event.type.replace('_', ' ')}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs bg-[var(--admin-surface)] border-neutral-600 text-neutral-300">
-                    {this.event.location}
-                  </Badge>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Severity:</span>
+              <div className="mt-1">
+                {getSeverityBadge()}
+              </div>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Status:</span>
+              <div className="mt-1">
+                <Badge variant={event.resolved ? "default" : "secondary"} className="text-xs">
+                  {event.resolved ? "RESOLVED" : "PENDING"}
+                </Badge>
+              </div>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Location:</span>
+              <div className="mt-1">
+                <Badge variant="outline" className="text-xs">
+                  {event.location}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Network Information */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <Activity className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Network Information</span>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">IP Address:</span>
+              <span className="text-sm font-semibold text-text">{event.ipAddress}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">User Agent:</span>
+              <span className="text-sm text-text truncate max-w-48">{event.userAgent}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">Location:</span>
+              <span className="text-sm text-text">{event.location}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Timeline Information */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <Calendar className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Timeline</span>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">Timestamp:</span>
+              <span className="text-sm text-text">
+                {new Date(event.timestamp).toLocaleString()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">Time:</span>
+              <span className="text-sm text-text">
+                {new Date(event.timestamp).toLocaleTimeString()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">Date:</span>
+              <span className="text-sm text-text">
+                {new Date(event.timestamp).toLocaleDateString()}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* User Information */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <User className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">User Information</span>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">User ID:</span>
+              <span className="text-sm text-text">{event.userId}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">Username:</span>
+              <span className="text-sm text-text">{event.username}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-3 pt-2 border-t border-line-soft">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onView}
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            View Details
+          </Button>
+          {!event.resolved && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+              onClick={onEdit}
+            >
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Resolve
+            </Button>
+          )}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onMore}
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ----------------------
+// Security Detail View Component
+// Purpose: Single card view with filtering and quick stats
+// Note: Similar to verification page with security-specific data
+// ----------------------
+function SecurityDetailView({
+  events,
+  selectedEventId,
+  onEventSelect,
+  onView,
+  onEdit,
+  onMore,
+  className = ""
+}: {
+  events: SecurityEvent[];
+  selectedEventId?: string;
+  onEventSelect?: (eventId: string) => void;
+  onView?: (eventId: string) => void;
+  onEdit?: (eventId: string) => void;
+  onMore?: (eventId: string) => void;
+  className?: string;
+}) {
+  const selectedEvent = events.find(e => e.id === selectedEventId) || events[0];
+
+  const getSeverityBadge = (severity: string) => {
+    const severityConfig = {
+      low: { variant: "default" as const, color: "text-green-600", bgColor: "bg-green-100" },
+      medium: { variant: "secondary" as const, color: "text-yellow-600", bgColor: "bg-yellow-100" },
+      high: { variant: "destructive" as const, color: "text-orange-600", bgColor: "bg-orange-100" },
+      critical: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" }
+    };
+    return severityConfig[severity as keyof typeof severityConfig] || severityConfig.low;
+  };
+
+  const getTypeIcon = () => {
+    return <Shield className="h-4 w-4" />;
+  };
+
+  const severityInfo = getSeverityBadge(selectedEvent?.severity || 'low');
+
+  return (
+    <div className={`space-y-6 ${className}`}>
+      {/* Filter Section */}
+      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <label className="text-sm font-medium text-text-muted mb-2 block">Select Security Event</label>
+            <Select value={selectedEventId || events[0]?.id} onValueChange={onEventSelect}>
+              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
+                <SelectValue placeholder="Choose a security event..." />
+              </SelectTrigger>
+              <SelectContent className="bg-surface-elev2 border-line-soft">
+                {events.map((event) => {
+                  const Icon = getTypeIcon();
+                  return (
+                    <SelectItem 
+                      key={event.id} 
+                      value={event.id}
+                      className="text-text hover:bg-surface-elev1"
+                    >
+                      <div className="flex items-center gap-2">
+                        {Icon}
+                        <span>{event.username} - {event.type.replace('_', ' ')}</span>
+                        <Badge 
+                          variant={event.severity === 'low' ? 'default' : 'destructive'}
+                          className="text-xs"
+                        >
+                          {event.severity}
+                        </Badge>
+                      </div>
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Security Event Card */}
+        <div className="lg:col-span-2">
+          {selectedEvent ? (
+            <ProfessionalSecurityEventCard
+              event={selectedEvent}
+              onView={() => onView?.(selectedEvent.id)}
+              onEdit={() => onEdit?.(selectedEvent.id)}
+              onMore={() => onMore?.(selectedEvent.id)}
+            />
+          ) : (
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-8 text-center">
+              <Shield className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <p className="text-gray-400">No security event selected</p>
+            </div>
+          )}
+        </div>
+
+        {/* Right: Quick Stats */}
+        <div className="space-y-4">
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Stats</CardTitle>
+              <CardDescription className="text-text-muted">Key information at a glance</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Severity */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Severity</span>
+                </div>
+                <div className={`px-2 py-1 rounded text-xs font-semibold ${severityInfo.bgColor} ${severityInfo.color}`}>
+                  {selectedEvent?.severity?.toUpperCase() || 'N/A'}
                 </div>
               </div>
-            </div>
-            <div className="flex gap-2">
-              {this.getSeverityBadge()}
-              {this.event.resolved ? (
-                <Badge variant="default" className="flex items-center gap-1 bg-green-600 text-[var(--admin-text-primary)]">
-                  <CheckCircle className="h-3 w-3" />
-                  Resolved
-                </Badge>
-              ) : (
-                <Badge variant="secondary" className="flex items-center gap-1 bg-[var(--admin-surface)] text-neutral-300">
-                  <Clock className="h-3 w-3" />
-                  Pending
-                </Badge>
-              )}
-            </div>
-          </div>
-        </CardHeader>
-        
-        <CardContent className="space-y-4">
-          {/* Event Details */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-3 bg-[var(--admin-surface)]/50 rounded-lg">
-              <div className="flex items-center justify-center gap-1 text-blue-500">
-                <Activity className="h-4 w-4" />
-                <span className="font-semibold text-sm">{this.event.ipAddress}</span>
-              </div>
-              <p className="text-xs text-[var(--admin-text-secondary)]">IP Address</p>
-            </div>
-            <div className="text-center p-3 bg-[var(--admin-surface)]/50 rounded-lg">
-              <div className="flex items-center justify-center gap-1 text-green-500">
-                <Clock className="h-4 w-4" />
-                <span className="font-semibold text-sm">
-                  {new Date(this.event.timestamp).toLocaleTimeString()}
+
+              {/* Type */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Type</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedEvent?.type?.replace('_', ' ').toUpperCase() || 'N/A'}
                 </span>
               </div>
-              <p className="text-xs text-[var(--admin-text-secondary)]">Time</p>
-            </div>
-          </div>
 
-          {/* User Agent */}
-          <div className="text-sm text-[var(--admin-text-secondary)] truncate">
-            {this.event.userAgent}
-          </div>
-          
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1 bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
-              <Eye className="h-4 w-4 mr-1" />
-              View Details
-            </Button>
-            {!this.event.resolved && (
-              <Button variant="outline" size="sm" className="flex-1 bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
-                <CheckCircle className="h-4 w-4 mr-1" />
-                Resolve
+              {/* Status */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Status</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedEvent?.resolved ? 'RESOLVED' : 'PENDING'}
+                </span>
+              </div>
+
+              {/* IP Address */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Activity className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">IP Address</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedEvent?.ipAddress || 'N/A'}
+                </span>
+              </div>
+
+              {/* Location */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Location</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedEvent?.location || 'N/A'}
+                </span>
+              </div>
+
+              {/* Username */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <User className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Username</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedEvent?.username || 'N/A'}
+                </span>
+              </div>
+
+              {/* Timestamp */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Timestamp</span>
+                </div>
+                <span className="text-sm text-text-muted">
+                  {selectedEvent?.timestamp ? new Date(selectedEvent.timestamp).toLocaleString() : 'N/A'}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Additional Actions */}
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onView?.(selectedEvent?.id || '')}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                View Event Details
               </Button>
-            )}
-            <Button variant="outline" size="sm" className="bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+              {!selectedEvent?.resolved && (
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                  onClick={() => onEdit?.(selectedEvent?.id || '')}
+                >
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Resolve Event
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 class PrivacySettingCardComponent {
@@ -415,236 +748,139 @@ class PrivacySettingCardComponent {
   }
 }
 
-export default function SecurityPage() {
+// ----------------------
+// Security Page Client Component
+// Purpose: Manages state and interactions for the security page
+// ----------------------
+function SecurityPageClient() {
+  const [selectedEventId, setSelectedEventId] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [severityFilter, setSeverityFilter] = useState('all');
+
   const securityService = new SecurityService();
   const allEvents = securityService.getAllSecurityEvents();
-  const criticalEvents = securityService.getSecurityEventsBySeverity('critical');
-  const highEvents = securityService.getSecurityEventsBySeverity('high');
-  const unresolvedEvents = securityService.getUnresolvedEvents();
-  const privacySettings = securityService.getPrivacySettings();
-  const accessControls = securityService.getAccessControls();
   const stats = securityService.getSecurityStats();
 
-  return (
-    <div className="p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-[var(--admin-text-primary)]">Security & Privacy</h1>
-            <p className="text-[var(--admin-text-secondary)]">Monitor security events and manage privacy settings</p>
-          </div>
-          <Badge className="bg-orange-500 text-[var(--admin-text-primary)]">Super Admin</Badge>
-        </div>
-      </div>
+  // Filter events based on search and severity
+  const filteredEvents = allEvents.filter(event => {
+    const matchesSearch = event.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         event.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         event.location.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSeverity = severityFilter === 'all' || event.severity === severityFilter;
+    return matchesSearch && matchesSeverity;
+  });
 
-      {/* Key Performance Indicators */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-[var(--admin-text-primary)] mb-2">Security Overview</h2>
-        <p className="text-[var(--admin-text-secondary)] mb-6">Security events, threats, and system status</p>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Total Events</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.totalEvents}</p>
-                <div className="flex items-center gap-1 text-sm text-blue-500">
-                  <Activity className="h-4 w-4" />
-                  +8.2% from last week
-                </div>
-              </div>
-              <Activity className="h-8 w-8 text-blue-500" />
-            </div>
-          </div>
-          
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Critical Alerts</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{criticalEvents.length}</p>
-                <div className="flex items-center gap-1 text-sm text-red-500">
-                  <AlertTriangle className="h-4 w-4" />
-                  Requires attention
-                </div>
-              </div>
-              <AlertTriangle className="h-8 w-8 text-red-500" />
-            </div>
-          </div>
-          
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Unresolved</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{unresolvedEvents.length}</p>
-                <div className="flex items-center gap-1 text-sm text-orange-500">
-                  <Clock className="h-4 w-4" />
-                  Pending review
-                </div>
-              </div>
-              <Clock className="h-8 w-8 text-orange-500" />
-            </div>
-          </div>
-          
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">System Status</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">Secure</p>
-                <div className="flex items-center gap-1 text-sm text-green-500">
-                  <CheckCircle className="h-4 w-4" />
-                  All systems operational
-                </div>
-              </div>
-              <Shield className="h-8 w-8 text-green-500" />
-            </div>
-          </div>
-        </div>
-      </div>
+  // Set default selected event
+  useEffect(() => {
+    if (filteredEvents.length > 0 && !selectedEventId) {
+      setSelectedEventId(filteredEvents[0].id);
+    }
+  }, [filteredEvents, selectedEventId]);
 
-      {/* Security Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
-          <CardHeader>
-            <CardTitle className="text-[var(--admin-text-primary)] flex items-center gap-2">
-              <Activity className="h-5 w-5 text-blue-500" />
-              Security Events Timeline
-            </CardTitle>
-            <CardDescription className="text-[var(--admin-text-secondary)]">Security events over the last 30 days</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
-              <div className="text-center">
-                <Activity className="h-12 w-12 text-[var(--admin-text-secondary)] mx-auto mb-2" />
-                <p className="text-[var(--admin-text-secondary)]">Security events chart</p>
-                <p className="text-sm text-neutral-500">Line chart showing security events over time</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+  const handleEventSelect = (eventId: string) => {
+    setSelectedEventId(eventId);
+  };
 
-        <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
-          <CardHeader>
-            <CardTitle className="text-[var(--admin-text-primary)] flex items-center gap-2">
-              <Shield className="h-5 w-5 text-green-500" />
-              Threat Analysis
-            </CardTitle>
-            <CardDescription className="text-[var(--admin-text-secondary)]">Security threats and risk assessment</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
-              <div className="text-center">
-                <Shield className="h-12 w-12 text-[var(--admin-text-secondary)] mx-auto mb-2" />
-                <p className="text-[var(--admin-text-secondary)]">Threat analysis chart</p>
-                <p className="text-sm text-neutral-500">Pie chart showing threat distribution</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+  const handleView = (eventId: string) => {
+    console.log('View security event:', eventId);
+  };
 
-      {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--admin-text-secondary)]" />
-          <Input 
-            placeholder="Search security events..."
-            className="pl-10 bg-[var(--admin-card-bg)] border-neutral-700 text-[var(--admin-text-primary)]"
-          />
-        </div>
-        <Button variant="outline" className="flex items-center gap-2 bg-[var(--admin-card-bg)] border-neutral-700 text-[var(--admin-text-primary)] hover:bg-[var(--admin-surface)]">
-          <Filter className="h-4 w-4" />
-          Filters
-        </Button>
-        <Button variant="outline" className="flex items-center gap-2 bg-[var(--admin-card-bg)] border-neutral-700 text-[var(--admin-text-primary)] hover:bg-[var(--admin-surface)]">
-          <Download className="h-4 w-4" />
-          Export
-        </Button>
-      </div>
+  const handleEdit = (eventId: string) => {
+    console.log('Edit security event:', eventId);
+  };
 
+  const handleMore = (eventId: string) => {
+    console.log('More actions for security event:', eventId);
+  };
 
-      {/* Security Tabs */}
-      <Tabs defaultValue="events" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 bg-[var(--admin-card-bg)] border-neutral-700">
-          <TabsTrigger value="events" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Security Events</TabsTrigger>
-          <TabsTrigger value="privacy" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Privacy Settings</TabsTrigger>
-          <TabsTrigger value="access" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Access Control</TabsTrigger>
-          <TabsTrigger value="compliance" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Compliance</TabsTrigger>
-        </TabsList>
+  const handleRefresh = () => {
+    console.log('Refresh security events');
+  };
 
-        <TabsContent value="events" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {allEvents.map((event) => {
-              const eventCard = new SecurityEventCardComponent(event);
-              return <div key={event.id}>{eventCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
+  const handleExportAll = () => {
+    console.log('Export all security events');
+  };
 
-        <TabsContent value="privacy" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {privacySettings.map((setting) => {
-              const settingCard = new PrivacySettingCardComponent(setting);
-              return <div key={setting.id}>{settingCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="access" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Access Control Matrix</CardTitle>
-              <CardDescription>Manage user permissions and resource access</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {accessControls.map((control) => (
-                  <div key={control.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
-                      <h4 className="font-medium">{control.user}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {control.resource} • {control.role}
-                      </p>
-                      <div className="flex gap-1 mt-1">
-                        {control.permissions.map((permission) => (
-                          <Badge key={permission} variant="outline" className="text-xs">
-                            {permission}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant={control.status === 'active' ? 'default' : 'secondary'}>
-                        {control.status}
-                      </Badge>
-                      <Button variant="outline" size="sm">
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="compliance" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Compliance Dashboard</CardTitle>
-              <CardDescription>Track compliance with security standards and regulations</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64 flex items-center justify-center bg-muted/20 rounded-lg">
-                <div className="text-center">
-                  <Shield className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-muted-foreground">Compliance dashboard placeholder</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+  const statsCards = (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <MetricCard
+        title="Total Events"
+        value={stats.totalEvents}
+        growth={8.2}
+        icon={Activity}
+        format="number"
+      />
+      <MetricCard
+        title="Critical Alerts"
+        value={stats.criticalEvents}
+        growth={0}
+        icon={AlertTriangle}
+        format="number"
+      />
+      <MetricCard
+        title="Unresolved Events"
+        value={stats.unresolvedEvents}
+        growth={0}
+        icon={Clock}
+        format="number"
+      />
+      <MetricCard
+        title="Resolved Rate"
+        value={parseFloat(stats.resolvedRate)}
+        growth={0}
+        icon={CheckCircle}
+        format="percentage"
+      />
     </div>
   );
+
+  const filters = (
+    <div className="flex items-center gap-2">
+      <Select value={severityFilter} onValueChange={setSeverityFilter}>
+        <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
+          <SelectValue placeholder="Severity" />
+        </SelectTrigger>
+        <SelectContent className="bg-surface-elev2 border-line-soft">
+          <SelectItem value="all" className="text-text hover:bg-surface-elev1">All Severity</SelectItem>
+          <SelectItem value="low" className="text-text hover:bg-surface-elev1">Low</SelectItem>
+          <SelectItem value="medium" className="text-text hover:bg-surface-elev1">Medium</SelectItem>
+          <SelectItem value="high" className="text-text hover:bg-surface-elev1">High</SelectItem>
+          <SelectItem value="critical" className="text-text hover:bg-surface-elev1">Critical</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
+  return (
+    <AdminPageTemplate
+      title="Security & Privacy Management"
+      description="Monitor security events, threats, and system status"
+      icon={<Shield className="h-6 w-6" />}
+      searchPlaceholder="Search security events, usernames, or descriptions..."
+      searchValue={searchTerm}
+      onSearchChange={setSearchTerm}
+      showSearch={true}
+      showFilters={true}
+      showRefresh={true}
+      showExport={true}
+      onRefresh={handleRefresh}
+      onExport={handleExportAll}
+      filters={filters}
+      stats={statsCards}
+    >
+      <SecurityDetailView
+        events={filteredEvents}
+        selectedEventId={selectedEventId}
+        onEventSelect={handleEventSelect}
+        onView={handleView}
+        onEdit={handleEdit}
+        onMore={handleMore}
+      />
+    </AdminPageTemplate>
+  );
+}
+
+export default function SecurityPage() {
+  return <SecurityPageClient />;
 }

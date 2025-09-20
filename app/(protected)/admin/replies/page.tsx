@@ -1,11 +1,12 @@
 "use client";
 
-import { AdminPageTemplate, AdminCard } from "@src/components/admin/AdminPageTemplate";
+import { useState, useEffect } from "react";
+import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@src/components/ui/select";
 import { 
   Reply, 
   Search, 
@@ -29,9 +30,18 @@ import {
   ThumbsDown,
   ArrowRight,
   RefreshCw,
-  Download
+  Download,
+  FileText,
+  Globe,
+  Star,
+  Crown,
+  Building,
+  RotateCcw,
+  Settings,
+  Ban,
+  CheckSquare,
+  XSquare
 } from "lucide-react";
-import { useState } from "react";
 
 // ----------------------
 // Replies Management Page
@@ -283,23 +293,34 @@ class RepliesManagementService {
   }
 }
 
-class ReplyCardComponent {
-  private reply: Reply;
-
-  constructor(reply: Reply) {
-    this.reply = reply;
-  }
-
-  private getStatusBadge() {
+// ----------------------
+// Professional Reply Card Component
+// Purpose: Displays reply information in a structured, professional layout
+// Note: Similar to verification card with reply-specific data
+// ----------------------
+function ProfessionalReplyCard({
+  reply,
+  onView,
+  onEdit,
+  onMore,
+  className = ""
+}: {
+  reply: Reply;
+  onView?: () => void;
+  onEdit?: () => void;
+  onMore?: () => void;
+  className?: string;
+}) {
+  const getStatusBadge = () => {
     const statusConfig = {
-      approved: { variant: "default" as const, icon: CheckCircle, text: "Approved" },
-      pending: { variant: "secondary" as const, icon: Clock, text: "Pending" },
-      flagged: { variant: "destructive" as const, icon: Flag, text: "Flagged" },
-      spam: { variant: "destructive" as const, icon: AlertTriangle, text: "Spam" },
-      removed: { variant: "outline" as const, icon: Shield, text: "Removed" }
+      approved: { variant: "default" as const, icon: CheckCircle, text: "Approved", color: "text-green-600" },
+      pending: { variant: "secondary" as const, icon: Clock, text: "Pending", color: "text-yellow-600" },
+      flagged: { variant: "destructive" as const, icon: Flag, text: "Flagged", color: "text-red-600" },
+      spam: { variant: "destructive" as const, icon: AlertTriangle, text: "Spam", color: "text-red-600" },
+      removed: { variant: "outline" as const, icon: Shield, text: "Removed", color: "text-gray-600" }
     };
 
-    const config = statusConfig[this.reply.status];
+    const config = statusConfig[reply.status];
     const Icon = config.icon;
 
     return (
@@ -308,260 +329,616 @@ class ReplyCardComponent {
         {config.text}
       </Badge>
     );
-  }
+  };
 
-  public render() {
+  const getTypeIcon = () => {
+    return <Reply className="h-4 w-4" />;
+  };
+
+  const getTypeBadge = () => {
     return (
-      <AdminCard
-        title={this.reply.content}
-        description={`Reply to "${this.reply.parentComment.content}" by ${this.reply.parentComment.author}`}
-        icon={<Reply className="h-5 w-5 text-[var(--admin-text-secondary)]" />}
-        headerActions={
-          <div className="flex items-center gap-2">
-            {this.reply.isSpam && (
-              <Badge variant="destructive" className="text-xs">
-                Spam ({Math.round(this.reply.spamScore * 100)}%)
-              </Badge>
-            )}
-            {this.getStatusBadge()}
+      <Badge variant="outline" className="text-xs">
+        Level {reply.threadLevel}
+      </Badge>
+    );
+  };
+
+  return (
+    <Card className={`bg-admin-card border-line-soft hover:shadow-lg transition-all duration-200 ${className}`}>
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-lg bg-surface-elev2 flex items-center justify-center border border-line-soft">
+              {getTypeIcon()}
+            </div>
+            <div>
+              <CardTitle className="text-lg text-text flex items-center gap-2">
+                {reply.content.length > 50 ? `${reply.content.substring(0, 50)}...` : reply.content}
+                {getTypeBadge()}
+              </CardTitle>
+              <CardDescription className="text-text-muted">
+                {reply.author.name} • {reply.author.username}
+              </CardDescription>
+            </div>
           </div>
-        }
-        className="group hover:shadow-lg transition-all duration-200"
-      >
-        <div className="space-y-4">
-          {/* Author Info */}
-          <div className="flex items-center gap-3 p-3 bg-[var(--admin-surface)] rounded-lg border border-[var(--admin-border)]">
-            <div className="h-8 w-8 rounded-full bg-[var(--admin-bg-alt)] flex items-center justify-center">
-              <User className="h-4 w-4 text-[var(--admin-text-secondary)]" />
+          <div className="text-right">
+            <div className="text-2xl font-bold text-text">
+              {reply.likes}
+            </div>
+            <div className="text-sm text-text-muted">
+              likes
+            </div>
+          </div>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="space-y-6">
+        {/* Reply Overview */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            {getTypeIcon()}
+            <span className="font-medium text-text">Reply Overview</span>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <span className="text-sm text-text-muted">Type:</span>
+              <div className="mt-1">
+                {getTypeBadge()}
+              </div>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Status:</span>
+              <div className="mt-1">
+                {getStatusBadge()}
+              </div>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Author:</span>
+              <div className="mt-1">
+                <Badge variant="outline" className="text-xs">
+                  {reply.author.username}
+                </Badge>
+              </div>
+            </div>
+            <div>
+              <span className="text-sm text-text-muted">Reports:</span>
+              <div className="mt-1 flex items-center gap-1">
+                <Flag className="h-4 w-4" />
+                <span className="text-sm text-text">{reply.reportCount}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Engagement Stats */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <ThumbsUp className="h-4 w-4" />
+              <span className="text-xs font-medium">Likes</span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              {reply.likes}
+            </div>
+          </div>
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <ArrowRight className="h-4 w-4" />
+              <span className="text-xs font-medium">Thread Level</span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              {reply.threadLevel}
+            </div>
+          </div>
+          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
+            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
+              <Flag className="h-4 w-4" />
+              <span className="text-xs font-medium">Reports</span>
+            </div>
+            <div className="text-lg font-bold text-text">
+              {reply.reportCount}
+            </div>
+          </div>
+        </div>
+
+        {/* Author Information */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <User className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Author Information</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-surface-elev1 flex items-center justify-center border border-line-soft">
+              <User className="h-5 w-5 text-text-muted" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-[var(--admin-text-primary)]">{this.reply.author.name}</p>
-              <p className="text-xs text-[var(--admin-text-secondary)]">{this.reply.author.username}</p>
+              <p className="text-sm font-medium text-text">{reply.author.name}</p>
+              <p className="text-xs text-text-muted">{reply.author.username}</p>
             </div>
-            <div className="text-sm text-[var(--admin-text-muted)]">
-              {new Date(this.reply.createdAt).toLocaleDateString()}
+            <div className="text-sm text-text-muted">
+              {new Date(reply.createdAt).toLocaleDateString()}
             </div>
           </div>
+        </div>
 
-          {/* Thread Context */}
-          <div className="space-y-3">
-            {/* Post Context */}
-            <div className="bg-[var(--admin-surface)] border border-[var(--admin-border)] rounded-lg p-3">
-              <div className="flex items-center gap-2 mb-2">
-                <MessageCircle className="h-4 w-4 text-[var(--admin-text-secondary)]" />
-                <span className="text-sm font-medium text-[var(--admin-text-primary)]">On Post:</span>
-              </div>
-              <p className="text-sm font-medium text-[var(--admin-text-primary)]">{this.reply.post.title}</p>
-              <p className="text-xs text-[var(--admin-text-secondary)]">by {this.reply.post.author}</p>
+        {/* Post Context */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <FileText className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Post Context</span>
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-text">{reply.post.title}</p>
+            <p className="text-xs text-text-muted">by {reply.post.author}</p>
+          </div>
+        </div>
+
+        {/* Parent Comment */}
+        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <MessageCircle className="h-5 w-5 text-text-muted" />
+            <span className="font-medium text-text">Replying to Comment</span>
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm text-text line-clamp-2">
+              "{reply.parentComment.content}"
+            </p>
+            <p className="text-xs text-text-muted">by {reply.parentComment.author}</p>
+          </div>
+        </div>
+
+        {/* Parent Reply (if nested) */}
+        {reply.parentReply && (
+          <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
+            <div className="flex items-center gap-2 mb-3">
+              <ArrowRight className="h-5 w-5 text-text-muted" />
+              <span className="font-medium text-text">Replying to Reply</span>
             </div>
-
-            {/* Parent Comment */}
-            <div className="bg-[var(--admin-surface)] border border-[var(--admin-border-light)] rounded-lg p-3">
-              <div className="flex items-center gap-2 mb-2">
-                <Reply className="h-4 w-4 text-[var(--admin-text-secondary)]" />
-                <span className="text-sm font-medium text-[var(--admin-text-primary)]">Replying to Comment:</span>
-              </div>
-              <p className="text-sm text-[var(--admin-text-primary)] line-clamp-2">
-                "{this.reply.parentComment.content}"
+            <div className="space-y-2">
+              <p className="text-sm text-text line-clamp-2">
+                "{reply.parentReply.content}"
               </p>
-              <p className="text-xs text-[var(--admin-text-secondary)] mt-1">by {this.reply.parentComment.author}</p>
-            </div>
-
-            {/* Parent Reply (if nested) */}
-            {this.reply.parentReply && (
-              <div className="bg-[var(--admin-surface)] border border-[var(--admin-border-light)] rounded-lg p-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <ArrowRight className="h-4 w-4 text-[var(--admin-text-secondary)]" />
-                  <span className="text-sm font-medium text-[var(--admin-text-primary)]">Replying to Reply:</span>
-                </div>
-                <p className="text-sm text-[var(--admin-text-primary)] line-clamp-2">
-                  "{this.reply.parentReply.content}"
-                </p>
-                <p className="text-xs text-[var(--admin-text-secondary)] mt-1">by {this.reply.parentReply.author}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="flex items-center gap-2 text-[var(--admin-text-secondary)]">
-              <ThumbsUp className="h-4 w-4" />
-              <span className="text-[var(--admin-text-primary)]">{this.reply.likes} likes</span>
-            </div>
-            <div className="flex items-center gap-2 text-[var(--admin-text-secondary)]">
-              <ThumbsDown className="h-4 w-4" />
-              <span className="text-[var(--admin-text-primary)]">{this.reply.dislikes} dislikes</span>
-            </div>
-            <div className="flex items-center gap-2 text-[var(--admin-text-secondary)]">
-              <Flag className="h-4 w-4" />
-              <span className="text-[var(--admin-text-primary)]">{this.reply.reportCount} reports</span>
-            </div>
-            <div className="flex items-center gap-2 text-[var(--admin-text-secondary)]">
-              <Shield className="h-4 w-4" />
-              <span className="text-[var(--admin-text-primary)]">Level {this.reply.threadLevel}</span>
+              <p className="text-xs text-text-muted">by {reply.parentReply.author}</p>
             </div>
           </div>
+        )}
 
-          {/* Flags and Reports */}
-          {this.reply.reportCount > 0 && (
-            <div className="bg-[var(--admin-surface)] border border-[var(--admin-status-flagged)] rounded-lg p-3">
-              <div className="flex items-center gap-2 text-[var(--admin-status-flagged)] mb-2">
-                <Flag className="h-4 w-4" />
-                <span className="text-sm font-medium">{this.reply.reportCount} Reports</span>
+        {/* Flags and Reports */}
+        {reply.reportCount > 0 && (
+          <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Flag className="h-5 w-5 text-red-400" />
+              <span className="font-medium text-red-300">Reports & Flags</span>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-red-200">Report Count:</span>
+                <span className="text-sm font-bold text-red-300">
+                  {reply.reportCount}
+                </span>
               </div>
               <div className="flex flex-wrap gap-1">
-                {this.reply.flags.map((flag) => (
+                {reply.flags.map((flag) => (
                   <Badge key={flag} variant="destructive" className="text-xs">
                     {flag.replace('_', ' ')}
                   </Badge>
                 ))}
               </div>
-              {this.reply.moderationNotes && (
-                <p className="text-xs text-[var(--admin-text-secondary)] mt-2">{this.reply.moderationNotes}</p>
+              {reply.moderationNotes && (
+                <p className="text-xs text-red-300 mt-2">{reply.moderationNotes}</p>
               )}
             </div>
-          )}
-
-          {/* Actions */}
-          <div className="flex gap-2 pt-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex-1 bg-[var(--admin-btn-secondary-bg)] text-[var(--admin-btn-secondary-text)] border-[var(--admin-border)] hover:bg-[var(--admin-surface-hover)]"
-            >
-              <Eye className="h-4 w-4 mr-2" />
-              View
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex-1 bg-[var(--admin-btn-secondary-bg)] text-[var(--admin-btn-secondary-text)] border-[var(--admin-border)] hover:bg-[var(--admin-surface-hover)]"
-            >
-              <Edit className="h-4 w-4 mr-2" />
-              Edit
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="bg-[var(--admin-btn-secondary-bg)] text-[var(--admin-btn-secondary-text)] border-[var(--admin-border)] hover:bg-[var(--admin-surface-hover)]"
-            >
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
           </div>
-        </div>
-      </AdminCard>
-    );
-  }
-}
+        )}
 
-export default function RepliesPage() {
-  const repliesService = new RepliesManagementService();
-  const replies = repliesService.getReplies();
-  const stats = repliesService.getRepliesStats();
-
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Replies Management</h1>
-          <p className="text-muted-foreground">Moderate and manage reply threads</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <Filter className="h-4 w-4 mr-2" />
-            Filters
-          </Button>
-          <Button variant="outline">
-            <Shield className="h-4 w-4 mr-2" />
-            Spam Filter
-          </Button>
-        </div>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Replies</CardTitle>
-            <Reply className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalReplies}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.approvedReplies} approved, {stats.pendingReplies} pending
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Flagged Replies</CardTitle>
-            <Flag className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.flaggedReplies}</div>
-            <p className="text-xs text-muted-foreground">
-              Require review
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Spam Replies</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{stats.spamReplies}</div>
-            <p className="text-xs text-muted-foreground">
-              Auto-detected
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Thread Level</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.averageThreadLevel.toFixed(1)}</div>
-            <p className="text-xs text-muted-foreground">
-              Nesting depth
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Search and Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search replies, authors, or content..."
-                  className="pl-10"
-                />
+        {/* Spam Detection */}
+        {reply.isSpam && (
+          <div className="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <AlertTriangle className="h-5 w-5 text-orange-400" />
+              <span className="font-medium text-orange-300">Spam Detection</span>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-orange-200">Spam Score:</span>
+                <span className="text-sm font-bold text-orange-300">
+                  {Math.round(reply.spamScore * 100)}%
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-orange-200">Status:</span>
+                <span className="text-sm font-bold text-orange-300">
+                  {reply.isSpam ? 'Detected' : 'Clean'}
+                </span>
               </div>
             </div>
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-            </Button>
           </div>
-        </CardContent>
-      </Card>
+        )}
 
-      {/* Replies List */}
-      <div className="space-y-4">
-        {replies.map((reply) => {
-          const replyCard = new ReplyCardComponent(reply);
-          return <div key={reply.id}>{replyCard.render()}</div>;
-        })}
+        {/* Action Buttons */}
+        <div className="flex gap-3 pt-2 border-t border-line-soft">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onView}
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            View
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onEdit}
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Edit
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+            onClick={onMore}
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ----------------------
+// Replies Detail View Component
+// Purpose: Single card view with filtering and quick stats
+// Note: Similar to verification page with reply-specific data
+// ----------------------
+function RepliesDetailView({
+  replies,
+  selectedReplyId,
+  onReplySelect,
+  onView,
+  onEdit,
+  onMore,
+  className = ""
+}: {
+  replies: Reply[];
+  selectedReplyId?: string;
+  onReplySelect?: (replyId: string) => void;
+  onView?: (replyId: string) => void;
+  onEdit?: (replyId: string) => void;
+  onMore?: (replyId: string) => void;
+  className?: string;
+}) {
+  const selectedReply = replies.find(r => r.id === selectedReplyId) || replies[0];
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      approved: { variant: "default" as const, color: "text-green-600", bgColor: "bg-green-100" },
+      pending: { variant: "secondary" as const, color: "text-yellow-600", bgColor: "bg-yellow-100" },
+      flagged: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" },
+      spam: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" },
+      removed: { variant: "outline" as const, color: "text-gray-600", bgColor: "bg-gray-100" }
+    };
+    return statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+  };
+
+  const getTypeIcon = () => {
+    return <Reply className="h-4 w-4" />;
+  };
+
+  const statusInfo = getStatusBadge(selectedReply?.status || 'pending');
+
+  return (
+    <div className={`space-y-6 ${className}`}>
+      {/* Filter Section */}
+      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <label className="text-sm font-medium text-text-muted mb-2 block">Select Reply</label>
+            <Select value={selectedReplyId || replies[0]?.id} onValueChange={onReplySelect}>
+              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
+                <SelectValue placeholder="Choose a reply..." />
+              </SelectTrigger>
+              <SelectContent className="bg-surface-elev2 border-line-soft">
+                {replies.map((reply) => {
+                  const Icon = getTypeIcon();
+                  return (
+                    <SelectItem 
+                      key={reply.id} 
+                      value={reply.id}
+                      className="text-text hover:bg-surface-elev1"
+                    >
+                      <div className="flex items-center gap-2">
+                        {Icon}
+                        <span>{reply.content.length > 30 ? `${reply.content.substring(0, 30)}...` : reply.content}</span>
+                        <Badge 
+                          variant={reply.status === 'approved' ? 'default' : 'secondary'}
+                          className="text-xs"
+                        >
+                          {reply.status}
+                        </Badge>
+                      </div>
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Reply Card */}
+        <div className="lg:col-span-2">
+          {selectedReply ? (
+            <ProfessionalReplyCard
+              reply={selectedReply}
+              onView={() => onView?.(selectedReply.id)}
+              onEdit={() => onEdit?.(selectedReply.id)}
+              onMore={() => onMore?.(selectedReply.id)}
+            />
+          ) : (
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-8 text-center">
+              <Reply className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <p className="text-gray-400">No reply selected</p>
+            </div>
+          )}
+        </div>
+
+        {/* Right: Quick Stats */}
+        <div className="space-y-4">
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Stats</CardTitle>
+              <CardDescription className="text-text-muted">Key information at a glance</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Status */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Status</span>
+                </div>
+                <div className={`px-2 py-1 rounded text-xs font-semibold ${statusInfo.bgColor} ${statusInfo.color}`}>
+                  {selectedReply?.status || 'N/A'}
+                </div>
+              </div>
+
+              {/* Type */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Reply className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Type</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  REPLY
+                </span>
+              </div>
+
+              {/* Likes */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <ThumbsUp className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Likes</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedReply?.likes || '0'}
+                </span>
+              </div>
+
+              {/* Thread Level */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <ArrowRight className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Thread Level</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedReply?.threadLevel || '0'}
+                </span>
+              </div>
+
+              {/* Reports */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Flag className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Reports</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedReply?.reportCount || '0'}
+                </span>
+              </div>
+
+              {/* Spam Score */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Spam Score</span>
+                </div>
+                <span className="text-sm font-semibold text-text">
+                  {selectedReply ? `${Math.round(selectedReply.spamScore * 100)}%` : 'N/A'}
+                </span>
+              </div>
+
+              {/* Date */}
+              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-text-muted" />
+                  <span className="text-sm font-medium text-text">Date</span>
+                </div>
+                <span className="text-sm text-text-muted">
+                  {selectedReply?.createdAt ? new Date(selectedReply.createdAt).toLocaleDateString() : 'N/A'}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Additional Actions */}
+          <Card className="bg-admin-panel border-line-soft">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-text">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onView?.(selectedReply?.id || '')}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                View Reply
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
+                onClick={() => onEdit?.(selectedReply?.id || '')}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Reply
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
+}
+
+// ----------------------
+// Replies Page Client Component
+// Purpose: Manages state and interactions for the replies page
+// ----------------------
+function RepliesPageClient() {
+  const [selectedReplyId, setSelectedReplyId] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  const repliesService = new RepliesManagementService();
+  const allReplies = repliesService.getReplies();
+  const stats = repliesService.getRepliesStats();
+
+  // Filter replies based on search and status
+  const filteredReplies = allReplies.filter(reply => {
+    const matchesSearch = reply.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         reply.author.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         reply.author.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         reply.post.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || reply.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  // Set default selected reply
+  useEffect(() => {
+    if (filteredReplies.length > 0 && !selectedReplyId) {
+      setSelectedReplyId(filteredReplies[0].id);
+    }
+  }, [filteredReplies, selectedReplyId]);
+
+  const handleReplySelect = (replyId: string) => {
+    setSelectedReplyId(replyId);
+  };
+
+  const handleView = (replyId: string) => {
+    console.log('View reply:', replyId);
+  };
+
+  const handleEdit = (replyId: string) => {
+    console.log('Edit reply:', replyId);
+  };
+
+  const handleMore = (replyId: string) => {
+    console.log('More actions for reply:', replyId);
+  };
+
+  const handleRefresh = () => {
+    console.log('Refresh replies');
+  };
+
+  const handleExportAll = () => {
+    console.log('Export all replies');
+  };
+
+  const statsCards = (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <MetricCard
+        title="Total Replies"
+        value={stats.totalReplies}
+        growth={0}
+        icon={Reply}
+        format="number"
+      />
+      <MetricCard
+        title="Flagged Replies"
+        value={stats.flaggedReplies}
+        growth={0}
+        icon={Flag}
+        format="number"
+      />
+      <MetricCard
+        title="Spam Replies"
+        value={stats.spamReplies}
+        growth={0}
+        icon={AlertTriangle}
+        format="number"
+      />
+      <MetricCard
+        title="Avg Thread Level"
+        value={stats.averageThreadLevel}
+        growth={0}
+        icon={BarChart3}
+        format="number"
+      />
+    </div>
+  );
+
+  const filters = (
+    <div className="flex items-center gap-2">
+      <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
+          <SelectValue placeholder="Status" />
+        </SelectTrigger>
+        <SelectContent className="bg-surface-elev2 border-line-soft">
+          <SelectItem value="all" className="text-text hover:bg-surface-elev1">All Status</SelectItem>
+          <SelectItem value="approved" className="text-text hover:bg-surface-elev1">Approved</SelectItem>
+          <SelectItem value="pending" className="text-text hover:bg-surface-elev1">Pending</SelectItem>
+          <SelectItem value="flagged" className="text-text hover:bg-surface-elev1">Flagged</SelectItem>
+          <SelectItem value="spam" className="text-text hover:bg-surface-elev1">Spam</SelectItem>
+          <SelectItem value="removed" className="text-text hover:bg-surface-elev1">Removed</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
+  return (
+    <AdminPageTemplate
+      title="Replies Management"
+      description="Moderate and manage reply threads across the platform"
+      icon={<Reply className="h-6 w-6" />}
+      searchPlaceholder="Search replies, authors, or content..."
+      searchValue={searchTerm}
+      onSearchChange={setSearchTerm}
+      showSearch={true}
+      showFilters={true}
+      showRefresh={true}
+      showExport={true}
+      onRefresh={handleRefresh}
+      onExport={handleExportAll}
+      filters={filters}
+      stats={statsCards}
+    >
+      <RepliesDetailView
+        replies={filteredReplies}
+        selectedReplyId={selectedReplyId}
+        onReplySelect={handleReplySelect}
+        onView={handleView}
+        onEdit={handleEdit}
+        onMore={handleMore}
+      />
+    </AdminPageTemplate>
+  );
+}
+
+export default function RepliesPage() {
+  return <RepliesPageClient />;
 }

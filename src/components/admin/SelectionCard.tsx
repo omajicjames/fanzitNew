@@ -388,7 +388,7 @@ export function CompactFilterCard({
   className 
 }: CompactFilterCardProps) {
   return (
-    <div className={`bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] rounded-lg p-4 ${className}`}>
+    <div className={`compact-filter-group bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] rounded-lg p-4 ${className}`}>
       <div className="flex items-center gap-4">
         <div className="flex-1">
           <label className="text-sm font-medium text-[var(--admin-text-primary)]-muted mb-2 block">{title}</label>
