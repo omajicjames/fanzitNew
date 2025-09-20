@@ -5,8 +5,8 @@ import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTe
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
-import { Input } from "@src/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@src/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs";
+import { Progress } from "@src/components/ui/progress";
 import { 
   DollarSign, 
   TrendingUp, 
@@ -56,691 +56,505 @@ import {
   CheckSquare,
   XSquare,
   Reply,
-  User
+  User,
+  BarChart3 as BarChart3Icon,
+  LineChart,
+  PieChart as PieChartIcon
 } from "lucide-react";
 
 // ----------------------
 // Financial Management Page
 // Location: /app/(protected)/admin/finance/page.tsx
-// Purpose: Comprehensive financial management for OnlyFans-like platform
+// Purpose: Comprehensive financial management with tabbed layout
 // Features: Revenue tracking, payouts, taxes, subscription management
-// Note: Mobile-first design with object-oriented structure
+// Note: Follows analytics dashboard pattern with financial-specific content
 // ----------------------
 
-interface FinancialData {
-  id: string;
-  type: 'revenue' | 'payout' | 'tax' | 'subscription' | 'refund';
-  amount: number;
-  creator: string;
-  creatorId: string;
-  description: string;
-  status: 'completed' | 'pending' | 'failed' | 'processing';
-  date: string;
-  paymentMethod: 'stripe' | 'paypal' | 'bank_transfer' | 'crypto';
-  transactionId: string;
-  fees: number;
-  netAmount: number;
-  currency: string;
-  category: string;
+interface FinancialDashboardProps {
+  defaultTab?: string;
 }
 
-interface RevenueData {
-  period: string;
-  totalRevenue: number;
-  platformFee: number;
-  creatorEarnings: number;
-  subscriptionRevenue: number;
-  tipsRevenue: number;
-  contentRevenue: number;
-  growth: number;
-}
-
-class FinancialManagementService {
-  private transactions: FinancialData[] = [
-    {
-      id: '1',
-      type: 'revenue',
-      amount: 1250.00,
-      creator: 'sarah_fitness',
-      creatorId: '1',
-      description: 'Monthly subscription revenue',
-      status: 'completed',
-      date: '2025-01-25',
-      paymentMethod: 'stripe',
-      transactionId: 'txn_123456789',
-      fees: 125.00,
-      netAmount: 1125.00,
-      currency: 'USD',
-      category: 'subscription'
-    },
-    {
-      id: '2',
-      type: 'payout',
-      amount: 1125.00,
-      creator: 'sarah_fitness',
-      creatorId: '1',
-      description: 'Creator payout',
-      status: 'completed',
-      date: '2025-01-26',
-      paymentMethod: 'bank_transfer',
-      transactionId: 'payout_987654321',
-      fees: 0,
-      netAmount: 1125.00,
-      currency: 'USD',
-      category: 'payout'
-    },
-    {
-      id: '3',
-      type: 'tax',
-      amount: 225.00,
-      creator: 'sarah_fitness',
-      creatorId: '1',
-      description: 'Tax withholding',
-      status: 'completed',
-      date: '2025-01-26',
-      paymentMethod: 'bank_transfer',
-      transactionId: 'tax_456789123',
-      fees: 0,
-      netAmount: 225.00,
-      currency: 'USD',
-      category: 'tax'
-    }
+// ----------------------
+// Financial Dashboard Component
+// Purpose: Main financial dashboard with tabbed layout
+// Note: Follows analytics pattern with financial-specific content
+// ----------------------
+export function FinancialDashboard({ defaultTab = "overview" }: FinancialDashboardProps = {}) {
+  const revenueData = [
+    { month: "Jan", subscriptions: 4000, payPerView: 2400, tips: 800 },
+    { month: "Feb", subscriptions: 3000, payPerView: 1398, tips: 600 },
+    { month: "Mar", subscriptions: 5000, payPerView: 3800, tips: 1200 },
+    { month: "Apr", subscriptions: 4500, payPerView: 3908, tips: 900 },
+    { month: "May", subscriptions: 6000, payPerView: 4800, tips: 1500 },
+    { month: "Jun", subscriptions: 7000, payPerView: 3800, tips: 1800 },
   ];
 
-  private revenueData: RevenueData[] = [
-    {
-      period: '2025-01',
-      totalRevenue: 125000,
-      platformFee: 12500,
-      creatorEarnings: 112500,
-      subscriptionRevenue: 80000,
-      tipsRevenue: 25000,
-      contentRevenue: 20000,
-      growth: 15.3
-    },
-    {
-      period: '2024-12',
-      totalRevenue: 108500,
-      platformFee: 10850,
-      creatorEarnings: 97650,
-      subscriptionRevenue: 70000,
-      tipsRevenue: 20000,
-      contentRevenue: 18500,
-      growth: 8.7
-    }
+  const transactionData = [
+    { day: "Mon", revenue: 1200, payouts: 800, fees: 120 },
+    { day: "Tue", revenue: 1900, payouts: 1200, fees: 190 },
+    { day: "Wed", revenue: 1600, payouts: 1000, fees: 160 },
+    { day: "Thu", revenue: 2200, payouts: 1400, fees: 220 },
+    { day: "Fri", revenue: 2800, payouts: 1800, fees: 280 },
+    { day: "Sat", revenue: 3200, payouts: 2000, fees: 320 },
+    { day: "Sun", revenue: 2400, payouts: 1500, fees: 240 },
   ];
 
-  public getAllTransactions(): FinancialData[] {
-    return this.transactions;
-  }
-
-  public getTransactionsByType(type: string): FinancialData[] {
-    return this.transactions.filter(t => t.type === type);
-  }
-
-  public getTransactionsByStatus(status: string): FinancialData[] {
-    return this.transactions.filter(t => t.status === status);
-  }
-
-  public getRevenueData(): RevenueData[] {
-    return this.revenueData;
-  }
-
-  public getTotalRevenue(): number {
-    return this.revenueData[0]?.totalRevenue || 0;
-  }
-
-  public getTotalPayouts(): number {
-    return this.transactions
-      .filter(t => t.type === 'payout' && t.status === 'completed')
-      .reduce((sum, t) => sum + t.amount, 0);
-  }
-
-  public getTotalFees(): number {
-    return this.transactions
-      .filter(t => t.type === 'revenue')
-      .reduce((sum, t) => sum + t.fees, 0);
-  }
-}
-
-// ----------------------
-// Professional Financial Transaction Card Component
-// Purpose: Displays financial transaction information in a structured, professional layout
-// Note: Similar to verification card with financial-specific data
-// ----------------------
-function ProfessionalTransactionCard({
-  transaction,
-  onView,
-  onExport,
-  onMore,
-  className = ""
-}: {
-  transaction: FinancialData;
-  onView?: () => void;
-  onExport?: () => void;
-  onMore?: () => void;
-  className?: string;
-}) {
-  const getStatusBadge = () => {
-    const statusConfig = {
-      completed: { variant: "default" as const, icon: CheckCircle, text: "Completed", color: "text-green-600" },
-      pending: { variant: "secondary" as const, icon: Clock, text: "Pending", color: "text-yellow-600" },
-      failed: { variant: "destructive" as const, icon: AlertTriangle, text: "Failed", color: "text-red-600" },
-      processing: { variant: "secondary" as const, icon: Clock, text: "Processing", color: "text-blue-600" }
-    };
-
-    const config = statusConfig[transaction.status];
-    const Icon = config.icon;
-
-    return (
-      <Badge variant={config.variant} className="flex items-center gap-1">
-        <Icon className="h-3 w-3" />
-        {config.text}
-      </Badge>
-    );
-  };
-
-  const getTypeIcon = () => {
-    const typeIcons = {
-      revenue: DollarSign,
-      payout: Banknote,
-      tax: FileText,
-      subscription: Users,
-      refund: TrendingDown
-    };
-
-    const Icon = typeIcons[transaction.type];
-    return <Icon className="h-4 w-4" />;
-  };
-
-  const getAmountColor = () => {
-    if (transaction.type === 'revenue') return 'text-green-600';
-    if (transaction.type === 'payout' || transaction.type === 'tax') return 'text-red-600';
-    return 'text-text-muted';
-  };
-
-  const getTypeBadge = () => {
-    const typeConfig = {
-      revenue: { variant: "default" as const, text: "Revenue", color: "text-green-600" },
-      payout: { variant: "secondary" as const, text: "Payout", color: "text-blue-600" },
-      tax: { variant: "destructive" as const, text: "Tax", color: "text-red-600" },
-      subscription: { variant: "outline" as const, text: "Subscription", color: "text-purple-600" },
-      refund: { variant: "destructive" as const, text: "Refund", color: "text-orange-600" }
-    };
-
-    const config = typeConfig[transaction.type];
-    return (
-      <Badge variant={config.variant} className="text-xs">
-        {config.text}
-      </Badge>
-    );
-  };
-
-  const getPaymentMethodIcon = () => {
-    const methodIcons = {
-      stripe: CreditCard,
-      paypal: CreditCard,
-      bank_transfer: Building,
-      crypto: DollarSign
-    };
-    const Icon = methodIcons[transaction.paymentMethod];
-    return <Icon className="h-4 w-4" />;
-  };
+  const paymentMethodData = [
+    { name: "Stripe", value: 45, color: "#8884d8" },
+    { name: "PayPal", value: 35, color: "#82ca9d" },
+    { name: "Bank Transfer", value: 20, color: "#ffc658" },
+  ];
 
   return (
-    <Card className={`bg-admin-card border-line-soft hover:shadow-lg transition-all duration-200 ${className}`}>
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-lg bg-surface-elev2 flex items-center justify-center border border-line-soft">
-              {getTypeIcon()}
-            </div>
-            <div>
-              <CardTitle className="text-lg text-text flex items-center gap-2">
-                {transaction.description}
-                {getTypeBadge()}
-              </CardTitle>
-              <CardDescription className="text-text-muted">
-                {transaction.creator} • {transaction.transactionId}
-              </CardDescription>
-            </div>
-          </div>
-          <div className="text-right">
-            <div className={`text-2xl font-bold ${getAmountColor()}`}>
-              ${transaction.amount.toLocaleString()}
-            </div>
-            <div className="text-sm text-text-muted">
-              Net: ${transaction.netAmount.toLocaleString()}
-            </div>
-          </div>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="space-y-6">
-        {/* Transaction Overview */}
-        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
-          <div className="flex items-center gap-2 mb-3">
-            {getTypeIcon()}
-            <span className="font-medium text-text">Transaction Overview</span>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <span className="text-sm text-text-muted">Type:</span>
-              <div className="mt-1">
-                {getTypeBadge()}
-              </div>
-            </div>
-            <div>
-              <span className="text-sm text-text-muted">Status:</span>
-              <div className="mt-1">
-                {getStatusBadge()}
-              </div>
-            </div>
-            <div>
-              <span className="text-sm text-text-muted">Category:</span>
-              <div className="mt-1">
-                <Badge variant="outline" className="text-xs">
-                  {transaction.category}
-                </Badge>
-              </div>
-            </div>
-            <div>
-              <span className="text-sm text-text-muted">Payment Method:</span>
-              <div className="mt-1 flex items-center gap-1">
-                {getPaymentMethodIcon()}
-                <span className="text-sm text-text">{transaction.paymentMethod}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Financial Details */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
-            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
-              <DollarSign className="h-4 w-4" />
-              <span className="text-xs font-medium">Amount</span>
-            </div>
-            <div className={`text-lg font-bold ${getAmountColor()}`}>
-              ${transaction.amount.toLocaleString()}
-            </div>
-          </div>
-          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
-            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
-              <CreditCard className="h-4 w-4" />
-              <span className="text-xs font-medium">Fees</span>
-            </div>
-            <div className="text-lg font-bold text-text">
-              ${transaction.fees.toLocaleString()}
-            </div>
-          </div>
-          <div className="bg-surface-elev2 rounded-lg p-4 text-center border border-line-soft">
-            <div className="flex items-center justify-center gap-1 text-text-muted mb-1">
-              <TrendingUp className="h-4 w-4" />
-              <span className="text-xs font-medium">Net</span>
-            </div>
-            <div className="text-lg font-bold text-text">
-              ${transaction.netAmount.toLocaleString()}
-            </div>
-          </div>
-        </div>
-
-        {/* Creator Information */}
-        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
-          <div className="flex items-center gap-2 mb-3">
-            <User className="h-5 w-5 text-text-muted" />
-            <span className="font-medium text-text">Creator Information</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-surface-elev1 flex items-center justify-center border border-line-soft">
-              <User className="h-5 w-5 text-text-muted" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-text">{transaction.creator}</p>
-              <p className="text-xs text-text-muted">ID: {transaction.creatorId}</p>
-            </div>
-            <div className="text-sm text-text-muted">
-              {new Date(transaction.date).toLocaleDateString()}
-            </div>
-          </div>
-        </div>
-
-        {/* Transaction Details */}
-        <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
-          <div className="flex items-center gap-2 mb-3">
-            <FileText className="h-5 w-5 text-text-muted" />
-            <span className="font-medium text-text">Transaction Details</span>
-          </div>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="text-text-muted">Transaction ID:</span>
-              <span className="ml-2 text-text font-mono">{transaction.transactionId}</span>
-            </div>
-            <div>
-              <span className="text-text-muted">Currency:</span>
-              <span className="ml-2 text-text">{transaction.currency}</span>
-            </div>
-            <div>
-              <span className="text-text-muted">Date:</span>
-              <span className="ml-2 text-text">{new Date(transaction.date).toLocaleDateString()}</span>
-            </div>
-            <div>
-              <span className="text-text-muted">Status:</span>
-              <span className="ml-2 text-text">{transaction.status}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Fee Breakdown */}
-        {transaction.fees > 0 && (
-          <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <CreditCard className="h-5 w-5 text-red-400" />
-              <span className="font-medium text-red-300">Fee Breakdown</span>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-red-200">Platform Fee:</span>
-                <span className="text-sm font-bold text-red-300">
-                  -${transaction.fees.toLocaleString()}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-red-200">Net Amount:</span>
-                <span className="text-sm font-bold text-red-300">
-                  ${transaction.netAmount.toLocaleString()}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Revenue Information */}
-        {transaction.type === 'revenue' && (
-          <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <TrendingUp className="h-5 w-5 text-green-400" />
-              <span className="font-medium text-green-300">Revenue Information</span>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-green-200">Gross Revenue:</span>
-                <span className="text-sm font-bold text-green-300">
-                  ${transaction.amount.toLocaleString()}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-green-200">Platform Fee (10%):</span>
-                <span className="text-sm font-bold text-green-300">
-                  -${transaction.fees.toLocaleString()}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-green-200">Creator Earnings:</span>
-                <span className="text-sm font-bold text-green-300">
-                  ${transaction.netAmount.toLocaleString()}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="flex gap-3 pt-2 border-t border-line-soft">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
-            onClick={onView}
-          >
-            <Eye className="h-4 w-4 mr-2" />
-            View
+    <div className="max-w-7xl mx-auto p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold text-foreground">Financial Dashboard</h1>
+        <div className="flex space-x-2">
+          <Button variant="outline">
+            <Calendar className="h-4 w-4 mr-2" />
+            Last 30 Days
           </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex-1 bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
-            onClick={onExport}
-          >
+          <Button variant="outline">
             <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
-            onClick={onMore}
-          >
-            <MoreHorizontal className="h-4 w-4" />
+            Export Report
           </Button>
         </div>
-      </CardContent>
-    </Card>
-  );
-}
+      </div>
 
-// ----------------------
-// Financial Detail View Component
-// Purpose: Single card view with filtering and quick stats
-// Note: Similar to verification page with financial-specific data
-// ----------------------
-function FinancialDetailView({
-  transactions,
-  selectedTransactionId,
-  onTransactionSelect,
-  onView,
-  onExport,
-  onMore,
-  className = ""
-}: {
-  transactions: FinancialData[];
-  selectedTransactionId?: string;
-  onTransactionSelect?: (transactionId: string) => void;
-  onView?: (transactionId: string) => void;
-  onExport?: (transactionId: string) => void;
-  onMore?: (transactionId: string) => void;
-  className?: string;
-}) {
-  const selectedTransaction = transactions.find(t => t.id === selectedTransactionId) || transactions[0];
+      {/* Key Financial Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-primary">$2,847,392</div>
+            <p className="text-xs text-muted-foreground">
+              <span className="text-green-600">+15.2%</span> from last month
+            </p>
+          </CardContent>
+        </Card>
 
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      completed: { variant: "default" as const, color: "text-green-600", bgColor: "bg-green-100" },
-      pending: { variant: "secondary" as const, color: "text-yellow-600", bgColor: "bg-yellow-100" },
-      failed: { variant: "destructive" as const, color: "text-red-600", bgColor: "bg-red-100" },
-      processing: { variant: "secondary" as const, color: "text-blue-600", bgColor: "bg-blue-100" }
-    };
-    return statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
-  };
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Creator Payouts</CardTitle>
+            <Banknote className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-primary">$2,415,283</div>
+            <p className="text-xs text-muted-foreground">
+              <span className="text-green-600">+12.8%</span> from last month
+            </p>
+          </CardContent>
+        </Card>
 
-  const getTypeIcon = (type: string) => {
-    const typeIcons = {
-      revenue: DollarSign,
-      payout: Banknote,
-      tax: FileText,
-      subscription: Users,
-      refund: TrendingDown
-    };
-    const Icon = typeIcons[type as keyof typeof typeIcons];
-    return Icon;
-  };
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Platform Fees</CardTitle>
+            <CreditCard className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-primary">$432,109</div>
+            <p className="text-xs text-muted-foreground">
+              <span className="text-green-600">+18.5%</span> from last month
+            </p>
+          </CardContent>
+        </Card>
 
-  const statusInfo = getStatusBadge(selectedTransaction?.status || 'pending');
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Transactions</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-primary">47</div>
+            <p className="text-xs text-muted-foreground">
+              <span className="text-red-600">-5.2%</span> from last month
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
-  return (
-    <div className={`space-y-6 ${className}`}>
-      {/* Filter Section */}
-      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <label className="text-sm font-medium text-text-muted mb-2 block">Select Transaction</label>
-            <Select value={selectedTransactionId || transactions[0]?.id} onValueChange={onTransactionSelect}>
-              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
-                <SelectValue placeholder="Choose a transaction..." />
-              </SelectTrigger>
-              <SelectContent className="bg-surface-elev2 border-line-soft">
-                {transactions.map((transaction) => {
-                  const Icon = getTypeIcon(transaction.type);
-                  return (
-                    <SelectItem 
-                      key={transaction.id} 
-                      value={transaction.id}
-                      className="text-text hover:bg-surface-elev1"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Icon className="h-4 w-4" />
-                        <span>{transaction.description}</span>
+      {/* Financial Analytics Tabs */}
+      <Tabs defaultValue={defaultTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="revenue">Revenue</TabsTrigger>
+          <TabsTrigger value="payouts">Payouts</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="mt-6">
+          <div className="space-y-6">
+            {/* Platform Financial Health */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <DollarSign className="h-5 w-5" />
+                    Platform Revenue & Take Rate
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Total Platform Revenue</span>
+                      <span className="text-2xl font-bold text-primary">$2,847,392</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Platform Take Rate</span>
+                      <span className="text-xl font-semibold text-green-600">15.2%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Creator Payouts</span>
+                      <span className="text-lg font-medium">$2,415,283</span>
+                    </div>
+                    <Progress value={15.2} className="w-full" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Users className="h-5 w-5" />
+                    Transaction Volume
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Total Transactions</span>
+                      <span className="text-2xl font-bold text-primary">12,847</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Successful Transactions</span>
+                      <span className="text-2xl font-bold text-primary">12,234</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Success Rate</span>
+                      <span className="text-lg font-medium">95.2%</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      <span className="text-green-600">+2.1%</span> from last month
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Top Revenue Sources */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Revenue Sources (This Month)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Subscriptions</span>
+                      <span className="text-xl font-bold text-primary">$1,847,392</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Pay-Per-View</span>
+                      <span className="text-xl font-bold text-primary">$678,234</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Tips</span>
+                      <span className="text-xl font-bold text-primary">$321,766</span>
+                    </div>
+                    <Progress value={75} className="w-full" />
+                    <div className="text-xs text-muted-foreground">
+                      <span className="text-green-600">+12.5%</span> subscription growth
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Crown className="h-5 w-5" />
+                    Top Earning Creators (This Month)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {[
+                      { name: "Sarah Johnson", earnings: "$12,847", tier: "VIP" },
+                      { name: "Mike Chen", earnings: "$9,234", tier: "Premium" },
+                      { name: "Emma Davis", earnings: "$7,891", tier: "Premium" },
+                      { name: "Alex Rodriguez", earnings: "$6,543", tier: "Basic" },
+                      { name: "Lisa Wang", earnings: "$5,432", tier: "Basic" },
+                    ].map((creator, index) => (
+                      <div key={index} className="flex justify-between items-center">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
+                            <span className="text-xs font-medium">{index + 1}</span>
+                          </div>
+                          <span className="text-sm font-medium">{creator.name}</span>
+                          <Badge variant="outline" className="text-xs">
+                            {creator.tier}
+                          </Badge>
+                        </div>
+                        <span className="text-sm font-semibold text-primary">
+                          {creator.earnings}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="revenue" className="mt-6">
+          <div className="space-y-6">
+            {/* Revenue Breakdown */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <DollarSign className="h-5 w-5" />
+                  Revenue Breakdown by Source
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Detailed breakdown of revenue streams and performance
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      { source: "Subscriptions", amount: 1847392, percentage: 64.8, color: "bg-blue-500" },
+                      { source: "Pay-Per-View", amount: 678234, percentage: 23.8, color: "bg-green-500" },
+                      { source: "Tips", amount: 321766, percentage: 11.3, color: "bg-yellow-500" },
+                    ].map((revenue, index) => (
+                      <div key={index} className="p-4 border rounded-lg">
+                        <div className="text-sm font-medium text-muted-foreground mb-2">{revenue.source}</div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-xs">Amount</span>
+                            <span className="text-sm font-medium">${revenue.amount.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-xs">Percentage</span>
+                            <span className="text-sm font-medium text-green-600">{revenue.percentage}%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className={`h-2 rounded-full ${revenue.color}`}
+                              style={{ width: `${revenue.percentage}%` }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Monthly Revenue Trends */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <BarChart3Icon className="h-5 w-5" />
+                  Monthly Revenue Trends
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Track revenue growth and seasonal patterns
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { month: "January", revenue: 2847392, growth: 15.2, status: "up" },
+                    { month: "February", revenue: 2654321, growth: 8.7, status: "up" },
+                    { month: "March", revenue: 2987654, growth: 12.5, status: "up" },
+                    { month: "April", revenue: 3123456, growth: 4.5, status: "up" },
+                    { month: "May", revenue: 2876543, growth: -7.9, status: "down" },
+                    { month: "June", revenue: 3245678, growth: 12.8, status: "up" },
+                  ].map((month, index) => (
+                    <div key={index} className="flex justify-between items-center p-3 border rounded-lg">
+                      <span className="text-sm font-medium">{month.month}</span>
+                      <div className="flex items-center space-x-4">
+                        <span className="text-sm font-semibold">${month.revenue.toLocaleString()}</span>
                         <Badge 
-                          variant={transaction.status === 'completed' ? 'default' : 'secondary'}
+                          variant={month.status === "up" ? "default" : "destructive"}
                           className="text-xs"
                         >
-                          {transaction.status}
+                          {month.growth > 0 ? "+" : ""}{month.growth}%
                         </Badge>
                       </div>
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </div>
-      </div>
+        </TabsContent>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left: Transaction Card */}
-        <div className="lg:col-span-2">
-          {selectedTransaction ? (
-            <ProfessionalTransactionCard
-              transaction={selectedTransaction}
-              onView={() => onView?.(selectedTransaction.id)}
-              onExport={() => onExport?.(selectedTransaction.id)}
-              onMore={() => onMore?.(selectedTransaction.id)}
-            />
-          ) : (
-            <div className="bg-gray-800 border border-gray-700 rounded-lg p-8 text-center">
-              <DollarSign className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-              <p className="text-gray-400">No transaction selected</p>
-            </div>
-          )}
-        </div>
-
-        {/* Right: Quick Stats */}
-        <div className="space-y-4">
-          <Card className="bg-admin-panel border-line-soft">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg text-text">Quick Stats</CardTitle>
-              <CardDescription className="text-text-muted">Key information at a glance</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Status */}
-              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm font-medium text-text">Status</span>
+        <TabsContent value="payouts" className="mt-6">
+          <div className="space-y-6">
+            {/* Payout Status Overview */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Banknote className="h-5 w-5" />
+                  Payout Status Overview
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Track creator payouts and processing status
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {[
+                      { status: "Completed", count: 1247, amount: 2415283, color: "text-green-600" },
+                      { status: "Pending", count: 47, amount: 89432, color: "text-yellow-600" },
+                      { status: "Processing", count: 23, amount: 45678, color: "text-blue-600" },
+                      { status: "Failed", count: 8, amount: 12345, color: "text-red-600" },
+                    ].map((payout, index) => (
+                      <div key={index} className="p-4 border rounded-lg text-center">
+                        <div className="text-2xl font-bold mb-1">{payout.count}</div>
+                        <div className="text-sm text-muted-foreground mb-2">{payout.status}</div>
+                        <div className={`text-sm font-medium ${payout.color}`}>
+                          ${payout.amount.toLocaleString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className={`px-2 py-1 rounded text-xs font-semibold ${statusInfo.bgColor} ${statusInfo.color}`}>
-                  {selectedTransaction?.status || 'N/A'}
-                </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              {/* Type */}
-              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
-                <div className="flex items-center gap-2">
-                  {selectedTransaction && (() => {
-                    const Icon = getTypeIcon(selectedTransaction.type);
-                    return <Icon className="h-4 w-4 text-text-muted" />;
-                  })()}
-                  <span className="text-sm font-medium text-text">Type</span>
+            {/* Payout Methods */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <CreditCard className="h-5 w-5" />
+                  Payout Methods Distribution
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Breakdown of payout methods used by creators
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { method: "Bank Transfer", count: 856, percentage: 65.2, amount: 1847392 },
+                    { method: "Stripe", count: 324, percentage: 24.7, amount: 678234 },
+                    { method: "PayPal", count: 131, percentage: 10.1, amount: 321766 },
+                  ].map((method, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">{method.method}</span>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm text-muted-foreground">{method.count} creators</span>
+                          <span className="text-sm font-semibold">{method.percentage}%</span>
+                        </div>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="h-2 rounded-full bg-blue-500"
+                          style={{ width: `${method.percentage}%` }}
+                        />
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Total: ${method.amount.toLocaleString()}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <span className="text-sm font-semibold text-text">
-                  {selectedTransaction?.type?.toUpperCase() || 'N/A'}
-                </span>
-              </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
 
-              {/* Amount */}
-              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm font-medium text-text">Amount</span>
+        <TabsContent value="analytics" className="mt-6">
+          <div className="space-y-6">
+            {/* Financial Health Metrics */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Activity className="h-5 w-5" />
+                  Financial Health Metrics
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Key performance indicators for financial operations
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      { metric: "Average Transaction Value", value: 221.50, target: 250, status: "warning" },
+                      { metric: "Platform Take Rate", value: 15.2, target: 15, status: "good" },
+                      { metric: "Payout Processing Time", value: 2.3, target: 2, status: "warning" },
+                      { metric: "Transaction Success Rate", value: 95.2, target: 95, status: "good" },
+                      { metric: "Chargeback Rate", value: 0.8, target: 1.0, status: "good" },
+                      { metric: "Refund Rate", value: 3.2, target: 5.0, status: "good" },
+                    ].map((metric, index) => (
+                      <div key={index} className="p-4 border rounded-lg text-center">
+                        <div className="text-2xl font-bold mb-1">{metric.value}{metric.metric.includes("Rate") ? "%" : metric.metric.includes("Time") ? " days" : "$"}</div>
+                        <div className="text-sm text-muted-foreground mb-2">{metric.metric}</div>
+                        <Badge 
+                          variant={metric.status === "good" ? "default" : metric.status === "warning" ? "secondary" : "destructive"}
+                          className="text-xs"
+                        >
+                          {metric.status === "good" ? "On Target" : metric.status === "warning" ? "Monitor" : "Needs Attention"}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <span className="text-sm font-semibold text-text">
-                  ${selectedTransaction?.amount?.toLocaleString() || '0'}
-                </span>
-              </div>
+              </CardContent>
+            </Card>
 
-              {/* Net Amount */}
-              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm font-medium text-text">Net Amount</span>
+            {/* Revenue Forecasting */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Revenue Forecasting
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Projected revenue based on current trends and growth patterns
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { period: "Next Month", projected: 3123456, confidence: 85, trend: "up" },
+                    { period: "Next Quarter", projected: 9876543, confidence: 78, trend: "up" },
+                    { period: "Next 6 Months", projected: 18765432, confidence: 72, trend: "up" },
+                    { period: "Next Year", projected: 36543210, confidence: 65, trend: "up" },
+                  ].map((forecast, index) => (
+                    <div key={index} className="flex justify-between items-center p-3 border rounded-lg">
+                      <div>
+                        <span className="text-sm font-medium">{forecast.period}</span>
+                        <div className="text-xs text-muted-foreground">
+                          {forecast.confidence}% confidence
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-semibold">${forecast.projected.toLocaleString()}</span>
+                        <Badge variant="default" className="text-xs">
+                          <TrendingUp className="h-3 w-3 mr-1" />
+                          {forecast.trend}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <span className="text-sm font-semibold text-text">
-                  ${selectedTransaction?.netAmount?.toLocaleString() || '0'}
-                </span>
-              </div>
-
-              {/* Fees */}
-              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <CreditCard className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm font-medium text-text">Fees</span>
-                </div>
-                <span className="text-sm font-semibold text-text">
-                  ${selectedTransaction?.fees?.toLocaleString() || '0'}
-                </span>
-              </div>
-
-              {/* Currency */}
-              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm font-medium text-text">Currency</span>
-                </div>
-                <span className="text-sm font-semibold text-text">
-                  {selectedTransaction?.currency || 'N/A'}
-                </span>
-              </div>
-
-              {/* Date */}
-              <div className="flex items-center justify-between p-3 bg-surface-elev2 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm font-medium text-text">Date</span>
-                </div>
-                <span className="text-sm text-text-muted">
-                  {selectedTransaction?.date ? new Date(selectedTransaction.date).toLocaleDateString() : 'N/A'}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Additional Actions */}
-          <Card className="bg-admin-panel border-line-soft">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg text-text">Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <Button 
-                variant="outline" 
-                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
-                onClick={() => onView?.(selectedTransaction?.id || '')}
-              >
-                <Eye className="h-4 w-4 mr-2" />
-                View Transaction
-              </Button>
-              <Button 
-                variant="outline" 
-                className="w-full bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
-                onClick={() => onExport?.(selectedTransaction?.id || '')}
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Export Transaction
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
@@ -750,117 +564,46 @@ function FinancialDetailView({
 // Purpose: Manages state and interactions for the financial page
 // ----------------------
 function FinancialPageClient() {
-  const [selectedTransactionId, setSelectedTransactionId] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [typeFilter, setTypeFilter] = useState('all');
-
-  const financialService = new FinancialManagementService();
-  const allTransactions = financialService.getAllTransactions();
-  const revenueData = financialService.getRevenueData();
-
-  // Filter transactions based on search, status, and type
-  const filteredTransactions = allTransactions.filter(transaction => {
-    const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         transaction.creator.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         transaction.transactionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         transaction.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || transaction.status === statusFilter;
-    const matchesType = typeFilter === 'all' || transaction.type === typeFilter;
-    return matchesSearch && matchesStatus && matchesType;
-  });
-
-  // Set default selected transaction
-  useEffect(() => {
-    if (filteredTransactions.length > 0 && !selectedTransactionId) {
-      setSelectedTransactionId(filteredTransactions[0].id);
-    }
-  }, [filteredTransactions, selectedTransactionId]);
-
-  const handleTransactionSelect = (transactionId: string) => {
-    setSelectedTransactionId(transactionId);
-  };
-
-  const handleView = (transactionId: string) => {
-    console.log('View transaction:', transactionId);
-  };
-
-  const handleExport = (transactionId: string) => {
-    console.log('Export transaction:', transactionId);
-  };
-
-  const handleMore = (transactionId: string) => {
-    console.log('More actions for transaction:', transactionId);
-  };
+  const [selectedTab, setSelectedTab] = useState("overview");
 
   const handleRefresh = () => {
-    console.log('Refresh transactions');
+    console.log('Refresh financial data');
   };
 
-  const handleExportAll = () => {
-    console.log('Export all transactions');
+  const handleExport = () => {
+    console.log('Export financial report');
   };
 
   const statsCards = (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <MetricCard
         title="Total Revenue"
-        value={financialService.getTotalRevenue()}
-        growth={15.3}
+        value={2847392}
+        growth={15.2}
         icon={DollarSign}
         format="currency"
       />
       <MetricCard
-        title="Total Payouts"
-        value={financialService.getTotalPayouts()}
-        growth={8.2}
+        title="Creator Payouts"
+        value={2415283}
+        growth={12.8}
         icon={Banknote}
         format="currency"
       />
       <MetricCard
         title="Platform Fees"
-        value={financialService.getTotalFees()}
-        growth={12.5}
+        value={432109}
+        growth={18.5}
         icon={CreditCard}
         format="currency"
       />
       <MetricCard
         title="Pending Transactions"
-        value={financialService.getTransactionsByStatus('pending').length}
+        value={47}
         growth={-5.2}
         icon={Clock}
         format="number"
       />
-    </div>
-  );
-
-  const filters = (
-    <div className="flex items-center gap-2">
-      <Select value={statusFilter} onValueChange={setStatusFilter}>
-        <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
-          <SelectValue placeholder="Status" />
-        </SelectTrigger>
-        <SelectContent className="bg-surface-elev2 border-line-soft">
-          <SelectItem value="all" className="text-text hover:bg-surface-elev1">All Status</SelectItem>
-          <SelectItem value="completed" className="text-text hover:bg-surface-elev1">Completed</SelectItem>
-          <SelectItem value="pending" className="text-text hover:bg-surface-elev1">Pending</SelectItem>
-          <SelectItem value="failed" className="text-text hover:bg-surface-elev1">Failed</SelectItem>
-          <SelectItem value="processing" className="text-text hover:bg-surface-elev1">Processing</SelectItem>
-        </SelectContent>
-      </Select>
-      <Select value={typeFilter} onValueChange={setTypeFilter}>
-        <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
-          <SelectValue placeholder="Type" />
-        </SelectTrigger>
-        <SelectContent className="bg-surface-elev2 border-line-soft">
-          <SelectItem value="all" className="text-text hover:bg-surface-elev1">All Types</SelectItem>
-          <SelectItem value="revenue" className="text-text hover:bg-surface-elev1">Revenue</SelectItem>
-          <SelectItem value="payout" className="text-text hover:bg-surface-elev1">Payout</SelectItem>
-          <SelectItem value="tax" className="text-text hover:bg-surface-elev1">Tax</SelectItem>
-          <SelectItem value="subscription" className="text-text hover:bg-surface-elev1">Subscription</SelectItem>
-          <SelectItem value="refund" className="text-text hover:bg-surface-elev1">Refund</SelectItem>
-        </SelectContent>
-      </Select>
     </div>
   );
 
@@ -869,26 +612,15 @@ function FinancialPageClient() {
       title="Financial Management"
       description="Track revenue, payouts, and financial analytics"
       icon={<DollarSign className="h-6 w-6" />}
-      searchPlaceholder="Search transactions by creator, ID, or description..."
-      searchValue={searchTerm}
-      onSearchChange={setSearchTerm}
-      showSearch={true}
-      showFilters={true}
+      showSearch={false}
+      showFilters={false}
       showRefresh={true}
       showExport={true}
       onRefresh={handleRefresh}
-      onExport={handleExportAll}
-      filters={filters}
+      onExport={handleExport}
       stats={statsCards}
     >
-      <FinancialDetailView
-        transactions={filteredTransactions}
-        selectedTransactionId={selectedTransactionId}
-        onTransactionSelect={handleTransactionSelect}
-        onView={handleView}
-        onExport={handleExport}
-        onMore={handleMore}
-      />
+      <FinancialDashboard defaultTab={selectedTab} />
     </AdminPageTemplate>
   );
 }
