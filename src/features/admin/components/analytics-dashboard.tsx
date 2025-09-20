@@ -35,7 +35,11 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 
-export function AnalyticsDashboard() {
+interface AnalyticsDashboardProps {
+  defaultTab?: string;
+}
+
+export function AnalyticsDashboard({ defaultTab = "overview" }: AnalyticsDashboardProps = {}) {
   const revenueData = [
     { month: "Jan", subscriptions: 4000, payPerView: 2400, tips: 800 },
     { month: "Feb", subscriptions: 3000, payPerView: 1398, tips: 600 },
@@ -230,7 +234,7 @@ export function AnalyticsDashboard() {
       </div>
 
       {/* Admin Analytics Tabs */}
-      <Tabs defaultValue="overview" className="w-full">
+      <Tabs defaultValue={defaultTab} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="cohorts">Cohorts</TabsTrigger>
