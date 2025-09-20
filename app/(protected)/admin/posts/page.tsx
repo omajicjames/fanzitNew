@@ -379,6 +379,7 @@ class PostCardComponent {
 
 export default function PostsPage() {
   const [selectedPostId, setSelectedPostId] = useState("");
+  const [selectedPostIdDetail, setSelectedPostIdDetail] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
@@ -392,7 +393,10 @@ export default function PostsPage() {
     if (posts.length > 0 && !selectedPostId) {
       setSelectedPostId(posts[0].id);
     }
-  }, [posts, selectedPostId]);
+    if (posts.length > 0 && !selectedPostIdDetail) {
+      setSelectedPostIdDetail(posts[0].id);
+    }
+  }, [posts, selectedPostId, selectedPostIdDetail]);
 
   // Filter posts based on search and filters
   const filteredPosts = posts.filter(post => {
@@ -408,6 +412,10 @@ export default function PostsPage() {
 
   const handlePostSelect = (postId: string) => {
     setSelectedPostId(postId);
+  };
+
+  const handlePostSelectDetail = (postId: string) => {
+    setSelectedPostIdDetail(postId);
   };
 
   const handleView = () => {
@@ -518,8 +526,8 @@ export default function PostsPage() {
 
         <PostsDetailView
           posts={filteredPosts}
-          selectedPostId={selectedPostId}
-          onPostSelect={handlePostSelect}
+          selectedPostId={selectedPostIdDetail}
+          onPostSelect={handlePostSelectDetail}
           onView={handleView}
           onEdit={handleEdit}
           onDelete={handleDelete}
