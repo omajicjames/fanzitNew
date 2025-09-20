@@ -393,16 +393,16 @@ export function CompactFilterCard({
         <div className="flex-1">
           <label className="text-sm font-medium text-[var(--admin-text-primary)]-muted mb-2 block">{title}</label>
           <Select value={value} onValueChange={onValueChange}>
-            <SelectTrigger className="bg-[var(--admin-card-bg)] border-[var(--admin-border-soft)] text-[var(--admin-text-primary)]">
+            <SelectTrigger className="bg-[var(--admin-card-bg)] border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-surface)] focus:ring-2 focus:ring-[var(--brand)]/20 focus:border-[var(--brand)]/50 transition-all duration-200">
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
-            <SelectContent className="bg-[var(--admin-card-bg)] border-[var(--admin-border-soft)]">
+            <SelectContent className="bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] shadow-xl backdrop-blur-sm z-50 min-w-[200px]">
               {options.map((option) => {
                 return (
                   <SelectItem 
                     key={option.id} 
                     value={option.id}
-                    className="text-[var(--admin-text-primary)] hover:bg-[var(--admin-surface)]"
+                    className="text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)] focus:bg-[var(--admin-card-bg)] cursor-pointer transition-colors duration-150 py-3"
                   >
                     <div className="flex items-center gap-2">
                       {option.icon}
