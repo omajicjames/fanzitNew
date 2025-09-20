@@ -91,7 +91,7 @@ export function AdminLayoutWrapper({ children }: AdminLayoutWrapperProps) {
             {/* Action Buttons */}
             <div className="space-y-3">
               <button 
-                onClick={() => window.location.href = '/admin'}
+                onClick={() => window.location.href = '/admin-login'}
                 className="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200"
               >
                 Admin Login
@@ -136,10 +136,10 @@ export function AdminLayoutWrapper({ children }: AdminLayoutWrapperProps) {
               <p className="text-sm text-white/60">There was an error verifying your credentials. Please try again.</p>
             </div>
             <button 
-              onClick={() => window.location.reload()}
+              onClick={() => window.location.href = '/admin-login'}
               className="bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
             >
-              Retry
+              Admin Login
             </button>
           </div>
         </div>
