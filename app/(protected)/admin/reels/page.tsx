@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
+import { SelectFilterSection } from "@src/components/admin/SelectFilterSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -609,38 +610,18 @@ function ReelsDetailView({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Filter Section */}
-      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <label className="text-sm font-medium text-text-muted mb-2 block">Select Reel</label>
-            <Select value={selectedReelId || reels[0]?.id} onValueChange={onReelSelect}>
-              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
-                <SelectValue placeholder="Choose a reel..." />
-              </SelectTrigger>
-              <SelectContent className="bg-surface-elev2 border-line-soft">
-                {reels.map((reel) => (
-                  <SelectItem 
-                    key={reel.id} 
-                    value={reel.id}
-                    className="text-text hover:bg-surface-elev1"
-                  >
-                    <div className="flex items-center gap-2">
-                      <PlaySquare className="h-4 w-4" />
-                      <span>{reel.title}</span>
-                      <Badge 
-                        variant={reel.status === 'published' ? 'default' : 'secondary'}
-                        className="text-xs"
-                      >
-                        {reel.status}
-                      </Badge>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <SelectFilterSection
+        title="Select Reel"
+        placeholder="Choose a reel..."
+        value={selectedReelId || reels[0]?.id}
+        onValueChange={onReelSelect || (() => {})}
+        options={reels.map((reel) => ({
+          id: reel.id,
+          label: reel.title,
+          icon: <PlaySquare className="h-4 w-4" />,
+          status: reel.status
+        }))}
+      />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

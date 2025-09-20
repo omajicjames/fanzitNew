@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
+import { SelectFilterSection } from "@src/components/admin/SelectFilterSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -282,8 +283,8 @@ function ProfessionalSecurityEventCard({
 
   return (
     <Card className={`bg-admin-card border-line-soft hover:shadow-lg transition-all duration-200 ${className}`}>
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
             <div className="h-12 w-12 rounded-lg bg-surface-elev2 flex items-center justify-center border border-line-soft">
               {getTypeIcon()}
@@ -322,7 +323,7 @@ function ProfessionalSecurityEventCard({
               <div className="mt-1">
                 {getTypeBadge()}
               </div>
-            </div>
+                </div>
             <div>
               <span className="text-sm text-text-muted">Severity:</span>
               <div className="mt-1">
@@ -375,7 +376,7 @@ function ProfessionalSecurityEventCard({
           <div className="flex items-center gap-2 mb-3">
             <Calendar className="h-5 w-5 text-text-muted" />
             <span className="font-medium text-text">Timeline</span>
-          </div>
+              </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-sm text-text-muted">Timestamp:</span>
@@ -387,16 +388,16 @@ function ProfessionalSecurityEventCard({
               <span className="text-sm text-text-muted">Time:</span>
               <span className="text-sm text-text">
                 {new Date(event.timestamp).toLocaleTimeString()}
-              </span>
-            </div>
+                </span>
+              </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-text-muted">Date:</span>
               <span className="text-sm text-text">
                 {new Date(event.timestamp).toLocaleDateString()}
               </span>
             </div>
+            </div>
           </div>
-        </div>
 
         {/* User Information */}
         <div className="bg-surface-elev2 rounded-lg p-4 border border-line-soft">
@@ -414,8 +415,8 @@ function ProfessionalSecurityEventCard({
               <span className="text-sm text-text">{event.username}</span>
             </div>
           </div>
-        </div>
-
+          </div>
+          
         {/* Action Buttons */}
         <div className="flex gap-3 pt-2 border-t border-line-soft">
           <Button 
@@ -425,8 +426,8 @@ function ProfessionalSecurityEventCard({
             onClick={onView}
           >
             <Eye className="h-4 w-4 mr-2" />
-            View Details
-          </Button>
+              View Details
+            </Button>
           {!event.resolved && (
             <Button 
               variant="outline" 
@@ -435,22 +436,22 @@ function ProfessionalSecurityEventCard({
               onClick={onEdit}
             >
               <CheckCircle className="h-4 w-4 mr-2" />
-              Resolve
-            </Button>
-          )}
+                Resolve
+              </Button>
+            )}
           <Button 
             variant="outline" 
             size="sm" 
             className="bg-surface-elev2 border-line-soft text-text hover:bg-surface-elev1"
             onClick={onMore}
           >
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
 // ----------------------
 // Security Detail View Component
@@ -495,41 +496,21 @@ function SecurityDetailView({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Filter Section */}
-      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <label className="text-sm font-medium text-text-muted mb-2 block">Select Security Event</label>
-            <Select value={selectedEventId || events[0]?.id} onValueChange={onEventSelect}>
-              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
-                <SelectValue placeholder="Choose a security event..." />
-              </SelectTrigger>
-              <SelectContent className="bg-surface-elev2 border-line-soft">
-                {events.map((event) => {
-                  const Icon = getTypeIcon();
-                  return (
-                    <SelectItem 
-                      key={event.id} 
-                      value={event.id}
-                      className="text-text hover:bg-surface-elev1"
-                    >
-                      <div className="flex items-center gap-2">
-                        {Icon}
-                        <span>{event.username} - {event.type.replace('_', ' ')}</span>
-                        <Badge 
-                          variant={event.severity === 'low' ? 'default' : 'destructive'}
-                          className="text-xs"
-                        >
-                          {event.severity}
-                        </Badge>
-                      </div>
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <SelectFilterSection
+        title="Select Security Event"
+        placeholder="Choose a security event..."
+        value={selectedEventId || events[0]?.id}
+        onValueChange={onEventSelect || (() => {})}
+        options={events.map((event) => {
+          const Icon = getTypeIcon();
+          return {
+            id: event.id,
+            label: `${event.username} - ${event.type.replace('_', ' ')}`,
+            icon: Icon,
+            status: event.severity
+          };
+        })}
+      />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -831,12 +812,12 @@ function SecurityPageClient() {
         growth={0}
         icon={CheckCircle}
         format="percentage"
-      />
-    </div>
+          />
+        </div>
   );
 
   const filters = (
-    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
       <Select value={severityFilter} onValueChange={setSeverityFilter}>
         <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
           <SelectValue placeholder="Severity" />

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
+import { SelectFilterSection } from "@src/components/admin/SelectFilterSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -568,41 +569,21 @@ function CommentsDetailView({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Filter Section */}
-      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <label className="text-sm font-medium text-text-muted mb-2 block">Select Comment</label>
-            <Select value={selectedCommentId || comments[0]?.id} onValueChange={onCommentSelect}>
-              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
-                <SelectValue placeholder="Choose a comment..." />
-              </SelectTrigger>
-              <SelectContent className="bg-surface-elev2 border-line-soft">
-                {comments.map((comment) => {
-                  const Icon = getTypeIcon(comment);
-                  return (
-                    <SelectItem 
-                      key={comment.id} 
-                      value={comment.id}
-                      className="text-text hover:bg-surface-elev1"
-                    >
-                      <div className="flex items-center gap-2">
-                        {Icon}
-                        <span>{comment.content.length > 30 ? `${comment.content.substring(0, 30)}...` : comment.content}</span>
-                        <Badge 
-                          variant={comment.status === 'approved' ? 'default' : 'secondary'}
-                          className="text-xs"
-                        >
-                          {comment.status}
-                        </Badge>
-                      </div>
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <SelectFilterSection
+        title="Select Comment"
+        placeholder="Choose a comment..."
+        value={selectedCommentId || comments[0]?.id}
+        onValueChange={onCommentSelect || (() => {})}
+        options={comments.map((comment) => {
+          const Icon = getTypeIcon(comment);
+          return {
+            id: comment.id,
+            label: comment.content.length > 30 ? `${comment.content.substring(0, 30)}...` : comment.content,
+            icon: Icon,
+            status: comment.status
+          };
+        })}
+      />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

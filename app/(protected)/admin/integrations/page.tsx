@@ -1,11 +1,13 @@
 "use client";
 
-import { AdminPillNavigationComponent } from "@src/components/admin/AdminPillNavigation";
+import { useState, useEffect } from "react";
+import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
+import { SelectFilterSection } from "@src/components/admin/SelectFilterSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@src/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@src/components/ui/select";
 import { 
   Webhook, 
   Zap, 
@@ -27,15 +29,27 @@ import {
   Activity,
   DollarSign,
   Users,
-  FileText
+  FileText,
+  Shield,
+  Database,
+  Mail,
+  BarChart3,
+  Globe,
+  Server,
+  Lock,
+  Unlock,
+  Play,
+  Pause,
+  RotateCcw,
+  Target
 } from "lucide-react";
 
 // ----------------------
 // Integrations Page
 // Location: /app/(protected)/admin/integrations/page.tsx
-// Purpose: Comprehensive integrations management for OnlyFans-like platform
+// Purpose: Comprehensive integrations management with finance page layout
 // Features: Third-party integrations, API management, webhook configuration
-// Note: Mobile-first design with object-oriented structure
+// Layout: Cards on left, filters on right (matching finance page)
 // ----------------------
 
 interface Integration {
@@ -153,6 +167,46 @@ class IntegrationsService {
         limit: 1000000,
         resetDate: '2025-02-01T00:00:00Z'
       }
+    },
+    {
+      id: '5',
+      name: 'Discord Bot Integration',
+      type: 'communication',
+      provider: 'Discord',
+      status: 'pending',
+      description: 'Community management and notifications',
+      lastSync: '2025-01-25T16:45:00Z',
+      apiKey: 'DISCORD_***',
+      features: ['notifications', 'community_management', 'moderation'],
+      pricing: 'free',
+      version: 'v1.2',
+      icon: '💬',
+      health: 'warning',
+      usage: {
+        requests: 1200,
+        limit: 10000,
+        resetDate: '2025-02-01T00:00:00Z'
+      }
+    },
+    {
+      id: '6',
+      name: 'HubSpot CRM',
+      type: 'crm',
+      provider: 'HubSpot',
+      status: 'active',
+      description: 'Customer relationship management and lead tracking',
+      lastSync: '2025-01-27T08:30:00Z',
+      apiKey: 'HUBSPOT_***',
+      features: ['lead_tracking', 'contact_management', 'sales_pipeline'],
+      pricing: 'paid',
+      version: 'v3',
+      icon: '🎯',
+      health: 'healthy',
+      usage: {
+        requests: 5600,
+        limit: 50000,
+        resetDate: '2025-02-01T00:00:00Z'
+      }
     }
   ];
 
@@ -175,6 +229,15 @@ class IntegrationsService {
       payload: { to: 'user@example.com', template: 'welcome' },
       response: 'Invalid API key',
       retryCount: 3
+    },
+    {
+      id: '3',
+      integration: 'Google Analytics',
+      event: 'event.tracked',
+      status: 'success',
+      timestamp: '2025-01-27T09:15:00Z',
+      payload: { event: 'page_view', page: '/dashboard' },
+      retryCount: 0
     }
   ];
 
@@ -214,456 +277,477 @@ class IntegrationsService {
   }
 }
 
-class IntegrationCardComponent {
-  private integration: Integration;
-
-  constructor(integration: Integration) {
-    this.integration = integration;
-  }
-
-  private getStatusBadge() {
+// Professional Integration Card Component
+function ProfessionalIntegrationCard({ 
+  integration, 
+  onView, 
+  onConfigure, 
+  onMore 
+}: { 
+  integration: Integration;
+  onView: (id: string) => void;
+  onConfigure: (id: string) => void;
+  onMore: (id: string) => void;
+}) {
+  const getStatusBadge = (status: string) => {
     const statusConfig = {
-      active: { variant: 'default' as const, icon: CheckCircle, text: 'Active' },
-      inactive: { variant: 'secondary' as const, icon: XCircle, text: 'Inactive' },
-      error: { variant: 'destructive' as const, icon: AlertTriangle, text: 'Error' },
-      pending: { variant: 'secondary' as const, icon: Clock, text: 'Pending' }
+      active: { variant: 'default' as const, icon: CheckCircle, text: 'Active', color: 'text-green-600' },
+      inactive: { variant: 'secondary' as const, icon: XCircle, text: 'Inactive', color: 'text-gray-500' },
+      error: { variant: 'destructive' as const, icon: AlertTriangle, text: 'Error', color: 'text-red-600' },
+      pending: { variant: 'secondary' as const, icon: Clock, text: 'Pending', color: 'text-yellow-600' }
     };
+    return statusConfig[status as keyof typeof statusConfig] || statusConfig.inactive;
+  };
 
-    const config = statusConfig[this.integration.status];
-    const Icon = config.icon;
-
-    return (
-      <Badge variant={config.variant} className="flex items-center gap-1">
-        <Icon className="h-3 w-3" />
-        {config.text}
-      </Badge>
-    );
-  }
-
-  private getHealthBadge() {
+  const getHealthBadge = (health: string) => {
     const healthConfig = {
-      healthy: { variant: 'default' as const, text: 'Healthy' },
-      warning: { variant: 'secondary' as const, text: 'Warning' },
-      error: { variant: 'destructive' as const, text: 'Error' }
+      healthy: { variant: 'default' as const, text: 'Healthy', color: 'text-green-600' },
+      warning: { variant: 'secondary' as const, text: 'Warning', color: 'text-yellow-600' },
+      error: { variant: 'destructive' as const, text: 'Error', color: 'text-red-600' }
     };
+    return healthConfig[health as keyof typeof healthConfig] || healthConfig.healthy;
+  };
 
-    const config = healthConfig[this.integration.health];
-    return (
-      <Badge variant={config.variant} className="text-xs">
-        {config.text}
-      </Badge>
-    );
-  }
-
-  private getPricingBadge() {
-    const pricingConfig = {
-      free: { variant: 'default' as const, text: 'Free' },
-      paid: { variant: 'secondary' as const, text: 'Paid' },
-      enterprise: { variant: 'destructive' as const, text: 'Enterprise' }
+  const getTypeIcon = (type: string) => {
+    const typeIcons = {
+      payment: DollarSign,
+      analytics: BarChart3,
+      communication: Mail,
+      storage: Database,
+      social: Users,
+      crm: Target
     };
+    return typeIcons[type as keyof typeof typeIcons] || Webhook;
+  };
 
-    const config = pricingConfig[this.integration.pricing];
-    return (
-      <Badge variant={config.variant} className="text-xs">
-        {config.text}
-      </Badge>
-    );
-  }
+  const statusInfo = getStatusBadge(integration.status);
+  const healthInfo = getHealthBadge(integration.health);
+  const TypeIcon = getTypeIcon(integration.type);
+  const usagePercentage = Math.round((integration.usage.requests / integration.usage.limit) * 100);
 
-  public render() {
-    return (
-      <Card className="bg-[var(--admin-card-bg)] border-neutral-700 hover:shadow-lg transition-shadow duration-200">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-[var(--admin-surface)] flex items-center justify-center text-2xl">
-                {this.integration.icon}
-              </div>
-              <div className="flex-1 min-w-0">
-                <CardTitle className="text-lg flex items-center gap-2 text-[var(--admin-text-primary)]">
-                  {this.integration.name}
-                </CardTitle>
-                <CardDescription className="line-clamp-2 text-[var(--admin-text-secondary)]">
-                  {this.integration.description}
-                </CardDescription>
-                <div className="flex items-center gap-2 mt-2">
-                  <Badge variant="outline" className="text-xs bg-[var(--admin-surface)] border-neutral-600 text-neutral-300">
-                    {this.integration.provider}
-                  </Badge>
-                  {this.getPricingBadge()}
-                  <Badge variant="outline" className="text-xs bg-[var(--admin-surface)] border-neutral-600 text-neutral-300">
-                    v{this.integration.version}
-                  </Badge>
-                </div>
-              </div>
+  return (
+    <Card className="bg-admin-card border-line-soft hover:shadow-lg transition-all duration-200">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-lg bg-surface-elev1 flex items-center justify-center text-2xl">
+              {integration.icon}
             </div>
-            <div className="flex gap-2">
-              {this.getStatusBadge()}
-              {this.getHealthBadge()}
-            </div>
-          </div>
-        </CardHeader>
-        
-        <CardContent className="space-y-4">
-          {/* Usage Stats */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-3 bg-[var(--admin-surface)]/50 rounded-lg">
-              <div className="flex items-center justify-center gap-1 text-blue-500">
-                <Activity className="h-4 w-4" />
-                <span className="font-semibold">
-                  {this.integration.usage.requests.toLocaleString()}
-                </span>
-              </div>
-              <p className="text-xs text-[var(--admin-text-secondary)]">API Calls</p>
-            </div>
-            <div className="text-center p-3 bg-[var(--admin-surface)]/50 rounded-lg">
-              <div className="flex items-center justify-center gap-1 text-green-500">
-                <Zap className="h-4 w-4" />
-                <span className="font-semibold">
-                  {Math.round((this.integration.usage.requests / this.integration.usage.limit) * 100)}%
-                </span>
-              </div>
-              <p className="text-xs text-[var(--admin-text-secondary)]">Usage</p>
-            </div>
-          </div>
-
-          {/* Features */}
-          <div className="flex flex-wrap gap-1">
-            {this.integration.features.slice(0, 3).map((feature) => (
-              <Badge key={feature} variant="secondary" className="text-xs bg-[var(--admin-surface)] text-neutral-300">
-                {feature.replace('_', ' ')}
-              </Badge>
-            ))}
-            {this.integration.features.length > 3 && (
-              <Badge variant="secondary" className="text-xs bg-[var(--admin-surface)] text-neutral-300">
-                +{this.integration.features.length - 3} more
-              </Badge>
-            )}
-          </div>
-
-          {/* Last Sync */}
-          <div className="text-sm text-[var(--admin-text-secondary)]">
-            Last sync: {new Date(this.integration.lastSync).toLocaleString()}
-          </div>
-          
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1 bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
-              <Eye className="h-4 w-4 mr-1" />
-              View
-            </Button>
-            <Button variant="outline" size="sm" className="flex-1 bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
-              <Settings className="h-4 w-4 mr-1" />
-              Configure
-            </Button>
-            <Button variant="outline" size="sm" className="bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-}
-
-class WebhookEventCardComponent {
-  private event: WebhookEvent;
-
-  constructor(event: WebhookEvent) {
-    this.event = event;
-  }
-
-  private getStatusBadge() {
-    const statusConfig = {
-      success: { variant: 'default' as const, icon: CheckCircle, text: 'Success' },
-      failed: { variant: 'destructive' as const, icon: XCircle, text: 'Failed' },
-      pending: { variant: 'secondary' as const, icon: Clock, text: 'Pending' }
-    };
-
-    const config = statusConfig[this.event.status];
-    const Icon = config.icon;
-
-    return (
-      <Badge variant={config.variant} className="flex items-center gap-1">
-        <Icon className="h-3 w-3" />
-        {config.text}
-      </Badge>
-    );
-  }
-
-  public render() {
-    return (
-      <Card className="bg-[var(--admin-card-bg)] border-neutral-700 hover:shadow-lg transition-shadow duration-200">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <CardTitle className="text-lg flex items-center gap-2 text-[var(--admin-text-primary)]">
-                {this.event.integration}
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-lg flex items-center gap-2 text-text">
+                {integration.name}
+                <Badge variant="outline" className="text-xs">
+                  {integration.provider}
+                </Badge>
               </CardTitle>
-              <CardDescription className="text-[var(--admin-text-secondary)]">
-                Event: {this.event.event}
+              <CardDescription className="text-text-muted line-clamp-2">
+                {integration.description}
               </CardDescription>
               <div className="flex items-center gap-2 mt-2">
-                <Badge variant="outline" className="text-xs bg-[var(--admin-surface)] border-neutral-600 text-neutral-300">
-                  {this.event.event}
+                <Badge variant="outline" className="text-xs">
+                  {integration.pricing}
                 </Badge>
-                {this.event.retryCount > 0 && (
-                  <Badge variant="destructive" className="text-xs">
-                    Retry {this.event.retryCount}
-                  </Badge>
-                )}
+                <Badge variant="outline" className="text-xs">
+                  v{integration.version}
+                </Badge>
               </div>
             </div>
-            <div className="flex gap-2">
-              {this.getStatusBadge()}
-            </div>
           </div>
-        </CardHeader>
-        
-        <CardContent className="space-y-4">
-          <div className="text-sm text-[var(--admin-text-secondary)]">
-            {new Date(this.event.timestamp).toLocaleString()}
-          </div>
-          
-          {this.event.response && (
-            <div className="p-3 bg-[var(--admin-surface)]/50 rounded-lg">
-              <p className="text-sm font-medium text-red-500">Error Response:</p>
-              <p className="text-sm text-[var(--admin-text-secondary)]">{this.event.response}</p>
-            </div>
-          )}
-          
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1 bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
-              <Eye className="h-4 w-4 mr-1" />
-              View Payload
-            </Button>
-            {this.event.status === 'failed' && (
-              <Button variant="outline" size="sm" className="flex-1 bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
-                <RefreshCw className="h-4 w-4 mr-1" />
-                Retry
-              </Button>
-            )}
-            <Button variant="outline" size="sm" className="bg-[var(--admin-surface)] border-neutral-600 text-[var(--admin-text-primary)] hover:bg-[var(--admin-bg-alt)]">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
+            <Badge variant={statusInfo.variant} className="flex items-center gap-1">
+              <statusInfo.icon className="h-3 w-3" />
+              {statusInfo.text}
+            </Badge>
+            <Badge variant={healthInfo.variant} className="text-xs">
+              {healthInfo.text}
+            </Badge>
           </div>
-        </CardContent>
-      </Card>
-    );
-  }
+        </div>
+      </CardHeader>
+      
+      <CardContent className="space-y-4">
+        {/* Usage Stats */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="text-center p-3 bg-surface-elev1 rounded-lg">
+            <div className="flex items-center justify-center gap-1 text-primary">
+              <Activity className="h-4 w-4" />
+              <span className="font-semibold">
+                {integration.usage.requests.toLocaleString()}
+              </span>
+            </div>
+            <p className="text-xs text-text-muted">API Calls</p>
+          </div>
+          <div className="text-center p-3 bg-surface-elev1 rounded-lg">
+            <div className="flex items-center justify-center gap-1 text-green-600">
+              <Zap className="h-4 w-4" />
+              <span className="font-semibold">{usagePercentage}%</span>
+            </div>
+            <p className="text-xs text-text-muted">Usage</p>
+          </div>
+        </div>
+
+        {/* Features */}
+        <div className="flex flex-wrap gap-1">
+          {integration.features.slice(0, 3).map((feature) => (
+            <Badge key={feature} variant="secondary" className="text-xs">
+              {feature.replace('_', ' ')}
+            </Badge>
+          ))}
+          {integration.features.length > 3 && (
+            <Badge variant="secondary" className="text-xs">
+              +{integration.features.length - 3} more
+            </Badge>
+          )}
+        </div>
+
+        {/* Last Sync */}
+        <div className="text-sm text-text-muted">
+          Last sync: {new Date(integration.lastSync).toLocaleString()}
+        </div>
+        
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1"
+            onClick={() => onView(integration.id)}
+          >
+            <Eye className="h-4 w-4 mr-1" />
+            View
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1"
+            onClick={() => onConfigure(integration.id)}
+          >
+            <Settings className="h-4 w-4 mr-1" />
+            Configure
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => onMore(integration.id)}
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Integration Detail View Component (matching finance page layout)
+function IntegrationDetailView({ 
+  integrations, 
+  selectedIntegrationId, 
+  onIntegrationSelect, 
+  onView, 
+  onConfigure, 
+  onMore 
+}: {
+  integrations: Integration[];
+  selectedIntegrationId: string;
+  onIntegrationSelect: (id: string) => void;
+  onView: (id: string) => void;
+  onConfigure: (id: string) => void;
+  onMore: (id: string) => void;
+}) {
+  const selectedIntegration = integrations.find(i => i.id === selectedIntegrationId) || integrations[0];
+
+  return (
+    <div className="space-y-6">
+      {/* Filter Section */}
+      <SelectFilterSection
+        title="Select Integration"
+        placeholder="Choose an integration..."
+        value={selectedIntegrationId || integrations[0]?.id}
+        onValueChange={onIntegrationSelect}
+        options={integrations.map((integration) => {
+          const typeIcons = {
+            payment: DollarSign,
+            analytics: BarChart3,
+            communication: Mail,
+            storage: Database,
+            social: Users,
+            crm: Target
+          };
+          const Icon = typeIcons[integration.type as keyof typeof typeIcons] || Webhook;
+          return {
+            id: integration.id,
+            label: integration.name,
+            icon: <Icon className="h-4 w-4" />,
+            status: integration.status
+          };
+        })}
+      />
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Integration Cards */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="grid grid-cols-1 gap-4">
+            {integrations.map((integration) => (
+              <ProfessionalIntegrationCard
+                key={integration.id}
+                integration={integration}
+                onView={onView}
+                onConfigure={onConfigure}
+                onMore={onMore}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Right: Filters and Stats */}
+        <div className="space-y-6">
+          {/* Quick Stats */}
+          <Card className="bg-admin-card border-line-soft">
+            <CardHeader>
+              <CardTitle className="text-text">Integration Health</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-text-muted">Total Integrations</span>
+                <span className="text-2xl font-bold text-primary">{integrations.length}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-text-muted">Active</span>
+                <span className="text-xl font-semibold text-green-600">
+                  {integrations.filter(i => i.status === 'active').length}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-text-muted">Errors</span>
+                <span className="text-xl font-semibold text-red-600">
+                  {integrations.filter(i => i.status === 'error').length}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-text-muted">Health Rate</span>
+                <span className="text-lg font-medium text-text">
+                  {Math.round((integrations.filter(i => i.health === 'healthy').length / integrations.length) * 100)}%
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Type Filter */}
+          <Card className="bg-admin-card border-line-soft">
+            <CardHeader>
+              <CardTitle className="text-text">Filter by Type</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {['payment', 'analytics', 'communication', 'storage', 'social', 'crm'].map((type) => (
+                  <Button
+                    key={type}
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() => console.log(`Filter by ${type}`)}
+                  >
+                    <span className="capitalize">{type}</span>
+                    <Badge variant="secondary" className="ml-auto">
+                      {integrations.filter(i => i.type === type).length}
+                    </Badge>
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Status Filter */}
+          <Card className="bg-admin-card border-line-soft">
+            <CardHeader>
+              <CardTitle className="text-text">Filter by Status</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {['active', 'inactive', 'error', 'pending'].map((status) => (
+                  <Button
+                    key={status}
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() => console.log(`Filter by ${status}`)}
+                  >
+                    <span className="capitalize">{status}</span>
+                    <Badge variant="secondary" className="ml-auto">
+                      {integrations.filter(i => i.status === status).length}
+                    </Badge>
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Quick Actions */}
+          <Card className="bg-admin-card border-line-soft">
+            <CardHeader>
+              <CardTitle className="text-text">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button className="w-full" onClick={() => console.log('Add Integration')}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Integration
+              </Button>
+              <Button variant="outline" className="w-full" onClick={() => console.log('Refresh All')}>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh All
+              </Button>
+              <Button variant="outline" className="w-full" onClick={() => console.log('View Logs')}>
+                <FileText className="h-4 w-4 mr-2" />
+                View Logs
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function IntegrationsPage() {
   const integrationsService = new IntegrationsService();
   const allIntegrations = integrationsService.getAllIntegrations();
-  const paymentIntegrations = integrationsService.getIntegrationsByType('payment');
-  const analyticsIntegrations = integrationsService.getIntegrationsByType('analytics');
-  const communicationIntegrations = integrationsService.getIntegrationsByType('communication');
-  const storageIntegrations = integrationsService.getIntegrationsByType('storage');
-  const webhookEvents = integrationsService.getWebhookEvents();
   const stats = integrationsService.getIntegrationStats();
 
-  return (
-    <div className="p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-[var(--admin-text-primary)]">Integrations</h1>
-            <p className="text-[var(--admin-text-secondary)]">Manage third-party integrations and API connections</p>
-          </div>
-          <Badge className="bg-orange-500 text-[var(--admin-text-primary)]">Super Admin</Badge>
-        </div>
-      </div>
+  const [selectedIntegrationId, setSelectedIntegrationId] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
 
-      {/* Key Performance Indicators */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-[var(--admin-text-primary)] mb-2">Integration Overview</h2>
-        <p className="text-[var(--admin-text-secondary)] mb-6">Third-party services, API connections, and system health</p>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Total Integrations</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.total}</p>
-                <div className="flex items-center gap-1 text-sm text-blue-500">
-                  <Webhook className="h-4 w-4" />
-                  +2.1% from last month
-                </div>
-              </div>
-              <Webhook className="h-8 w-8 text-blue-500" />
-            </div>
-          </div>
-          
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Active</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.active}</p>
-                <div className="flex items-center gap-1 text-sm text-green-500">
-                  <CheckCircle className="h-4 w-4" />
-                  +12.5% from last month
-                </div>
-              </div>
-              <CheckCircle className="h-8 w-8 text-green-500" />
-            </div>
-          </div>
-          
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Errors</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.errors}</p>
-                <div className="flex items-center gap-1 text-sm text-red-500">
-                  <XCircle className="h-4 w-4" />
-                  Requires attention
-                </div>
-              </div>
-              <XCircle className="h-8 w-8 text-red-500" />
-            </div>
-          </div>
-          
-          <div className="bg-[var(--admin-card-bg)] border border-neutral-700 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--admin-text-secondary)] uppercase tracking-wide">Health Rate</p>
-                <p className="text-2xl font-bold text-[var(--admin-text-primary)]">{stats.healthRate}%</p>
-                <div className="flex items-center gap-1 text-sm text-purple-500">
-                  <Activity className="h-4 w-4" />
-                  +5.2% from last month
-                </div>
-              </div>
-              <Activity className="h-8 w-8 text-purple-500" />
-            </div>
-          </div>
-        </div>
-      </div>
+  // Filter integrations based on search and filters
+  const filteredIntegrations = allIntegrations.filter(integration => {
+    const matchesSearch = integration.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         integration.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         integration.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || integration.status === statusFilter;
+    const matchesType = typeFilter === 'all' || integration.type === typeFilter;
+    
+    return matchesSearch && matchesStatus && matchesType;
+  });
 
-      {/* Integration Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
-          <CardHeader>
-            <CardTitle className="text-[var(--admin-text-primary)] flex items-center gap-2">
-              <Webhook className="h-5 w-5 text-green-500" />
-              Integration Health
-            </CardTitle>
-            <CardDescription className="text-[var(--admin-text-secondary)]">System health and performance metrics</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
-              <div className="text-center">
-                <Webhook className="h-12 w-12 text-[var(--admin-text-secondary)] mx-auto mb-2" />
-                <p className="text-[var(--admin-text-secondary)]">Integration health chart</p>
-                <p className="text-sm text-neutral-500">Pie chart showing integration status</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+  useEffect(() => {
+    if (filteredIntegrations.length > 0 && !selectedIntegrationId) {
+      setSelectedIntegrationId(filteredIntegrations[0].id);
+    }
+  }, [filteredIntegrations, selectedIntegrationId]);
 
-        <Card className="bg-[var(--admin-card-bg)] border-neutral-700">
-          <CardHeader>
-            <CardTitle className="text-[var(--admin-text-primary)] flex items-center gap-2">
-              <Activity className="h-5 w-5 text-blue-500" />
-              API Usage Trends
-            </CardTitle>
-            <CardDescription className="text-[var(--admin-text-secondary)]">API calls and usage patterns over time</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 flex items-center justify-center bg-neutral-900/50 rounded-lg">
-              <div className="text-center">
-                <Activity className="h-12 w-12 text-[var(--admin-text-secondary)] mx-auto mb-2" />
-                <p className="text-[var(--admin-text-secondary)]">API usage chart</p>
-                <p className="text-sm text-neutral-500">Line chart showing API usage trends</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+  const handleIntegrationSelect = (id: string) => {
+    setSelectedIntegrationId(id);
+  };
 
-      {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--admin-text-secondary)]" />
-          <Input 
-            placeholder="Search integrations..."
-            className="pl-10 bg-[var(--admin-card-bg)] border-neutral-700 text-[var(--admin-text-primary)]"
-          />
-        </div>
-        <Button variant="outline" className="flex items-center gap-2 bg-[var(--admin-card-bg)] border-neutral-700 text-[var(--admin-text-primary)] hover:bg-[var(--admin-surface)]">
-          <Filter className="h-4 w-4" />
-          Filters
-        </Button>
-        <Button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-[var(--admin-text-primary)]">
-          <Plus className="h-4 w-4" />
-          Add Integration
-        </Button>
-      </div>
+  const handleView = (id: string) => {
+    console.log('View integration:', id);
+  };
 
-      {/* Integration Tabs */}
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6 bg-[var(--admin-card-bg)] border-neutral-700">
-          <TabsTrigger value="all" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">All</TabsTrigger>
-          <TabsTrigger value="payment" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Payment</TabsTrigger>
-          <TabsTrigger value="analytics" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Analytics</TabsTrigger>
-          <TabsTrigger value="communication" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Communication</TabsTrigger>
-          <TabsTrigger value="storage" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Storage</TabsTrigger>
-          <TabsTrigger value="webhooks" className="data-[state=active]:bg-[var(--admin-surface)] data-[state=active]:text-[var(--admin-text-primary)] text-[var(--admin-text-secondary)]">Webhooks</TabsTrigger>
-        </TabsList>
+  const handleConfigure = (id: string) => {
+    console.log('Configure integration:', id);
+  };
 
-        <TabsContent value="all" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {allIntegrations.map((integration) => {
-              const integrationCard = new IntegrationCardComponent(integration);
-              return <div key={integration.id}>{integrationCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
+  const handleMore = (id: string) => {
+    console.log('More actions for integration:', id);
+  };
 
-        <TabsContent value="payment" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {paymentIntegrations.map((integration) => {
-              const integrationCard = new IntegrationCardComponent(integration);
-              return <div key={integration.id}>{integrationCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
+  const handleRefresh = () => {
+    console.log('Refreshing integrations...');
+  };
 
-        <TabsContent value="analytics" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {analyticsIntegrations.map((integration) => {
-              const integrationCard = new IntegrationCardComponent(integration);
-              return <div key={integration.id}>{integrationCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
+  const handleExport = () => {
+    console.log('Exporting integrations...');
+  };
 
-        <TabsContent value="communication" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {communicationIntegrations.map((integration) => {
-              const integrationCard = new IntegrationCardComponent(integration);
-              return <div key={integration.id}>{integrationCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="storage" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {storageIntegrations.map((integration) => {
-              const integrationCard = new IntegrationCardComponent(integration);
-              return <div key={integration.id}>{integrationCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="webhooks" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {webhookEvents.map((event) => {
-              const eventCard = new WebhookEventCardComponent(event);
-              return <div key={event.id}>{eventCard.render()}</div>;
-            })}
-          </div>
-        </TabsContent>
-      </Tabs>
+  // Stats cards for the header
+  const statsCards = (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <MetricCard
+        title="Total Integrations"
+        value={stats.total}
+        growth={2.1}
+        icon={Webhook}
+        format="number"
+      />
+      <MetricCard
+        title="Active Integrations"
+        value={stats.active}
+        growth={12.5}
+        icon={CheckCircle}
+        format="number"
+      />
+      <MetricCard
+        title="Error Count"
+        value={stats.errors}
+        growth={-5.2}
+        icon={AlertTriangle}
+        format="number"
+      />
+      <MetricCard
+        title="Health Rate"
+        value={`${stats.healthRate}%`}
+        growth={5.2}
+        icon={Activity}
+        format="percentage"
+      />
     </div>
+  );
+
+  // Filters for the header
+  const filters = (
+    <div className="flex items-center gap-2">
+      <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
+          <SelectValue placeholder="Status" />
+        </SelectTrigger>
+        <SelectContent className="bg-surface-elev2 border-line-soft">
+          <SelectItem value="all" className="text-text hover:bg-surface-elev1">All Status</SelectItem>
+          <SelectItem value="active" className="text-text hover:bg-surface-elev1">Active</SelectItem>
+          <SelectItem value="inactive" className="text-text hover:bg-surface-elev1">Inactive</SelectItem>
+          <SelectItem value="error" className="text-text hover:bg-surface-elev1">Error</SelectItem>
+          <SelectItem value="pending" className="text-text hover:bg-surface-elev1">Pending</SelectItem>
+        </SelectContent>
+      </Select>
+      <Select value={typeFilter} onValueChange={setTypeFilter}>
+        <SelectTrigger className="w-40 bg-surface-elev2 border-line-soft text-text">
+          <SelectValue placeholder="Type" />
+        </SelectTrigger>
+        <SelectContent className="bg-surface-elev2 border-line-soft">
+          <SelectItem value="all" className="text-text hover:bg-surface-elev1">All Types</SelectItem>
+          <SelectItem value="payment" className="text-text hover:bg-surface-elev1">Payment</SelectItem>
+          <SelectItem value="analytics" className="text-text hover:bg-surface-elev1">Analytics</SelectItem>
+          <SelectItem value="communication" className="text-text hover:bg-surface-elev1">Communication</SelectItem>
+          <SelectItem value="storage" className="text-text hover:bg-surface-elev1">Storage</SelectItem>
+          <SelectItem value="social" className="text-text hover:bg-surface-elev1">Social</SelectItem>
+          <SelectItem value="crm" className="text-text hover:bg-surface-elev1">CRM</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
+  return (
+    <AdminPageTemplate
+      title="Integrations Management"
+      description="Manage third-party integrations and API connections"
+      icon={<Webhook className="h-6 w-6" />}
+      searchPlaceholder="Search integrations by name, provider, or description..."
+      searchValue={searchTerm}
+      onSearchChange={setSearchTerm}
+      showSearch={true}
+      showFilters={true}
+      showRefresh={true}
+      showExport={true}
+      onRefresh={handleRefresh}
+      onExport={handleExport}
+      filters={filters}
+      stats={statsCards}
+    >
+      <IntegrationDetailView
+        integrations={filteredIntegrations}
+        selectedIntegrationId={selectedIntegrationId}
+        onIntegrationSelect={handleIntegrationSelect}
+        onView={handleView}
+        onConfigure={handleConfigure}
+        onMore={handleMore}
+      />
+    </AdminPageTemplate>
   );
 }

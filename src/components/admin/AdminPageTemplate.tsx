@@ -11,6 +11,7 @@ import { Input } from "@src/components/ui/input";
 import { Button } from "@src/components/ui/button";
 import { Badge } from "@src/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@src/components/ui/select";
+import { SelectFilterSection } from "./SelectFilterSection";
 import { Search, Filter, RefreshCw, Download, Settings, TrendingUp, TrendingDown, Users, CheckCircle, DollarSign, Eye, Edit, MoreHorizontal, User, FileText, MapPin, Shield, Flag, MessageSquare, FileImage, Clock, XCircle, UserX, AlertTriangle, Calendar } from "lucide-react";
 import { ReactNode } from "react";
 
@@ -900,38 +901,18 @@ export function VerificationDetailView({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Filter Section */}
-      <div className="bg-[var(--admin-card-bg)] border border-[var(--admin-border-soft)] rounded-lg p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <label className="text-sm font-medium text-[var(--admin-text-primary)]-muted mb-2 block">Select Verification Request</label>
-            <Select value={selectedRequestId || requests[0]?.id} onValueChange={onRequestSelect}>
-              <SelectTrigger className="bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)]">
-                <SelectValue placeholder="Choose a verification request..." />
-              </SelectTrigger>
-              <SelectContent className="bg-[var(--admin-surface)] border border-[var(--admin-border-soft)]">
-                {requests.map((request) => (
-                  <SelectItem 
-                    key={request.id} 
-                    value={request.id}
-                    className="text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]"
-                  >
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      <span>{request.user.name}</span>
-                      <Badge 
-                        variant={request.status === 'approved' ? 'default' : 'secondary'}
-                        className="text-xs"
-                      >
-                        {request.status}
-                      </Badge>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <SelectFilterSection
+        title="Select Verification Request"
+        placeholder="Choose a verification request..."
+        value={selectedRequestId || requests[0]?.id}
+        onValueChange={onRequestSelect || (() => {})}
+        options={requests.map((request) => ({
+          id: request.id,
+          label: request.user.name,
+          icon: <User className="h-4 w-4" />,
+          status: request.status
+        }))}
+      />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
+import { SelectFilterSection } from "@src/components/admin/SelectFilterSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -574,41 +575,21 @@ function GiftsDetailView({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Filter Section */}
-      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <label className="text-sm font-medium text-text-muted mb-2 block">Select Gift</label>
-            <Select value={selectedGiftId || gifts[0]?.id} onValueChange={onGiftSelect}>
-              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
-                <SelectValue placeholder="Choose a gift..." />
-              </SelectTrigger>
-              <SelectContent className="bg-surface-elev2 border-line-soft">
-                {gifts.map((gift) => {
-                  const Icon = getTypeIcon();
-                  return (
-                    <SelectItem 
-                      key={gift.id} 
-                      value={gift.id}
-                      className="text-text hover:bg-surface-elev1"
-                    >
-                      <div className="flex items-center gap-2">
-                        {Icon}
-                        <span>{gift.name}</span>
-                        <Badge 
-                          variant={gift.status === 'active' ? 'default' : 'secondary'}
-                          className="text-xs"
-                        >
-                          {gift.status}
-                        </Badge>
-                      </div>
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <SelectFilterSection
+        title="Select Gift"
+        placeholder="Choose a gift..."
+        value={selectedGiftId || gifts[0]?.id}
+        onValueChange={onGiftSelect || (() => {})}
+        options={gifts.map((gift) => {
+          const Icon = getTypeIcon();
+          return {
+            id: gift.id,
+            label: gift.name,
+            icon: Icon,
+            status: gift.status
+          };
+        })}
+      />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -387,14 +387,28 @@ export function CompactFilterCard({
   options, 
   className 
 }: CompactFilterCardProps) {
+  const selectedOption = options.find(option => option.id === value);
+  
   return (
     <div className={`compact-filter-group bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] rounded-lg p-4 ${className}`}>
       <div className="flex items-center gap-4">
         <div className="flex-1">
           <label className="text-sm font-medium text-[var(--admin-text-primary)]-muted mb-2 block">{title}</label>
           <Select value={value} onValueChange={onValueChange}>
-            <SelectTrigger className="bg-[var(--admin-card-bg)] border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]/80 focus:ring-2 focus:ring-[var(--admin-border-soft)]/30 focus:border-[var(--admin-border-soft)] transition-all duration-200">
-              <SelectValue placeholder={placeholder} />
+            <SelectTrigger className="bg-[var(--admin-card-bg)] border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)]/80 focus:ring-2 focus:ring-[var(--admin-border-soft)]/30 focus:border-[var(--admin-border-soft)] transition-all duration-200 h-12 min-w-full">
+              {selectedOption ? (
+                <div className="flex items-center gap-1.5">
+                  {selectedOption.icon}
+                  <span className="text-left">{selectedOption.label}</span>
+                  {selectedOption.status && (
+                    <span className="text-xs px-1 py-0.5 bg-[var(--admin-surface)] rounded text-[var(--admin-text-primary)]-muted">
+                      {selectedOption.status}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <SelectValue placeholder={placeholder} />
+              )}
             </SelectTrigger>
             <SelectContent className="bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] shadow-xl backdrop-blur-sm z-50 min-w-[200px]">
               {options.map((option) => {
@@ -404,9 +418,9 @@ export function CompactFilterCard({
                     value={option.id}
                     className="text-[var(--admin-text-primary)] hover:bg-[var(--admin-surface)]/50 focus:bg-[var(--admin-surface)]/50 cursor-pointer transition-colors duration-150 py-3"
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
                       {option.icon}
-                      <span>{option.label}</span>
+                      <span className="flex-1">{option.label}</span>
                       {option.status && (
                         <Badge 
                           variant={option.status === 'published' || option.status === 'completed' ? 'default' : 'secondary'}

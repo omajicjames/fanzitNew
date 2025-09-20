@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
+import { SelectFilterSection } from "@src/components/admin/SelectFilterSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -637,43 +638,23 @@ function ModerationDetailView({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Filter Section */}
-      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <label className="text-sm font-medium text-text-muted mb-2 block">Select Item</label>
-            <Select value={selectedItemId || items[0]?.id} onValueChange={onItemSelect}>
-              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
-                <SelectValue placeholder="Choose an item..." />
-              </SelectTrigger>
-              <SelectContent className="bg-surface-elev2 border-line-soft">
-                {items.map((item) => (
-                  <SelectItem 
-                    key={item.id} 
-                    value={item.id}
-                    className="text-text hover:bg-surface-elev1"
-                  >
-                    <div className="flex items-center gap-2">
-                      {item.type === 'image' ? <Image className="h-4 w-4" /> :
-                       item.type === 'video' ? <Video className="h-4 w-4" /> :
-                       item.type === 'text' ? <FileText className="h-4 w-4" /> :
-                       item.type === 'post' ? <FileText className="h-4 w-4" /> :
-                       item.type === 'comment' ? <MessageCircle className="h-4 w-4" /> :
-                       <Reply className="h-4 w-4" />}
-                      <span>{item.type.toUpperCase()}</span>
-                      <Badge 
-                        variant={item.status === 'pending' ? 'secondary' : 'default'}
-                        className="text-xs"
-                      >
-                        {item.status}
-                      </Badge>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <SelectFilterSection
+        title="Select Item"
+        placeholder="Choose an item..."
+        value={selectedItemId || items[0]?.id}
+        onValueChange={onItemSelect || (() => {})}
+        options={items.map((item) => ({
+          id: item.id,
+          label: item.type.toUpperCase(),
+          icon: item.type === 'image' ? <Image className="h-4 w-4" /> :
+                item.type === 'video' ? <Video className="h-4 w-4" /> :
+                item.type === 'text' ? <FileText className="h-4 w-4" /> :
+                item.type === 'post' ? <FileText className="h-4 w-4" /> :
+                item.type === 'comment' ? <MessageCircle className="h-4 w-4" /> :
+                <Reply className="h-4 w-4" />,
+          status: item.status
+        }))}
+      />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
+import { SelectFilterSection } from "@src/components/admin/SelectFilterSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -512,41 +513,21 @@ function CategoriesDetailView({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Filter Section */}
-      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <label className="text-sm font-medium text-text-muted mb-2 block">Select Category</label>
-            <Select value={selectedCategoryId || categories[0]?.id} onValueChange={onCategorySelect}>
-              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
-                <SelectValue placeholder="Choose a category..." />
-              </SelectTrigger>
-              <SelectContent className="bg-surface-elev2 border-line-soft">
-                {categories.map((category) => {
-                  const Icon = getTypeIcon();
-                  return (
-                    <SelectItem 
-                      key={category.id} 
-                      value={category.id}
-                      className="text-text hover:bg-surface-elev1"
-                    >
-                      <div className="flex items-center gap-2">
-                        {Icon}
-                        <span>{category.name}</span>
-                        <Badge 
-                          variant={category.status === 'active' ? 'default' : 'secondary'}
-                          className="text-xs"
-                        >
-                          {category.status}
-                        </Badge>
-                      </div>
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <SelectFilterSection
+        title="Select Category"
+        placeholder="Choose a category..."
+        value={selectedCategoryId || categories[0]?.id}
+        onValueChange={onCategorySelect || (() => {})}
+        options={categories.map((category) => {
+          const Icon = getTypeIcon();
+          return {
+            id: category.id,
+            label: category.name,
+            icon: Icon,
+            status: category.status
+          };
+        })}
+      />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
+import { SelectFilterSection } from "@src/components/admin/SelectFilterSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -461,41 +462,21 @@ function ProductsDetailView({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Filter Section */}
-      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <label className="text-sm font-medium text-text-muted mb-2 block">Select Product</label>
-            <Select value={selectedProductId || products[0]?.id} onValueChange={onProductSelect}>
-              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
-                <SelectValue placeholder="Choose a product..." />
-              </SelectTrigger>
-              <SelectContent className="bg-surface-elev2 border-line-soft">
-                {products.map((product) => {
-                  const Icon = getTypeIcon();
-                  return (
-                    <SelectItem 
-                      key={product.id} 
-                      value={product.id}
-                      className="text-text hover:bg-surface-elev1"
-                    >
-                      <div className="flex items-center gap-2">
-                        {Icon}
-                        <span>{product.name.length > 30 ? `${product.name.substring(0, 30)}...` : product.name}</span>
-                        <Badge 
-                          variant={product.status === 'active' ? 'default' : 'secondary'}
-                          className="text-xs"
-                        >
-                          {product.status}
-                        </Badge>
-                      </div>
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <SelectFilterSection
+        title="Select Product"
+        placeholder="Choose a product..."
+        value={selectedProductId || products[0]?.id}
+        onValueChange={onProductSelect || (() => {})}
+        options={products.map((product) => {
+          const Icon = getTypeIcon();
+          return {
+            id: product.id,
+            label: product.name.length > 30 ? `${product.name.substring(0, 30)}...` : product.name,
+            icon: Icon,
+            status: product.status
+          };
+        })}
+      />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

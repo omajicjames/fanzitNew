@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
+import { SelectFilterSection } from "@src/components/admin/SelectFilterSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -633,41 +634,21 @@ function RepliesDetailView({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Filter Section */}
-      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <label className="text-sm font-medium text-text-muted mb-2 block">Select Reply</label>
-            <Select value={selectedReplyId || replies[0]?.id} onValueChange={onReplySelect}>
-              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
-                <SelectValue placeholder="Choose a reply..." />
-              </SelectTrigger>
-              <SelectContent className="bg-surface-elev2 border-line-soft">
-                {replies.map((reply) => {
-                  const Icon = getTypeIcon();
-                  return (
-                    <SelectItem 
-                      key={reply.id} 
-                      value={reply.id}
-                      className="text-text hover:bg-surface-elev1"
-                    >
-                      <div className="flex items-center gap-2">
-                        {Icon}
-                        <span>{reply.content.length > 30 ? `${reply.content.substring(0, 30)}...` : reply.content}</span>
-                        <Badge 
-                          variant={reply.status === 'approved' ? 'default' : 'secondary'}
-                          className="text-xs"
-                        >
-                          {reply.status}
-                        </Badge>
-                      </div>
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <SelectFilterSection
+        title="Select Reply"
+        placeholder="Choose a reply..."
+        value={selectedReplyId || replies[0]?.id}
+        onValueChange={onReplySelect || (() => {})}
+        options={replies.map((reply) => {
+          const Icon = getTypeIcon();
+          return {
+            id: reply.id,
+            label: reply.content.length > 30 ? `${reply.content.substring(0, 30)}...` : reply.content,
+            icon: Icon,
+            status: reply.status
+          };
+        })}
+      />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

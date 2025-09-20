@@ -253,7 +253,8 @@ export const ADMIN_SECTION_PILLS: Record<AdminSection, readonly PillItem[]> = {
     { label: "Access", href: "/admin/security/access" },
   ],
   integrations: [
-    { label: "Catalog", href: "/admin/integrations" },
+    { label: "Overview", href: "/admin/integrations" },
+    { label: "Catalog", href: "/admin/integrations/catalog" },
     { label: "Webhooks", href: "/admin/integrations/webhooks" },
     { label: "API Keys", href: "/admin/integrations/keys" },
   ],

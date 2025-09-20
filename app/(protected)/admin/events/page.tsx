@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
+import { SelectFilterSection } from "@src/components/admin/SelectFilterSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -531,41 +532,21 @@ function EventsDetailView({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Filter Section */}
-      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <label className="text-sm font-medium text-text-muted mb-2 block">Select Event</label>
-            <Select value={selectedEventId || events[0]?.id} onValueChange={onEventSelect}>
-              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
-                <SelectValue placeholder="Choose an event..." />
-              </SelectTrigger>
-              <SelectContent className="bg-surface-elev2 border-line-soft">
-                {events.map((event) => {
-                  const Icon = getTypeIcon();
-                  return (
-                    <SelectItem 
-                      key={event.id} 
-                      value={event.id}
-                      className="text-text hover:bg-surface-elev1"
-                    >
-                      <div className="flex items-center gap-2">
-                        {Icon}
-                        <span>{event.title}</span>
-                        <Badge 
-                          variant={event.status === 'live' ? 'destructive' : 'default'}
-                          className="text-xs"
-                        >
-                          {event.status}
-                        </Badge>
-                      </div>
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <SelectFilterSection
+        title="Select Event"
+        placeholder="Choose an event..."
+        value={selectedEventId || events[0]?.id}
+        onValueChange={onEventSelect || (() => {})}
+        options={events.map((event) => {
+          const Icon = getTypeIcon();
+          return {
+            id: event.id,
+            label: event.title,
+            icon: Icon,
+            status: event.status
+          };
+        })}
+      />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

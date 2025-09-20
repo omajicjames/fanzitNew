@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AdminPageTemplate, MetricCard, UserCard } from "@src/components/admin/AdminPageTemplate";
+import { SelectFilterSection } from "@src/components/admin/SelectFilterSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -294,6 +295,7 @@ class MembersManagementService {
         created_at: "2024-01-20T12:00:00Z",
         updated_at: "2024-01-25T09:15:00Z",
         last_seen: "2024-01-25T09:15:00Z",
+        last_login: "2024-01-25T09:15:00Z",
         location: "London, UK",
         website: "",
         social_links: {
@@ -309,6 +311,10 @@ class MembersManagementService {
           earnings: 0,
           total_views: 45000
         },
+        financial: {
+          balance: 0,
+          wallet: 0
+        },
         subscription: {
           plan: "free",
           status: "active"
@@ -321,7 +327,8 @@ class MembersManagementService {
         user_agent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15",
         country: "United Kingdom",
         city: "London",
-        timezone: "Europe/London"
+        timezone: "Europe/London",
+        verification_status: "not_required"
       },
       {
         id: "4",
@@ -337,6 +344,7 @@ class MembersManagementService {
         created_at: "2024-01-05T14:20:00Z",
         updated_at: "2024-01-27T11:30:00Z",
         last_seen: "2024-01-27T11:30:00Z",
+        last_login: "2024-01-27T11:30:00Z",
         location: "Madrid, Spain",
         website: "https://alexrodriguez.tech",
         social_links: {
@@ -353,6 +361,10 @@ class MembersManagementService {
           earnings: 3200.75,
           total_views: 180000
         },
+        financial: {
+          balance: 3200.75,
+          wallet: 150.25
+        },
         subscription: {
           plan: "pro",
           status: "active",
@@ -365,7 +377,8 @@ class MembersManagementService {
         user_agent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
         country: "Spain",
         city: "Madrid",
-        timezone: "Europe/Madrid"
+        timezone: "Europe/Madrid",
+        verification_status: "verified"
       }
     ];
   }
@@ -747,38 +760,18 @@ function MembersDetailView({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Filter Section */}
-      <div className="bg-surface-elev1 border border-line-soft rounded-lg p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <label className="text-sm font-medium text-text-muted mb-2 block">Select Member</label>
-            <Select value={selectedMemberId || members[0]?.id} onValueChange={onMemberSelect}>
-              <SelectTrigger className="bg-surface-elev2 border-line-soft text-text">
-                <SelectValue placeholder="Choose a member..." />
-              </SelectTrigger>
-              <SelectContent className="bg-surface-elev2 border-line-soft">
-                {members.map((member) => (
-                  <SelectItem 
-                    key={member.id} 
-                    value={member.id}
-                    className="text-text hover:bg-surface-elev1"
-                  >
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      <span>{member.name}</span>
-                      <Badge 
-                        variant={member.status === 'active' ? 'default' : 'secondary'}
-                        className="text-xs"
-                      >
-                        {member.status}
-                      </Badge>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <SelectFilterSection
+        title="Select Member"
+        placeholder="Choose a member..."
+        value={selectedMemberId || members[0]?.id}
+        onValueChange={onMemberSelect || (() => {})}
+        options={members.map((member) => ({
+          id: member.id,
+          label: member.name,
+          icon: <User className="h-4 w-4" />,
+          status: member.status
+        }))}
+      />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
