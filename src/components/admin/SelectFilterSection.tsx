@@ -4,10 +4,10 @@ import { CompactFilterCard } from "./SelectionCard";
 import { ReactNode } from "react";
 
 // ----------------------
-// Blue Filter Section Component
-// Location: /src/components/admin/BlueFilterSection.tsx
-// Purpose: Reusable blue-themed filter section for top of admin pages
-// Features: Independent state, blue background, consistent styling
+// Select Filter Section Component
+// Location: /src/components/admin/SelectFilterSection.tsx
+// Purpose: Reusable filter section for top of admin pages
+// Features: Independent state, consistent styling
 // Note: Used for top filter sections that need independent post selection
 // ----------------------
 
@@ -18,7 +18,7 @@ interface FilterOption {
   icon?: ReactNode;
 }
 
-interface BlueFilterSectionProps {
+interface SelectFilterSectionProps {
   title: string;
   placeholder?: string;
   value: string;
@@ -27,14 +27,14 @@ interface BlueFilterSectionProps {
   className?: string;
 }
 
-export function BlueFilterSection({ 
+export function SelectFilterSection({ 
   title, 
   placeholder = "Choose an option...", 
   value, 
   onValueChange, 
   options, 
   className 
-}: BlueFilterSectionProps) {
+}: SelectFilterSectionProps) {
   return (
     <div className={`bg-blue-200 p-2 rounded-lg border-2 border-blue-400 ${className}`}>
       <CompactFilterCard

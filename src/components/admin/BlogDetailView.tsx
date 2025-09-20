@@ -2,7 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@src/components/ui/card";
 import { BlogPostCard } from "./BlogPostCard";
-import { RedRightSideDetailView } from "./RedRightSideDetailView";
+import { RightCompactDetail } from "./RightCompactDetail";
 import { 
   PenTool, Eye, Edit, Trash2, Calendar, User, TrendingUp, BarChart3, 
   CheckCircle, Clock, AlertTriangle, FileText, Heart, MessageCircle, 
@@ -118,7 +118,7 @@ export function BlogDetailView({
       {/* Quick Stats and Controls - Right Column */}
       <div className="space-y-4">
         {/* Post Selection */}
-        <RedRightSideDetailView
+        <RightCompactDetail
           value={selectedPostId}
           onValueChange={onPostSelect}
           posts={posts}

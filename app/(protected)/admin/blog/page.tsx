@@ -2,7 +2,7 @@
 
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
 import { BlogDetailView } from "@src/components/admin/BlogDetailView";
-import { BlueFilterSection } from "@src/components/admin/BlueFilterSection";
+import { SelectFilterSection } from "@src/components/admin/SelectFilterSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -475,7 +475,7 @@ export default function BlogPage() {
     >
       <div className="space-y-6">
         {/* Filter Section */}
-        <BlueFilterSection
+        <SelectFilterSection
           title="Select Post"
           placeholder="Choose a post..."
           value={selectedPostIdFilter || filteredPosts[0]?.id || ''}
