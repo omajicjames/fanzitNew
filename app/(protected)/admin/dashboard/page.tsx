@@ -10,7 +10,6 @@
 
 "use client";
 
-import requireAdminPage from '@src/features/admin/auth/requireAdminPage';
 import EnhancedAdminPageClient from '@src/features/admin/components/EnhancedAdminPageClient';
 import { useEffect } from 'react';
 
@@ -18,8 +17,9 @@ import { useEffect } from 'react';
 // Admin Dashboard Component
 // Purpose: Renders the admin dashboard for /admin/dashboard route
 // Note: Alternative to main /admin route, same functionality
+// Authentication: Now handled at layout level by AdminLayoutWrapper
 // ----------------------
-function AdminDashboardPage() {
+export default function AdminDashboardPage() {
   // Debug: Check localStorage on page load
   useEffect(() => {
     console.log('=== Admin Dashboard (/dashboard) Page Loaded ===');
@@ -34,10 +34,3 @@ function AdminDashboardPage() {
     </div>
   );
 }
-
-// ----------------------
-// Protected Export
-// Purpose: Wraps component with requireAdminPage HOC for authentication
-// Note: Ensures only authenticated admins can access this page
-// ----------------------
-export default requireAdminPage(AdminDashboardPage);

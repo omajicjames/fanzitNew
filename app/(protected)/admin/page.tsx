@@ -10,7 +10,6 @@
 
 "use client";
 
-import requireAdminPage from '@src/features/admin/auth/requireAdminPage';
 import { AdminPageTemplate } from '@src/components/admin/AdminPageTemplate';
 import { AdminDashboardDetailView } from '@src/components/admin/AdminDashboardDetailView';
 import { BarChart3, TrendingUp, Users, DollarSign, Activity, Eye, MessageSquare, Heart, Target, CheckCircle, Calendar, Zap, Clock, AlertTriangle } from 'lucide-react';
@@ -20,8 +19,9 @@ import { useEffect, useState } from 'react';
 // Admin Dashboard Component
 // Purpose: Renders the main admin dashboard with single-card layout
 // Note: Uses AdminDashboardDetailView for comprehensive dashboard display
+// Authentication: Now handled at layout level by AdminLayoutWrapper
 // ----------------------
-function AdminDashboardPage() {
+export default function AdminDashboardPage() {
   const [selectedMetricId, setSelectedMetricId] = useState("overview");
 
   // Debug: Check localStorage on page load
@@ -94,10 +94,3 @@ function AdminDashboardPage() {
     </AdminPageTemplate>
   );
 }
-
-// ----------------------
-// Protected Export
-// Purpose: Wraps component with requireAdminPage HOC for authentication
-// Note: Ensures only authenticated admins can access this page
-// ----------------------
-export default requireAdminPage(AdminDashboardPage);
