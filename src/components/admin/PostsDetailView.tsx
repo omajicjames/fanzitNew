@@ -2,7 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@src/components/ui/card";
 import { ProfessionalPostCard } from "./ProfessionalPostCard";
-import { PostSelectionCard } from "./SelectionCard";
+import { RedRightSideDetailView } from "./RedRightSideDetailView";
 import { 
   FileText, Eye, Edit, Trash2, Calendar, User, TrendingUp, BarChart3, 
   CheckCircle, Clock, AlertTriangle, Image, Video, Music, Heart, MessageCircle, 
@@ -141,18 +141,16 @@ export function PostsDetailView({
       {/* Quick Stats and Controls - Right Column */}
       <div className="space-y-4">
         {/* Post Selection */}
-        <div className="bg-red-200 p-2 rounded-lg border-2 border-red-400">
-          <PostSelectionCard
-            value={selectedPostId}
-            onValueChange={onPostSelect}
-            posts={posts.map(post => ({
-              id: post.id,
-              title: post.title,
-              category: post.category,
-              status: post.status
-            }))}
-          />
-        </div>
+        <RedRightSideDetailView
+          value={selectedPostId}
+          onValueChange={onPostSelect}
+          posts={posts.map(post => ({
+            id: post.id,
+            title: post.title,
+            category: post.category,
+            status: post.status
+          }))}
+        />
 
         {/* Quick Stats */}
         <Card className="bg-admin-panel border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)]">

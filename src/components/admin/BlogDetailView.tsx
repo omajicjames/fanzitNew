@@ -2,7 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@src/components/ui/card";
 import { BlogPostCard } from "./BlogPostCard";
-import { PostSelectionCard } from "./SelectionCard";
+import { RedRightSideDetailView } from "./RedRightSideDetailView";
 import { 
   PenTool, Eye, Edit, Trash2, Calendar, User, TrendingUp, BarChart3, 
   CheckCircle, Clock, AlertTriangle, FileText, Heart, MessageCircle, 
@@ -118,13 +118,11 @@ export function BlogDetailView({
       {/* Quick Stats and Controls - Right Column */}
       <div className="space-y-4">
         {/* Post Selection */}
-        <div className="bg-yellow-200 p-2 rounded-lg border-2 border-yellow-400">
-          <PostSelectionCard
-            value={selectedPostId}
-            onValueChange={onPostSelect}
-            posts={posts}
-          />
-        </div>
+        <RedRightSideDetailView
+          value={selectedPostId}
+          onValueChange={onPostSelect}
+          posts={posts}
+        />
 
         {/* Quick Stats */}
         <Card className="bg-admin-panel border border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)]">

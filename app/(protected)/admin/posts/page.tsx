@@ -2,7 +2,7 @@
 
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
 import { PostsDetailView } from "@src/components/admin/PostsDetailView";
-import { CompactFilterCard } from "@src/components/admin/SelectionCard";
+import { BlueFilterSection } from "@src/components/admin/BlueFilterSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -509,20 +509,18 @@ export default function PostsPage() {
     >
       <div className="space-y-6">
         {/* Filter Section */}
-        <div className="bg-blue-200 p-2 rounded-lg border-2 border-blue-400">
-          <CompactFilterCard
-            title="Select Post"
-            placeholder="Choose a post..."
-            value={selectedPostId || filteredPosts[0]?.id || ''}
-            onValueChange={handlePostSelect}
-            options={filteredPosts.map(post => ({
-              id: post.id,
-              label: post.title,
-              status: post.status,
-              icon: <FileText className="h-4 w-4" />
-            }))}
-          />
-        </div>
+        <BlueFilterSection
+          title="Select Post"
+          placeholder="Choose a post..."
+          value={selectedPostId || filteredPosts[0]?.id || ''}
+          onValueChange={handlePostSelect}
+          options={filteredPosts.map(post => ({
+            id: post.id,
+            label: post.title,
+            status: post.status,
+            icon: <FileText className="h-4 w-4" />
+          }))}
+        />
 
         <PostsDetailView
           posts={filteredPosts}
