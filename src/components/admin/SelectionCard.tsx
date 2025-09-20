@@ -55,7 +55,7 @@ export function SelectionCard({
       </CardHeader>
       <CardContent>
         <Select value={value} onValueChange={onValueChange} disabled={disabled}>
-          <SelectTrigger className="bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)] focus:ring-2 focus:ring-[var(--brand)]/20 focus:border-[var(--brand)]/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+          <SelectTrigger className="bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)] hover:bg-[var(--admin-surface)]/80 focus:ring-2 focus:ring-[var(--admin-border-soft)]/30 focus:border-[var(--admin-border-soft)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent className="bg-[var(--admin-surface)] border border-[var(--admin-border-soft)] shadow-xl backdrop-blur-sm z-50 min-w-[200px]">
@@ -63,7 +63,7 @@ export function SelectionCard({
               <SelectItem
                 key={option.id}
                 value={option.id}
-                className="text-[var(--admin-text-primary)] hover:bg-[var(--admin-card-bg)] focus:bg-[var(--admin-card-bg)] cursor-pointer transition-colors duration-150 py-3"
+                className="text-[var(--admin-text-primary)] hover:bg-[var(--admin-surface)]/50 focus:bg-[var(--admin-surface)]/50 cursor-pointer transition-colors duration-150 py-3"
               >
                 <div className="flex items-center gap-3 py-1">
                   {option.icon && (
