@@ -141,16 +141,18 @@ export function PostsDetailView({
       {/* Quick Stats and Controls - Right Column */}
       <div className="space-y-4">
         {/* Post Selection */}
-        <PostSelectionCard
-          value={selectedPostId}
-          onValueChange={onPostSelect}
-          posts={posts.map(post => ({
-            id: post.id,
-            title: post.title,
-            category: post.category,
-            status: post.status
-          }))}
-        />
+        <div className="bg-yellow-200 p-2 rounded-lg border-2 border-yellow-400">
+          <PostSelectionCard
+            value={selectedPostId}
+            onValueChange={onPostSelect}
+            posts={posts.map(post => ({
+              id: post.id,
+              title: post.title,
+              category: post.category,
+              status: post.status
+            }))}
+          />
+        </div>
 
         {/* Quick Stats */}
         <Card className="bg-admin-panel border border-[var(--admin-border-soft)] text-[var(--admin-text-primary)]">

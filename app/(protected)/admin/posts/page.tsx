@@ -501,18 +501,20 @@ export default function PostsPage() {
     >
       <div className="space-y-6">
         {/* Filter Section */}
-        <CompactFilterCard
-          title="Select Post"
-          placeholder="Choose a post..."
-          value={selectedPostId || filteredPosts[0]?.id || ''}
-          onValueChange={handlePostSelect}
-          options={filteredPosts.map(post => ({
-            id: post.id,
-            label: post.title,
-            status: post.status,
-            icon: <FileText className="h-4 w-4" />
-          }))}
-        />
+        <div className="bg-yellow-200 p-2 rounded-lg border-2 border-yellow-400">
+          <CompactFilterCard
+            title="Select Post"
+            placeholder="Choose a post..."
+            value={selectedPostId || filteredPosts[0]?.id || ''}
+            onValueChange={handlePostSelect}
+            options={filteredPosts.map(post => ({
+              id: post.id,
+              label: post.title,
+              status: post.status,
+              icon: <FileText className="h-4 w-4" />
+            }))}
+          />
+        </div>
 
         <PostsDetailView
           posts={filteredPosts}
