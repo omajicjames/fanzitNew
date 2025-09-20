@@ -36,7 +36,7 @@ export function SelectFilterSection({
   className 
 }: SelectFilterSectionProps) {
   return (
-    <div className={`bg-blue-200 p-2 rounded-lg border-2 border-blue-400 ${className}`}>
+    <div className={`p-2 rounded-lg ${className}`}>
       <CompactFilterCard
         title={title}
         placeholder={placeholder}

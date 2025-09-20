@@ -31,7 +31,7 @@ export function RightCompactDetail({
   className 
 }: RightCompactDetailProps) {
   return (
-    <div className={`bg-red-200 p-2 rounded-lg border-2 border-red-400 ${className}`}>
+    <div className={`p-2 rounded-lg ${className}`}>
       <PostSelectionCard
         value={value}
         onValueChange={onValueChange}
