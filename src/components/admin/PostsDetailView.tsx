@@ -141,7 +141,7 @@ export function PostsDetailView({
       {/* Quick Stats and Controls - Right Column */}
       <div className="space-y-4">
         {/* Post Selection */}
-        <div className="bg-yellow-200 p-2 rounded-lg border-2 border-yellow-400">
+        <div className="bg-red-200 p-2 rounded-lg border-2 border-red-400">
           <PostSelectionCard
             value={selectedPostId}
             onValueChange={onPostSelect}

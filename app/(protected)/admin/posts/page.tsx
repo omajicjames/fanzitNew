@@ -509,7 +509,7 @@ export default function PostsPage() {
     >
       <div className="space-y-6">
         {/* Filter Section */}
-        <div className="bg-yellow-200 p-2 rounded-lg border-2 border-yellow-400">
+        <div className="bg-blue-200 p-2 rounded-lg border-2 border-blue-400">
           <CompactFilterCard
             title="Select Post"
             placeholder="Choose a post..."
