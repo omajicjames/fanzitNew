@@ -229,159 +229,361 @@ export function AnalyticsDashboard() {
         </Card>
       </div>
 
-      {/* Detailed Analytics Tabs */}
-      <Tabs defaultValue="content" className="w-full">
+      {/* Admin Analytics Tabs */}
+      <Tabs defaultValue="overview" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="content">Content Performance</TabsTrigger>
-          <TabsTrigger value="subscribers">Subscribers</TabsTrigger>
-          <TabsTrigger value="revenue">Revenue Breakdown</TabsTrigger>
-          <TabsTrigger value="goals">Goals & Targets</TabsTrigger>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="cohorts">Cohorts</TabsTrigger>
+          <TabsTrigger value="funnels">Funnels</TabsTrigger>
+          <TabsTrigger value="retention">Retention</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="content" className="mt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
+        <TabsContent value="overview" className="mt-6">
+          <div className="space-y-6">
+            {/* Platform-Wide Health Metrics */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Top Performing Content</CardTitle>
+                  <CardTitle className="flex items-center space-x-2">
+                    <DollarSign className="h-5 w-5" />
+                    Platform Revenue & Take Rate
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {topContent.map((content) => (
-                      <div key={content.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <div className="p-2 bg-primary/10 rounded-lg">
-                            {content.type === "video" ? (
-                              <Play className="h-4 w-4 text-primary" />
-                            ) : (
-                              <Eye className="h-4 w-4 text-primary" />
-                            )}
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Total Platform Revenue</span>
+                      <span className="text-2xl font-bold text-primary">$2,847,392</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Platform Take Rate</span>
+                      <span className="text-xl font-semibold text-green-600">15.2%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Creator Payouts</span>
+                      <span className="text-lg font-medium">$2,415,283</span>
+                    </div>
+                    <Progress value={15.2} className="w-full" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Users className="h-5 w-5" />
+                    Daily Active Users
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Daily Active Creators</span>
+                      <span className="text-2xl font-bold text-primary">1,247</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Daily Active Fans</span>
+                      <span className="text-2xl font-bold text-primary">12,847</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Total Platform Users</span>
+                      <span className="text-lg font-medium">45,392</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      <span className="text-green-600">+8.2%</span> from last month
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* New Sign-ups and Top Earners */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>New Sign-ups (Last 30 Days)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">New Creators</span>
+                      <span className="text-xl font-bold text-primary">234</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">New Fans</span>
+                      <span className="text-xl font-bold text-primary">2,847</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Creator/Fan Ratio</span>
+                      <span className="text-lg font-medium">1:12.2</span>
+                    </div>
+                    <Progress value={75} className="w-full" />
+                    <div className="text-xs text-muted-foreground">
+                      <span className="text-green-600">+15.3%</span> creator growth
                           </div>
-                          <div>
-                            <h4 className="font-semibold">{content.title}</h4>
-                            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                              <span>{content.views.toLocaleString()} views</span>
-                              <span>{content.likes} likes</span>
-                              <span>${content.revenue} revenue</span>
                             </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Crown className="h-5 w-5" />
+                    Top Earners (This Month)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {[
+                      { name: "Sarah Johnson", earnings: "$12,847", tier: "VIP" },
+                      { name: "Mike Chen", earnings: "$9,234", tier: "Premium" },
+                      { name: "Emma Davis", earnings: "$7,891", tier: "Premium" },
+                      { name: "Alex Rodriguez", earnings: "$6,543", tier: "Basic" },
+                      { name: "Lisa Wang", earnings: "$5,432", tier: "Basic" },
+                    ].map((creator, index) => (
+                      <div key={index} className="flex justify-between items-center">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
+                            <span className="text-xs font-medium">{index + 1}</span>
                           </div>
+                          <span className="text-sm font-medium">{creator.name}</span>
+                          <Badge variant="outline" className="text-xs">
+                            {creator.tier}
+                          </Badge>
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm font-medium">{content.engagement}% engagement</div>
-                          <Progress value={content.engagement} className="w-20 mt-1" />
-                        </div>
+                        <span className="text-sm font-semibold text-primary">
+                          {creator.earnings}
+                        </span>
                       </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
             </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Content Stats</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">342</div>
-                  <p className="text-sm text-muted-foreground">Total Posts</p>
-                </div>
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div>
-                    <div className="text-lg font-semibold">89.2K</div>
-                    <p className="text-xs text-muted-foreground">Total Views</p>
-                  </div>
-                  <div>
-                    <div className="text-lg font-semibold">12.5K</div>
-                    <p className="text-xs text-muted-foreground">Total Likes</p>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Videos</span>
-                    <span>156 (45.6%)</span>
-                  </div>
-                  <Progress value={45.6} />
-                  <div className="flex justify-between text-sm">
-                    <span>Images</span>
-                    <span>186 (54.4%)</span>
-                  </div>
-                  <Progress value={54.4} />
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </TabsContent>
 
-        <TabsContent value="subscribers" className="mt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
+        <TabsContent value="cohorts" className="mt-6">
+          <div className="space-y-6">
+            {/* Creator Cohorts */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Users className="h-5 w-5" />
+                  Creator Cohorts Analysis
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Analyze the performance of creators who joined in a given month
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      { month: "Jan 2024", creators: 45, active: 38, revenue: "$12,847", retention: "84.4%" },
+                      { month: "Feb 2024", creators: 52, active: 41, revenue: "$15,234", retention: "78.8%" },
+                      { month: "Mar 2024", creators: 38, active: 32, revenue: "$9,876", retention: "84.2%" },
+                      { month: "Apr 2024", creators: 61, active: 48, revenue: "$18,543", retention: "78.7%" },
+                      { month: "May 2024", creators: 47, active: 39, revenue: "$14,567", retention: "83.0%" },
+                      { month: "Jun 2024", creators: 55, active: 44, revenue: "$16,789", retention: "80.0%" },
+                    ].map((cohort, index) => (
+                      <div key={index} className="p-4 border rounded-lg">
+                        <div className="text-sm font-medium text-muted-foreground mb-2">{cohort.month}</div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-xs">Total Creators</span>
+                            <span className="text-sm font-medium">{cohort.creators}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-xs">Still Active</span>
+                            <span className="text-sm font-medium text-green-600">{cohort.active}</span>
+                </div>
+                          <div className="flex justify-between">
+                            <span className="text-xs">Revenue Generated</span>
+                            <span className="text-sm font-medium text-primary">{cohort.revenue}</span>
+                  </div>
+                          <div className="flex justify-between">
+                            <span className="text-xs">Retention Rate</span>
+                            <span className="text-sm font-medium">{cohort.retention}</span>
+                  </div>
+                </div>
+                  </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Fan Cohorts */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Recent Subscribers</CardTitle>
+                <CardTitle className="flex items-center space-x-2">
+                  <Heart className="h-5 w-5" />
+                  Fan Cohorts Analysis
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Analyze the spending behavior and retention of fans who sign up in a given month
+                </p>
                 </CardHeader>
                 <CardContent>
-                  <ScrollArea className="h-96">
-                    <div className="space-y-4">
-                      {recentSubscribers.map((subscriber, index) => (
-                        <div key={subscriber.name} className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="flex items-center space-x-3">
-                            <Image
-                              src={subscriber.avatar || "/placeholder.svg"}
-                              alt={subscriber.name}
-                              width={40}
-                              height={40}
-                              className="rounded-full"
-                            />
-                            <div>
-                              <h4 className="font-semibold">{subscriber.name}</h4>
-                              <p className="text-sm text-muted-foreground">{subscriber.joinDate}</p>
-                            </div>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      { month: "Jan 2024", fans: 234, active: 189, spending: "$45,678", retention: "80.8%" },
+                      { month: "Feb 2024", fans: 287, active: 221, spending: "$52,134", retention: "77.0%" },
+                      { month: "Mar 2024", fans: 198, active: 156, spending: "$38,945", retention: "78.8%" },
+                      { month: "Apr 2024", fans: 312, active: 234, spending: "$61,789", retention: "75.0%" },
+                      { month: "May 2024", fans: 256, active: 198, spending: "$48,567", retention: "77.3%" },
+                      { month: "Jun 2024", fans: 298, active: 223, spending: "$56,234", retention: "74.8%" },
+                    ].map((cohort, index) => (
+                      <div key={index} className="p-4 border rounded-lg">
+                        <div className="text-sm font-medium text-muted-foreground mb-2">{cohort.month}</div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-xs">Total Fans</span>
+                            <span className="text-sm font-medium">{cohort.fans}</span>
                           </div>
-                          <div className="text-right">
-                            <Badge variant="outline">{subscriber.tier}</Badge>
-                            <p className="text-sm font-medium text-green-600 mt-1">${subscriber.revenue}</p>
+                          <div className="flex justify-between">
+                            <span className="text-xs">Still Active</span>
+                            <span className="text-sm font-medium text-green-600">{cohort.active}</span>
+                            </div>
+                          <div className="flex justify-between">
+                            <span className="text-xs">Total Spending</span>
+                            <span className="text-sm font-medium text-primary">{cohort.spending}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-xs">Retention Rate</span>
+                            <span className="text-sm font-medium">{cohort.retention}</span>
+                          </div>
                           </div>
                         </div>
                       ))}
                     </div>
-                  </ScrollArea>
+                </div>
                 </CardContent>
               </Card>
             </div>
+        </TabsContent>
 
+        <TabsContent value="funnels" className="mt-6">
+          <div className="space-y-6">
+            {/* Fan Sign-up & Onboarding Funnel */}
             <Card>
               <CardHeader>
-                <CardTitle>Subscription Tiers</CardTitle>
+                <CardTitle className="flex items-center space-x-2">
+                  <Users className="h-5 w-5" />
+                  Fan Sign-up & Onboarding Funnel
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Track where potential fans abandon the registration process
+                </p>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie
-                      data={subscriptionTierData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={40}
-                      outerRadius={80}
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      {subscriptionTierData.map((entry, index) => (
-                        <Cell key={entry.name} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="space-y-2 mt-4">
-                  {subscriptionTierData.map((tier) => (
-                    <div key={tier.name} className="flex items-center justify-between">
+                <div className="space-y-4">
+                  {[
+                    { step: "Site Visit", users: 10000, percentage: 100, color: "bg-blue-500" },
+                    { step: "Registration Started", users: 7500, percentage: 75, color: "bg-blue-400" },
+                    { step: "Email Verification", users: 6800, percentage: 68, color: "bg-blue-300" },
+                    { step: "Profile Setup", users: 5200, percentage: 52, color: "bg-blue-200" },
+                    { step: "Payment Method Added", users: 3800, percentage: 38, color: "bg-blue-100" },
+                    { step: "First Subscription", users: 2847, percentage: 28.5, color: "bg-green-500" },
+                  ].map((funnel, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">{funnel.step}</span>
                       <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: tier.color }} />
-                        <span className="text-sm">{tier.name}</span>
+                          <span className="text-sm text-muted-foreground">{funnel.users.toLocaleString()}</span>
+                          <span className="text-sm font-semibold">{funnel.percentage}%</span>
+                        </div>
                       </div>
-                      <span className="text-sm font-medium">{tier.value}%</span>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full ${funnel.color}`}
+                          style={{ width: `${funnel.percentage}%` }}
+                        />
+                      </div>
                     </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Creator Application Funnel */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Crown className="h-5 w-5" />
+                  Creator Application Funnel
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Track the journey from applicant to verified, active creator
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { step: "Application Started", users: 500, percentage: 100, color: "bg-purple-500" },
+                    { step: "Documents Uploaded", users: 420, percentage: 84, color: "bg-purple-400" },
+                    { step: "Identity Verification", users: 380, percentage: 76, color: "bg-purple-300" },
+                    { step: "Content Review", users: 320, percentage: 64, color: "bg-purple-200" },
+                    { step: "Approved & Verified", users: 280, percentage: 56, color: "bg-green-500" },
+                    { step: "First Post Published", users: 234, percentage: 46.8, color: "bg-green-400" },
+                  ].map((funnel, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">{funnel.step}</span>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm text-muted-foreground">{funnel.users.toLocaleString()}</span>
+                          <span className="text-sm font-semibold">{funnel.percentage}%</span>
+                        </div>
+                  </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full ${funnel.color}`}
+                          style={{ width: `${funnel.percentage}%` }}
+                        />
+                  </div>
+                  </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Overall Monetization Funnel */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <DollarSign className="h-5 w-5" />
+                  Overall Monetization Funnel
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Site Visit → Sign Up → First Subscription → First Tip/PPV Purchase
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { step: "Site Visit", users: 50000, percentage: 100, color: "bg-orange-500" },
+                    { step: "Sign Up", users: 2847, percentage: 5.7, color: "bg-orange-400" },
+                    { step: "First Subscription", users: 1200, percentage: 2.4, color: "bg-orange-300" },
+                    { step: "First Tip/PPV", users: 800, percentage: 1.6, color: "bg-green-500" },
+                    { step: "Repeat Purchase", users: 650, percentage: 1.3, color: "bg-green-400" },
+                  ].map((funnel, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">{funnel.step}</span>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm text-muted-foreground">{funnel.users.toLocaleString()}</span>
+                          <span className="text-sm font-semibold">{funnel.percentage}%</span>
+                        </div>
+                  </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full ${funnel.color}`}
+                          style={{ width: `${funnel.percentage}%` }}
+                        />
+                  </div>
+                  </div>
                   ))}
                 </div>
               </CardContent>
@@ -389,132 +591,124 @@ export function AnalyticsDashboard() {
           </div>
         </TabsContent>
 
-        <TabsContent value="revenue" className="mt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue Sources</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span>Subscriptions</span>
-                    <span className="font-semibold">$8,247 (64.2%)</span>
-                  </div>
-                  <Progress value={64.2} />
-                  <div className="flex items-center justify-between">
-                    <span>Pay-per-view</span>
-                    <span className="font-semibold">$3,420 (26.6%)</span>
-                  </div>
-                  <Progress value={26.6} />
-                  <div className="flex items-center justify-between">
-                    <span>Tips & Gifts</span>
-                    <span className="font-semibold">$1,180 (9.2%)</span>
-                  </div>
-                  <Progress value={9.2} />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Monthly Targets</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span>Revenue Goal</span>
-                    <span className="font-semibold">$12,847 / $15,000</span>
-                  </div>
-                  <Progress value={85.6} />
-                  <div className="flex items-center justify-between">
-                    <span>Subscriber Goal</span>
-                    <span className="font-semibold">1,247 / 1,500</span>
-                  </div>
-                  <Progress value={83.1} />
-                  <div className="flex items-center justify-between">
-                    <span>Content Goal</span>
-                    <span className="font-semibold">28 / 30 posts</span>
-                  </div>
-                  <Progress value={93.3} />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="goals" className="mt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <TabsContent value="retention" className="mt-6">
+          <div className="space-y-6">
+            {/* Platform-Wide Fan Retention */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <Target className="h-5 w-5" />
-                  <span>Monthly Goals</span>
+                  <Heart className="h-5 w-5" />
+                  Platform-Wide Fan Retention
                 </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Are fans staying on the platform and spending money month-over-month?
+                </p>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">Revenue Target</span>
-                    <Badge variant="secondary">85.6% Complete</Badge>
-                  </div>
-                  <Progress value={85.6} />
-                  <p className="text-sm text-muted-foreground">$12,847 of $15,000 goal</p>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      { period: "1 Month", retention: 78.5, spending: "$45,678", color: "text-green-600" },
+                      { period: "3 Months", retention: 65.2, spending: "$38,945", color: "text-blue-600" },
+                      { period: "6 Months", retention: 52.8, spending: "$28,567", color: "text-orange-600" },
+                      { period: "12 Months", retention: 41.3, spending: "$18,234", color: "text-red-600" },
+                    ].map((retention, index) => (
+                      <div key={index} className="p-4 border rounded-lg text-center">
+                        <div className="text-2xl font-bold mb-1">{retention.retention}%</div>
+                        <div className="text-sm text-muted-foreground mb-2">{retention.period} Retention</div>
+                        <div className="text-sm font-medium text-primary">{retention.spending}</div>
+                        <div className="text-xs text-muted-foreground">Avg. Spending</div>
+                      </div>
+                    ))}
                 </div>
 
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Retention Trends</h4>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">New Subscribers</span>
-                    <Badge variant="secondary">83.1% Complete</Badge>
+                      {[
+                        { metric: "New Fan Retention (30 days)", value: 78.5, target: 80, status: "warning" },
+                        { metric: "Repeat Purchase Rate", value: 45.2, target: 50, status: "warning" },
+                        { metric: "Average Revenue Per User", value: 89.50, target: 100, status: "warning" },
+                        { metric: "Churn Rate", value: 21.5, target: 20, status: "error" },
+                      ].map((trend, index) => (
+                        <div key={index} className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm font-medium">{trend.metric}</span>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm font-semibold">{trend.value}%</span>
+                              <Badge 
+                                variant={trend.status === "error" ? "destructive" : trend.status === "warning" ? "secondary" : "default"}
+                                className="text-xs"
+                              >
+                                {trend.status === "error" ? "Below Target" : trend.status === "warning" ? "Near Target" : "On Target"}
+                              </Badge>
+                            </div>
+                          </div>
+                          <Progress value={(trend.value / trend.target) * 100} className="w-full" />
                   </div>
-                  <Progress value={83.1} />
-                  <p className="text-sm text-muted-foreground">1,247 of 1,500 goal</p>
+                      ))}
                 </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">Content Posts</span>
-                    <Badge variant="default">93.3% Complete</Badge>
                   </div>
-                  <Progress value={93.3} />
-                  <p className="text-sm text-muted-foreground">28 of 30 posts goal</p>
                 </div>
               </CardContent>
             </Card>
 
+            {/* Creator Retention */}
             <Card>
               <CardHeader>
-                <CardTitle>Performance Insights</CardTitle>
+                <CardTitle className="flex items-center space-x-2">
+                  <Crown className="h-5 w-5" />
+                  Creator Retention
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Are new creators staying active, or are they churning after the first month due to lack of earnings?
+                </p>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <TrendingUp className="h-4 w-4 text-green-600" />
-                    <span className="font-medium text-green-800 dark:text-green-200">Strong Performance</span>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      { period: "1 Month", retention: 68.2, earnings: "$1,247", color: "text-orange-600" },
+                      { period: "3 Months", retention: 45.8, earnings: "$2,456", color: "text-red-600" },
+                      { period: "6 Months", retention: 32.1, earnings: "$3,789", color: "text-red-600" },
+                      { period: "12 Months", retention: 24.7, earnings: "$5,234", color: "text-red-600" },
+                    ].map((retention, index) => (
+                      <div key={index} className="p-4 border rounded-lg text-center">
+                        <div className="text-2xl font-bold mb-1">{retention.retention}%</div>
+                        <div className="text-sm text-muted-foreground mb-2">{retention.period} Retention</div>
+                        <div className="text-sm font-medium text-primary">{retention.earnings}</div>
+                        <div className="text-xs text-muted-foreground">Avg. Earnings</div>
+                      </div>
+                    ))}
                   </div>
-                  <p className="text-sm text-green-700 dark:text-green-300">
-                    Your engagement rate is 15% higher than the platform average
-                  </p>
+                  
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Creator Health Metrics</h4>
+                    <div className="space-y-3">
+                      {[
+                        { metric: "First Month Earnings > $100", value: 34.2, target: 50, status: "error" },
+                        { metric: "Active Posting (Last 30 days)", value: 56.8, target: 70, status: "warning" },
+                        { metric: "Creator Satisfaction Score", value: 7.2, target: 8.0, status: "warning" },
+                        { metric: "Support Ticket Volume", value: 12.3, target: 10, status: "error" },
+                      ].map((metric, index) => (
+                        <div key={index} className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm font-medium">{metric.metric}</span>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm font-semibold">{metric.value}%</span>
+                              <Badge 
+                                variant={metric.status === "error" ? "destructive" : metric.status === "warning" ? "secondary" : "default"}
+                                className="text-xs"
+                              >
+                                {metric.status === "error" ? "Needs Attention" : metric.status === "warning" ? "Monitor" : "Good"}
+                              </Badge>
+                            </div>
                 </div>
-
-                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Crown className="h-4 w-4 text-blue-600" />
-                    <span className="font-medium text-blue-800 dark:text-blue-200">Premium Growth</span>
+                          <Progress value={(metric.value / metric.target) * 100} className="w-full" />
                   </div>
-                  <p className="text-sm text-blue-700 dark:text-blue-300">
-                    Premium subscribers increased by 23% this month
-                  </p>
+                      ))}
                 </div>
-
-                <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <MessageCircle className="h-4 w-4 text-orange-600" />
-                    <span className="font-medium text-orange-800 dark:text-orange-200">Engagement Opportunity</span>
                   </div>
-                  <p className="text-sm text-orange-700 dark:text-orange-300">
-                    Consider posting more interactive content to boost comments
-                  </p>
                 </div>
               </CardContent>
             </Card>
