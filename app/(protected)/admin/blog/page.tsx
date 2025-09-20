@@ -2,6 +2,7 @@
 
 import { AdminPageTemplate, MetricCard } from "@src/components/admin/AdminPageTemplate";
 import { BlogDetailView } from "@src/components/admin/BlogDetailView";
+import { BlueFilterSection } from "@src/components/admin/BlueFilterSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -349,6 +350,7 @@ class BlogPostCardComponent {
 
 export default function BlogPage() {
   const [selectedPostId, setSelectedPostId] = useState("");
+  const [selectedPostIdFilter, setSelectedPostIdFilter] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -363,7 +365,10 @@ export default function BlogPage() {
     if (posts.length > 0 && !selectedPostId) {
       setSelectedPostId(posts[0].id);
     }
-  }, [posts, selectedPostId]);
+    if (posts.length > 0 && !selectedPostIdFilter) {
+      setSelectedPostIdFilter(posts[0].id);
+    }
+  }, [posts, selectedPostId, selectedPostIdFilter]);
 
   // Filter posts based on search and filters
   const filteredPosts = posts.filter(post => {
@@ -378,6 +383,10 @@ export default function BlogPage() {
 
   const handlePostSelect = (postId: string) => {
     setSelectedPostId(postId);
+  };
+
+  const handlePostSelectFilter = (postId: string) => {
+    setSelectedPostIdFilter(postId);
   };
 
   const handleView = () => {
@@ -464,19 +473,35 @@ export default function BlogPage() {
       showExport={true}
       stats={statsCards}
     >
-      <BlogDetailView
-        posts={filteredPosts}
-        selectedPostId={selectedPostId}
-        onPostSelect={handlePostSelect}
-        onView={handleView}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onMore={handleMore}
-        onFeature={handleFeature}
-        onPublish={handlePublish}
-        onNewPost={handleNewPost}
-        onFilter={handleFilter}
-      />
+      <div className="space-y-6">
+        {/* Filter Section */}
+        <BlueFilterSection
+          title="Select Post"
+          placeholder="Choose a post..."
+          value={selectedPostIdFilter || filteredPosts[0]?.id || ''}
+          onValueChange={handlePostSelectFilter}
+          options={filteredPosts.map(post => ({
+            id: post.id,
+            label: post.title,
+            status: post.status,
+            icon: <FileText className="h-4 w-4" />
+          }))}
+        />
+
+        <BlogDetailView
+          posts={filteredPosts}
+          selectedPostId={selectedPostId}
+          onPostSelect={handlePostSelect}
+          onView={handleView}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onMore={handleMore}
+          onFeature={handleFeature}
+          onPublish={handlePublish}
+          onNewPost={handleNewPost}
+          onFilter={handleFilter}
+        />
+      </div>
     </AdminPageTemplate>
   );
 }
